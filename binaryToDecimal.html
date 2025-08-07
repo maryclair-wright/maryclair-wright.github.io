@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ASCTE Cyber 101 Positional Numbering Systems Conversion Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #0A2342;
+            color: #FFFFFF;
+        }
+        .container {
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .instructions, .rules, .problemArea, .feedbackArea, .resultArea {
+            background-color: #F4F4F4;
+            color: #0A2342;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .visualGuide {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .visualGuide img {
+            max-width: 95%;
+            height: auto;
+            border-radius: 8px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .timestamp {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #A6C8FF;
+        }
+        .hidden {
+            display: none;
+        }
+        .restartArea {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #restartButton {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid #0A2342;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            color: #0A2342;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #restartButton:hover {
+            background-color: #A6C8FF;
+            color: #0A2342;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ASCTE Cyber 101 Positional Numbering Systems Conversion Practice</h1>
+
+    <div class="instructions">
+        <h2>Task Instructions:</h2>
+        <ul>
+            <li>Answer each conversion question carefully.</li>
+            <li>Use the number provided to convert between Decimal and Binary as instructed.</li>
+            <li>Binary answers can be either 8-digit with leading zeros or trimmed (e.g., both <code>00000101</code> and <code>101</code> are acceptable).</li>
+            <li>Only two attempts per question are allowed.</li>
+            <li>Spelling and formatting must be correct.</li>
+            <li>Subscripts are shown for clarity but do not need to be typed.</li>
+            <li>The practice will automatically move you to the next question after answering or after two incorrect attempts.</li>
+            <li>Need help? <a href="https://www.youtube.com/watch?v=H4BstqvgBow&t=2s" target="_blank">Quick Review of Decimal to Binary</a>.</li>
+        </ul>
+    </div>
+
+    <div class="rules" id="emailSection">
+        <h2>Enter Your School Email:</h2>
+        <input type="text" id="emailInput" placeholder="Enter your school email and press Enter">
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+
+    <div class="problemArea hidden" id="problemSection">
+        <h2>Conversion Problem:</h2>
+        <p id="problemText"></p>
+        <input type="text" id="answerInput" placeholder="Enter your answer and press Enter">
+    </div>
+
+    <div class="feedbackArea hidden" id="feedbackSection">
+        <p id="feedbackText"></p>
+    </div>
+
+    <div class="resultArea hidden" id="resultSection">
+        <h2>Session Summary:</h2>
+        <p id="resultText"></p>
+    </div>
+
+    <div class="restartArea hidden" id="restartSection">
+        <button id="restartButton">Practice Again?</button>
+    </div>
+
+    <div class="visualGuide">
+        <img src="https://miro.medium.com/v2/resize:fit:841/1*IRQyKlnOy1TYSX5lFGHKrQ.png" alt="Positional Numbering Chart">
+    </div>
+</div>
+
+<script>
+    let decimalValue;
+    let correctAnswer;
+    let currentQuestion = 1;
+    let attemptsLeft = 2;
+    let correctCount = 0;
+    let largestMissed = 0;
+    let startTime;
+    let stopTime;
+    let originalValue;
+
+    function generateProblem() {
+        if (currentQuestion === 1) {
+            do {
+                decimalValue = Math.floor(Math.random() * (63 - 25 + 1)) + 25;
+            } while (decimalValue === 89);
+            correctAnswer = decimalValue.toString(2);
+            originalValue = decimalValue;
+            document.getElementById('problemText').innerHTML = `Convert ${decimalValue}<sub>10</sub> to Binary:`;
+        } else if (currentQuestion === 2) {
+            let decimalForBinary;
+            do {
+                decimalForBinary = Math.floor(Math.random() * (99 - 40 + 1)) + 40;
+            } while (decimalForBinary === 89);
+            correctAnswer = decimalForBinary.toString(10);
+            originalValue = decimalForBinary;
+            let binarySequence = decimalForBinary.toString(2);
+            document.getElementById('problemText').innerHTML = `Convert ${binarySequence}<sub>2</sub> to Decimal:`;
+        } else if (currentQuestion === 3 || currentQuestion === 5 || currentQuestion === 7) {
+            do {
+                decimalValue = Math.floor(Math.random() * (currentQuestion < 5 ? 150 - 75 + 1 : 255 - 150 + 1)) + (currentQuestion < 5 ? 75 : 150);
+            } while (decimalValue === 89);
+            correctAnswer = decimalValue.toString(2);
+            originalValue = decimalValue;
+            document.getElementById('problemText').innerHTML = `Convert ${decimalValue}<sub>10</sub> to Binary:`;
+        } else if (currentQuestion === 4 || currentQuestion === 6 || currentQuestion === 8) {
+            let decimalForBinary;
+            do {
+                decimalForBinary = Math.floor(Math.random() * (currentQuestion < 5 ? 150 - 75 + 1 : 255 - 150 + 1)) + (currentQuestion < 5 ? 75 : 150);
+            } while (decimalForBinary === 89);
+            correctAnswer = decimalForBinary.toString(10);
+            originalValue = decimalForBinary;
+            let binarySequence = decimalForBinary.toString(2);
+            document.getElementById('problemText').innerHTML = `Convert ${binarySequence}<sub>2</sub> to Decimal:`;
+        }
+    }
+
+    document.getElementById('emailInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const email = e.target.value.trim();
+            if (email.length > 0) {
+                startTime = new Date();
+                const dateTimeString = startTime.toLocaleString('en-US', { 
+                    dateStyle: 'short', 
+                    timeStyle: 'short' 
+                });
+                document.getElementById('timestamp').innerText = 'Start Time: ' + dateTimeString;
+                
+                document.getElementById('emailSection').classList.add('hidden');
+                document.getElementById('problemSection').classList.remove('hidden');
+                generateProblem();
+            }
+        }
+    });
+
+    document.getElementById('answerInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const studentAnswer = e.target.value.trim();
+            checkAnswer(studentAnswer);
+        }
+    });
+
+    function checkAnswer(answer) {
+        const feedbackSection = document.getElementById('feedbackSection');
+        const feedbackText = document.getElementById('feedbackText');
+
+        let normalizedAnswer = answer.replace(/^0+/, '');
+        let normalizedCorrect = correctAnswer.replace(/^0+/, '');
+
+        if (normalizedAnswer === normalizedCorrect) {
+            correctCount++;
+            feedbackText.innerText = '✅ Correct!';
+            feedbackSection.classList.remove('hidden');
+            document.getElementById('answerInput').disabled = true;
+            setTimeout(moveToNext, 1500);
+        } else {
+            attemptsLeft--;
+            if (attemptsLeft > 0) {
+                feedbackText.innerText = `❌ Incorrect. You have ${attemptsLeft} attempt(s) left. Try again!`;
+                feedbackSection.classList.remove('hidden');
+            } else {
+                if (originalValue > largestMissed) {
+                    largestMissed = originalValue;
+                }
+                feedbackText.innerText = `❌ Incorrect. The correct answer was ${correctAnswer}.`;
+                feedbackSection.classList.remove('hidden');
+                document.getElementById('answerInput').disabled = true;
+                setTimeout(moveToNext, 1500);
+            }
+        }
+    }
+
+    function moveToNext() {
+        if (currentQuestion < 8) {
+            currentQuestion++;
+            attemptsLeft = 2;
+            document.getElementById('feedbackSection').classList.add('hidden');
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').disabled = false;
+            generateProblem();
+        } else {
+            stopTime = new Date();
+            displayResults();
+        }
+    }
+
+    function displayResults() {
+        const stopTimeString = stopTime.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' });
+        let results = `Start Time: ${startTime.toLocaleString('en-US', {dateStyle: 'short', timeStyle: 'short'})}<br>`;
+        results += `Stop Time: ${stopTimeString}<br>`;
+        results += `Correct Conversions: ${correctCount} out of 8.<br>`;
+        if (largestMissed > 0) {
+            results += `You should practice conversions with values at least ${largestMissed} or higher.`;
+        }
+        document.getElementById('resultText').innerHTML = results;
+
+        document.getElementById('problemSection').classList.add('hidden');
+        document.getElementById('resultSection').classList.remove('hidden');
+        document.getElementById('restartSection').classList.remove('hidden');
+    }
+
+    document.getElementById('restartButton').addEventListener('click', function() {
+        currentQuestion = 1;
+        correctCount = 0;
+        largestMissed = 0;
+        attemptsLeft = 2;
+        startTime = new Date();
+        const dateTimeString = startTime.toLocaleString('en-US', {dateStyle: 'short', timeStyle: 'short'});
+        document.getElementById('timestamp').innerText = 'Start Time: ' + dateTimeString;
+
+        document.getElementById('feedbackSection').classList.add('hidden');
+        document.getElementById('resultSection').classList.add('hidden');
+        document.getElementById('restartSection').classList.add('hidden');
+
+        document.getElementById('answerInput').value = '';
+        document.getElementById('answerInput').disabled = false;
+        document.getElementById('problemSection').classList.remove('hidden');
+
+        generateProblem();
+    });
+</script>
+
+</body>
+</html>
