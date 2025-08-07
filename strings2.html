@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python String Expressions 2</title>
+  <style>
+    body { background-color: #f9f9ec; font-family: 'IBM Plex Serif', serif; margin: 0; padding: 0; }
+    header { background-color: #00274D; color: white; padding: 20px; text-align: center; font-size: 2em; }
+    .instructions { background-color: #00274D; color: white; margin: 30px; padding: 30px; border-radius: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    .left, .right { font-size: 1.1em; }
+    .variables, .questions { background-color: #e6f0ff; margin: 30px; padding: 30px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 1.8em; }
+    .question { margin-bottom: 30px; font-family: 'IBM Plex Serif', serif; font-size: 1em; }
+    button { background-color: #A6192E; color: white; border: none; padding: 10px 20px; margin-top: 10px; cursor: pointer; border-radius: 5px; }
+    input[type="text"] { width: 50%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Courier New', monospace; font-size: 1em; }
+    #patriotBox { position: fixed; top: 10px; right: 10px; background: #d8e8ff; border: 2px solid #00274D; padding: 15px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 1em; }
+   #feedbackSummary {
+  background: #f0f0f0; /* light gray */
+  color: #00274D; /* ASCTE dark blue */
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  font-size: 1.2em;
+  grid-column: span 2;
+}
+
+  </style>
+</head>
+
+<body>
+
+<header>Python String Expressions 2</header>
+
+<div id="patriotBox">
+  <div id="patriot1Box"></div>
+  <div id="patriot2Box"></div>
+</div>
+
+<div class="instructions">
+  <div class="left">
+    <p><strong>Task Instructions:</strong></p>
+    <ul>
+      <li>Answer each question carefully.</li>
+      <li>Use the values stored in <code>patriot1</code> and <code>patriot2</code>.</li>
+      <li>Write the correct Python expression for each task.</li>
+      <li>Press the <strong>Enter key</strong> to begin.</li>
+    </ul>
+  </div>
+
+  <div class="right">
+    <p><strong>Important Rules:</strong></p>
+    <ul>
+      <li>3 attempts per question.</li>
+      <li>Spelling, capitalization, and punctuation must be exact.</li>
+      <li>Do not use negative indexing.</li>
+      <li>Need help? <a href="https://pythontutor.com/visualize.html#code=word%20%3D%20%22ASCTE!%22%0Aa%20%3D%20len(word)%0Ab%20%3D%20word.index(%22!%22)%0Ac%20%3D%20word%5B1%3A3%5D%0Ad%20%3D%20word.replace(%22A%22,%20%22WHYISTHIS%22)" target="_blank">Review Python String Basics</a>.</li>
+    </ul>
+  </div>
+
+  <div style="grid-column: span 2;">
+    <p>Enter your school email and press Enter to get started:</p>
+    <input id="emailInput" type="text" placeholder="Enter your school email" onkeydown="recordStartTime(event)">
+    <p id="startTime"></p>
+    <div id="feedbackSummary" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="variables">
+  <div id="patriot1"></div>
+  <div id="patriot2"></div>
+</div>
+
+<div class="questions" id="questionsSection" style="display:none;">
+  <div class="question">
+    <p>Write the Python code expression to return the total number of characters stored in <code>patriot1</code>:</p>
+    <input id="answer" type="text">
+    <br><button onclick="checkAnswer()">Submit</button>
+    <div id="feedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Write a Python expression to produce this exact substring from patriot1: <code id="substringTarget"></code></p>
+    <input id="substringAnswer" type="text">
+    <br><button onclick="checkSubstringAnswer()">Submit</button>
+    <div id="substringFeedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Write a Python expression to produce this exact substring from patriot2: <code id="patriot2SubstringTarget"></code></p>
+    <input id="patriot2SubstringAnswer" type="text">
+    <br><button onclick="checkPatriot2SubstringAnswer()">Submit</button>
+    <div id="patriot2SubstringFeedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Find the location of the first space character in <code id="spaceTarget"></code>:</p>
+    <input id="spaceIndexAnswer" type="text">
+    <br><button onclick="checkSpaceIndexAnswer()">Submit</button>
+    <div id="spaceIndexFeedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Combine the first name from <code>patriot1</code> and last name from <code>patriot2</code>. Output: <code id="combineTarget"></code></p>
+    <input id="combineAnswer" type="text">
+    <br><button onclick="checkCombineAnswer()">Submit</button>
+    <div id="combineFeedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Find the index of the last name <code id="lastNameTarget"></code> in <code>patriot1</code>:</p>
+    <input id="lastNameIndexAnswer" type="text">
+    <br><button onclick="checkLastNameIndexAnswer()">Submit</button>
+    <div id="lastNameIndexFeedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Combine "Patriot: " with the first three letters of the first and last names of <code>patriot2</code>. Output: <code id="patriotMiniTarget"></code></p>
+    <input id="patriotMiniAnswer" type="text">
+    <br><button onclick="checkPatriotMiniAnswer()">Submit</button>
+    <div id="patriotMiniFeedback"></div>
+  </div>
+
+  <div class="question">
+    <p>Replace all spaces in <code>patriot1</code> with "LIBERTY". Output: <code id="replaceLibertyTarget"></code></p>
+    <input id="replaceLibertyAnswer" type="text">
+    <br><button onclick="checkReplaceLibertyAnswer()">Submit</button>
+    <div id="replaceLibertyFeedback"></div>
+  </div>
+</div>
+
+<script>
+let startTimeRecorded = false;
+const names = [
+  'Margaret Corbin', 'Deborah Sampson', 'Nancy Hart', 'Sybil Ludington',
+  'Mary Ludwig Hays McCauley', 'Patience Wright', 'Ann Bates',
+  'Lucy Flucker Knox', 'Esther De Berdt Reed', 'Prudence Wright',
+  'Crispus Attucks', 'James Armistead Lafayette', 'Salem Poor',
+  'Peter Salem', 'Prince Whipple', 'John Jay', 'Benjamin Rush', 'Elbridge Gerry', 'Anthony Jeremiah'
+];
+
+let patriot1 = "";
+let patriot2 = "";
+let spaceTarget = "";
+let correctAnswers = 0;
+let currentQuestion = 0;
+let totalQuestions = 8;
+let attemptsLeft = 3;
+
+function recordStartTime(event) {
+  if (event.key === 'Enter' && !startTimeRecorded) {
+    const emailInput = document.getElementById('emailInput').value.trim();
+    if (emailInput) {
+      const startTime = new Date().toLocaleString();
+      document.getElementById('startTime').innerText = 'Start Time: ' + startTime;
+      document.querySelector('.variables').style.display = 'block';
+      document.getElementById('questionsSection').style.display = 'block';
+      assignRandomPatriots();
+      startTimeRecorded = true;
+    }
+  }
+}
+
+function assignRandomPatriots() {
+  const shuffled = names.sort(() => 0.5 - Math.random());
+  patriot1 = shuffled[0];
+  patriot2 = shuffled[1];
+  document.getElementById('patriot1').innerText = `patriot1 = "${patriot1}"`;
+  document.getElementById('patriot2').innerText = `patriot2 = "${patriot2}"`;
+  document.getElementById('patriot1Box').innerText = `patriot1 = "${patriot1}"`;
+  document.getElementById('patriot2Box').innerText = `patriot2 = "${patriot2}"`;
+
+  document.getElementById('substringTarget').innerText = `"${patriot1.substring(1, 6)}"`;
+  document.getElementById('patriot2SubstringTarget').innerText = `"${patriot2.substring(0, patriot2.indexOf(" "))}"`;
+
+  const firstName = patriot1.split(" ")[0];
+  const lastName = patriot2.split(" ").slice(-1)[0];
+  document.getElementById('combineTarget').innerText = `"${firstName} ${lastName}"`;
+
+  document.getElementById('lastNameTarget').innerText = patriot1.split(" ").slice(-1)[0];
+  const miniFirst = patriot2.split(" ")[0].slice(0, 3);
+  const miniLast = patriot2.split(" ").slice(-1)[0].slice(0, 3);
+  document.getElementById('patriotMiniTarget').innerText = `"Patriot: ${miniFirst}${miniLast}"`;
+
+  document.getElementById('replaceLibertyTarget').innerText = `"${patriot1.replace(/ /g, "LIBERTY")}"`;
+
+  spaceTarget = Math.random() < 0.5 ? "patriot1" : "patriot2";
+  document.getElementById('spaceTarget').innerText = spaceTarget;
+}
+
+// --- Checking Functions ---
+
+function checkAnswer() { validate('answer', 'len(patriot1)', 'feedback'); }
+function checkSubstringAnswer() { validateContains('substringAnswer', 'patriot1[', 'substringFeedback'); }
+function checkPatriot2SubstringAnswer() { validateContains('patriot2SubstringAnswer', 'patriot2[', 'patriot2SubstringFeedback'); }
+function checkSpaceIndexAnswer() { validate('spaceIndexAnswer', `${spaceTarget}.index(" ")`, 'spaceIndexFeedback'); }
+function checkCombineAnswer() { validateContains('combineAnswer', '+', 'combineFeedback'); }
+function checkLastNameIndexAnswer() {
+  const lastName = patriot1.split(" ").slice(-1)[0];
+  validate('lastNameIndexAnswer', `patriot1.index("${lastName}")`, 'lastNameIndexFeedback');
+}
+function checkPatriotMiniAnswer() { validateContains('patriotMiniAnswer', '+', 'patriotMiniFeedback'); }
+function checkReplaceLibertyAnswer() { validateContains('replaceLibertyAnswer', '.replace', 'replaceLibertyFeedback'); }
+
+// --- Helper Validation Functions ---
+
+function validate(inputId, correctAnswer, feedbackId) {
+  const input = document.getElementById(inputId).value.trim();
+  if (input === correctAnswer) {
+    correct(feedbackId, inputId);
+  } else {
+    tryAgain(feedbackId);
+  }
+}
+
+function validateContains(inputId, mustContain, feedbackId) {
+  const input = document.getElementById(inputId).value.trim();
+  if (input.includes(mustContain)) {
+    correct(feedbackId, inputId);
+  } else {
+    tryAgain(feedbackId);
+  }
+}
+
+function correct(feedbackId, inputId) {
+  document.getElementById(feedbackId).innerText = "Correct!";
+  document.getElementById(feedbackId).style.color = "green";
+  document.getElementById(inputId).disabled = true;
+  correctAnswers++;
+  nextQuestion();
+}
+
+function tryAgain(feedbackId) {
+  attemptsLeft--;
+  if (attemptsLeft > 0) {
+    document.getElementById(feedbackId).innerText = `Try again. Attempts left: ${attemptsLeft}`;
+    document.getElementById(feedbackId).style.color = "red";
+  } else {
+    document.getElementById(feedbackId).innerText = "Moving on...";
+    document.getElementById(feedbackId).style.color = "orange";
+    nextQuestion();
+  }
+}
+
+function nextQuestion() {
+  currentQuestion++;
+  attemptsLeft = 3;
+
+  if (currentQuestion >= totalQuestions) {
+    finishSession();
+  }
+}
+
+function finishSession() {
+  const stopTime = new Date().toLocaleString();
+  let summary = `<strong>Session Complete!</strong><br>Stop Time: ${stopTime}<br>`;
+  summary += `Correct Answers: ${correctAnswers} / ${totalQuestions}<br>`;
+
+  if (totalQuestions - correctAnswers > 2) {
+    summary += `<br><strong>Recommendation:</strong> Practice using string slicing and the .index() method!`;
+  } else {
+    summary += `<br><strong>Awesome job!</strong> You're ready for more Python challenges!`;
+  }
+  document.getElementById('feedbackSummary').style.display = 'block';
+  document.getElementById('feedbackSummary').innerHTML = summary;
+}
+</script>
+
+</body>
+</html>
