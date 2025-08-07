@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ASCTE Cyber 101 Positional Numbering Systems Conversion Practice 2 (with hex)</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #0A2342;
+            color: #FFFFFF;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .instructions, .rules, .problemArea, .feedbackArea, .resultArea {
+            background-color: #F4F4F4;
+            color: #0A2342;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .instructions p, .instructions a {
+            margin: 10px 0;
+            display: block;
+        }
+        .visualGuide {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .visualGuide img {
+            max-width: 95%;
+            height: auto;
+            border-radius: 8px;
+        }
+        input[type="text"] {
+            width: 45%;
+            padding: 10px;
+            font-size: 1em;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .timestamp {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #A6C8FF;
+        }
+        .hidden {
+            display: none;
+        }
+        .restartArea {
+            margin-top: 20px;
+        }
+        #restartButton {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid #0A2342;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            color: #0A2342;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #restartButton:hover {
+            background-color: #A6C8FF;
+            color: #0A2342;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>ASCTE Cyber 101 Positional Numbering Systems Conversion Practice 2 (with hex)</h1>
+
+    <div class="instructions">
+        <h2>Task Instructions:</h2>
+        <p>Answer each conversion question carefully by entering <strong>both</strong> Binary and Hexadecimal values.</p>
+        <p>Use these videos if needed:</p>
+        <p><a href="https://www.khanacademy.org/math/algebra-home/alg-intro-to-algebra/algebra-alternate-number-bases/v/binary-to-hexadecimal" target="_blank">Binary to Hexadecimal - Khan Academy</a></p>
+        <p><a href="https://www.youtube.com/watch?v=NFmDz1dQyPU" target="_blank">Decimal to Hexadecimal - YouTube</a></p>
+        <p>Only two attempts per question are allowed.</p>
+        <p>Binary answers: 8-digit or trimmed form accepted.</p>
+        <p>Hexadecimal answers: two digits, uppercase (no leading 0x needed).</p>
+    </div>
+
+    <div class="rules" id="emailSection">
+        <h2>Enter Your School Email:</h2>
+        <input type="text" id="emailInput" placeholder="Enter your school email and press Enter">
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+
+    <div class="problemArea hidden" id="problemSection">
+        <h2>Conversion Problem:</h2>
+        <p id="problemText"></p>
+        <input type="text" id="binaryInput" placeholder="Enter Answer">
+        <input type="text" id="hexInput" placeholder="Enter Answer">
+    </div>
+
+    <div class="feedbackArea hidden" id="feedbackSection">
+        <p id="feedbackText"></p>
+    </div>
+
+    <div class="resultArea hidden" id="resultSection">
+        <h2>Session Summary:</h2>
+        <p id="resultText"></p>
+    </div>
+
+    <div class="restartArea hidden" id="restartSection">
+        <button id="restartButton">Practice Again?</button>
+    </div>
+
+    <div class="visualGuide">
+        <img src="https://andy-eportfolio.weebly.com/uploads/1/3/5/8/13582430/1357330_orig.jpg?1" alt="Positional Numbering Chart">
+    </div>
+</div>
+
+<script>
+let decimalValue;
+let correctBinary;
+let correctHex;
+let mode;
+let studentEmail = "";
+let currentQuestion = 1;
+let attemptsLeft = 2;
+let correctCount = 0;
+let binaryMisses = 0;
+let hexMisses = 0;
+let startTime;
+let stopTime;
+
+document.getElementById('emailInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        const email = e.target.value.trim();
+        if (email.length > 0) {
+            studentEmail = email;
+            startTime = new Date();
+            document.getElementById('timestamp').innerText = 'Start Time: ' + startTime.toLocaleString();
+            document.getElementById('emailSection').classList.add('hidden');
+            document.getElementById('problemSection').classList.remove('hidden');
+            generateProblem();
+        }
+    }
+});
+
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && (document.getElementById('binaryInput') === document.activeElement || document.getElementById('hexInput') === document.activeElement)) {
+        checkAnswer();
+    }
+});
+
+function generateProblem() {
+    if (currentQuestion <= 2) {
+        decimalValue = Math.floor(Math.random() * (15 - 9 + 1)) + 9;
+    } else if (currentQuestion >= 3 && currentQuestion <= 7) {
+        decimalValue = Math.floor(Math.random() * (99 - 30 + 1)) + 30;
+    } else if (currentQuestion >= 8 && currentQuestion <= 10) {
+        decimalValue = Math.floor(Math.random() * (255 - 100 + 1)) + 100;
+    }
+
+    correctBinary = decimalValue.toString(2);
+    correctHex = decimalValue.toString(16).toUpperCase();
+
+    const modes = ['decimal', 'binary', 'hex'];
+    mode = modes[Math.floor(Math.random() * modes.length)];
+
+    if (mode === 'decimal') {
+        document.getElementById('problemText').innerHTML = `Convert ${decimalValue}<sub>10</sub> to Binary and Hexadecimal<sub>16</sub>:`;
+        document.getElementById('binaryInput').placeholder = "Enter Binary";
+        document.getElementById('hexInput').placeholder = "Enter Hexadecimal";
+    } else if (mode === 'binary') {
+        document.getElementById('problemText').innerHTML = `Convert ${correctBinary}<sub>2</sub> to Decimal and Hexadecimal<sub>16</sub>:`;
+        document.getElementById('binaryInput').placeholder = "Enter Decimal";
+        document.getElementById('hexInput').placeholder = "Enter Hexadecimal";
+    } else {
+        document.getElementById('problemText').innerHTML = `Convert ${correctHex}<sub>16</sub> to Decimal and Binary:`;
+        document.getElementById('binaryInput').placeholder = "Enter Binary";
+        document.getElementById('hexInput').placeholder = "Enter Decimal";
+    }
+}
+
+function checkAnswer() {
+    const feedbackSection = document.getElementById('feedbackSection');
+    const feedbackText = document.getElementById('feedbackText');
+    const studentLeft = document.getElementById('binaryInput').value.trim().replace(/^0+/, '').toUpperCase();
+    const studentRight = document.getElementById('hexInput').value.trim().replace(/^0+/, '').toUpperCase();
+
+    let leftCorrect = false;
+    let rightCorrect = false;
+
+    if (mode === 'decimal') {
+        leftCorrect = studentLeft === correctBinary.replace(/^0+/, '');
+        rightCorrect = studentRight === correctHex;
+    } else if (mode === 'binary') {
+        leftCorrect = studentLeft === decimalValue.toString(10);
+        rightCorrect = studentRight === decimalValue.toString(16).toUpperCase();
+    } else if (mode === 'hex') {
+        leftCorrect = studentLeft === decimalValue.toString(2);
+        rightCorrect = studentRight === decimalValue.toString(10);
+    }
+
+    if (leftCorrect && rightCorrect) {
+        correctCount++;
+        feedbackText.innerText = '✅ Correct!';
+        feedbackSection.classList.remove('hidden');
+        document.getElementById('binaryInput').disabled = true;
+        document.getElementById('hexInput').disabled = true;
+        setTimeout(moveToNext, 1500);
+    } else {
+        attemptsLeft--;
+        if (!leftCorrect) binaryMisses++;
+        if (!rightCorrect) hexMisses++;
+
+        if (attemptsLeft > 0) {
+            let errorMsg = '❌ Incorrect. ';
+            if (!leftCorrect && !rightCorrect) {
+                errorMsg += 'Both the left and right boxes are incorrect.';
+            } else if (!leftCorrect) {
+                errorMsg += 'Left box is incorrect.';
+            } else if (!rightCorrect) {
+                errorMsg += 'Right box is incorrect.';
+            }
+            errorMsg += ` ${attemptsLeft} attempt(s) left.`;
+            feedbackText.innerText = errorMsg;
+            feedbackSection.classList.remove('hidden');
+        } else {
+            feedbackText.innerHTML = `❌ Incorrect.`;
+            feedbackSection.classList.remove('hidden');
+            document.getElementById('binaryInput').disabled = true;
+            document.getElementById('hexInput').disabled = true;
+            setTimeout(moveToNext, 1500);
+        }
+    }
+}
+
+function moveToNext() {
+    if (currentQuestion < 10) {
+        currentQuestion++;
+        attemptsLeft = 2;
+        document.getElementById('feedbackSection').classList.add('hidden');
+        document.getElementById('binaryInput').value = '';
+        document.getElementById('hexInput').value = '';
+        document.getElementById('binaryInput').disabled = false;
+        document.getElementById('hexInput').disabled = false;
+        generateProblem();
+    } else {
+        stopTime = new Date();
+        displayResults();
+    }
+}
+
+function displayResults() {
+    let results = `Email: ${studentEmail}<br>`;
+    results += `Start Time: ${startTime.toLocaleString()}<br>`;
+    results += `Stop Time: ${stopTime.toLocaleString()}<br>`;
+    results += `Correct Conversions: ${correctCount} / 10.<br>`;
+
+    if (binaryMisses > hexMisses) {
+        results += `You struggled more with converting to/from Binary.`;
+    } else if (hexMisses > binaryMisses) {
+        results += `You struggled more with converting to/from Hexadecimal.`;
+    } else if (binaryMisses > 0 || hexMisses > 0) {
+        results += `You struggled equally with Binary and Hexadecimal conversions.`;
+    }
+
+    document.getElementById('resultText').innerHTML = results;
+
+    document.getElementById('problemSection').classList.add('hidden');
+    document.getElementById('resultSection').classList.remove('hidden');
+    document.getElementById('restartSection').classList.remove('hidden');
+}
+
+document.getElementById('restartButton').addEventListener('click', function() {
+    currentQuestion = 1;
+    correctCount = 0;
+    binaryMisses = 0;
+    hexMisses = 0;
+    attemptsLeft = 2;
+    studentEmail = "";
+    startTime = new Date();
+    document.getElementById('timestamp').innerText = 'Start Time: ' + startTime.toLocaleString();
+    document.getElementById('feedbackSection').classList.add('hidden');
+    document.getElementById('resultSection').classList.add('hidden');
+    document.getElementById('restartSection').classList.add('hidden');
+    document.getElementById('binaryInput').value = '';
+    document.getElementById('hexInput').value = '';
+    document.getElementById('binaryInput').disabled = false;
+    document.getElementById('hexInput').disabled = false;
+    document.getElementById('problemSection').classList.remove('hidden');
+    generateProblem();
+});
+</script>
+
+</body>
+</html>
