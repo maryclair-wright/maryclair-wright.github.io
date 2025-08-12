@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,6 +128,7 @@
     let startTime;
     let stopTime;
     let originalValue;
+    let studentEmail = '';
 
     function generateProblem() {
         if (currentQuestion === 1) {
@@ -170,13 +170,13 @@
         if (e.key === 'Enter') {
             const email = e.target.value.trim();
             if (email.length > 0) {
+                studentEmail = email;
                 startTime = new Date();
                 const dateTimeString = startTime.toLocaleString('en-US', { 
                     dateStyle: 'short', 
                     timeStyle: 'short' 
                 });
                 document.getElementById('timestamp').innerText = 'Start Time: ' + dateTimeString;
-                
                 document.getElementById('emailSection').classList.add('hidden');
                 document.getElementById('problemSection').classList.remove('hidden');
                 generateProblem();
@@ -237,7 +237,11 @@
 
     function displayResults() {
         const stopTimeString = stopTime.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' });
-        let results = `Start Time: ${startTime.toLocaleString('en-US', {dateStyle: 'short', timeStyle: 'short'})}<br>`;
+        let results = '';
+        if (studentEmail && studentEmail.length > 0) {
+            results += `<span style="color:#0A2342;"><strong>Email:</strong> ${studentEmail}</span><br>`;
+        }
+        results += `Start Time: ${startTime.toLocaleString('en-US', {dateStyle: 'short', timeStyle: 'short'})}<br>`;
         results += `Stop Time: ${stopTimeString}<br>`;
         results += `Correct Conversions: ${correctCount} out of 8.<br>`;
         if (largestMissed > 0) {
@@ -267,6 +271,7 @@
         document.getElementById('answerInput').disabled = false;
         document.getElementById('problemSection').classList.remove('hidden');
 
+        // Keep the email for the session
         generateProblem();
     });
 </script>
