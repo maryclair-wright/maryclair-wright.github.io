@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ALSDE AI Curriculum Pixel Examiner</title>
+  <style>
+    /* Branding and color scheme */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      color: #333;
+    }
+    /* Accent buttons use red */
+    button {
+      background-color: #D32F2F; /* Red accent */
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 3px;
+      margin-right: 5px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    /* Controls and slider */
+    #controls {
+      margin-bottom: 1em;
+    }
+    #zoomLabel {
+      margin-left: 0.5em;
+      font-weight: bold;
+    }
+    /* Canvas container styling */
+    #canvasContainer {
+      position: relative;
+      display: inline-block;
+      border: 1px solid #ccc;
+      max-width: 95vw;
+      max-height: 80vh;
+      overflow: auto;
+      background-color: #fff;
+    }
+    #mosaicCanvas {
+      display: block;
+    }
+    /* Footer style */
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.85em;
+      color: #666;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ALSDE AI Curriculum Pixel Examiner</h1>
+  <p>
+    1. Choose an image to load.<br/>
+    2. Adjust the zoom level with the slider or +/- buttons until you see large colored squares
+       with text showing the RGB values for each pixel.
+  </p>
+  
+  <div id="controls">
+    <input type="file" id="imageInput" accept="image/*" />
+    <br/><br/>
+    <button id="zoomOutBtn">–</button>
+    <input type="range" id="zoomRange" min="1" max="40" step="1" value="8" />
+    <button id="zoomInBtn">+</button>
+    <span id="zoomLabel">Zoom: 8×</span>
+  </div>
+
+  <div id="canvasContainer">
+    <canvas id="mosaicCanvas"></canvas>
+  </div>
+
+  <footer>
+    © 2025 Alabama State Department of Education (ALSDE) &amp; Alabama School of Cyber Technology &amp; Engineering (ASCTE). All rights reserved. This curriculum may not be reproduced, distributed, or modified without express written permission from ALSDE and ASCTE.
+  </footer>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const mosaicCanvas = document.getElementById('mosaicCanvas');
+    const mosaicCtx = mosaicCanvas.getContext('2d');
+    const zoomRange = document.getElementById('zoomRange');
+    const zoomLabel = document.getElementById('zoomLabel');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+
+    // Store the original image dimensions and pixel data
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let imageData = null;
+
+    imageInput.addEventListener('change', handleImageUpload);
+
+    // Zoom controls
+    zoomRange.addEventListener('input', () => {
+      updateZoomUI();
+      drawMosaic();
+    });
+    zoomInBtn.addEventListener('click', () => {
+      let val = parseInt(zoomRange.value, 10);
+      zoomRange.value = Math.min(val + 1, zoomRange.max);
+      updateZoomUI();
+      drawMosaic();
+    });
+    zoomOutBtn.addEventListener('click', () => {
+      let val = parseInt(zoomRange.value, 10);
+      zoomRange.value = Math.max(val - 1, zoomRange.min);
+      updateZoomUI();
+      drawMosaic();
+    });
+
+    function updateZoomUI() {
+      zoomLabel.textContent = "Zoom: " + zoomRange.value + "×";
+    }
+
+    // Load the image, draw it on a hidden canvas to capture pixel data, then show the mosaic.
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          originalWidth = img.width;
+          originalHeight = img.height;
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = originalWidth;
+          tempCanvas.height = originalHeight;
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCtx.drawImage(img, 0, 0);
+          imageData = tempCtx.getImageData(0, 0, originalWidth, originalHeight).data;
+          drawMosaic();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Draw each pixel as a large square with the corresponding RGB text
+    function drawMosaic() {
+      if (!imageData) return;
+      const zoomFactor = parseInt(zoomRange.value, 10);
+      mosaicCanvas.width = originalWidth * zoomFactor;
+      mosaicCanvas.height = originalHeight * zoomFactor;
+      mosaicCtx.imageSmoothingEnabled = false;
+      mosaicCtx.textBaseline = 'top';
+      
+      let index = 0;
+      for (let y = 0; y < originalHeight; y++) {
+        for (let x = 0; x < originalWidth; x++) {
+          const r = imageData[index++];
+          const g = imageData[index++];
+          const b = imageData[index++];
+          index++; // skip alpha
+
+          mosaicCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+          mosaicCtx.fillRect(x * zoomFactor, y * zoomFactor, zoomFactor, zoomFactor);
+          
+          // If zoom is sufficient, overlay RGB text
+          if (zoomFactor >= 15) {
+            const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+            mosaicCtx.fillStyle = (brightness > 128) ? '#000' : '#fff';
+            mosaicCtx.font = `${Math.floor(zoomFactor * 0.35)}px sans-serif`;
+            const lineHeight = zoomFactor * 0.35;
+            mosaicCtx.fillText(`R ${r}`, x * zoomFactor + 2, y * zoomFactor + 1);
+            mosaicCtx.fillText(`G ${g}`, x * zoomFactor + 2, y * zoomFactor + 1 + lineHeight);
+            mosaicCtx.fillText(`B ${b}`, x * zoomFactor + 2, y * zoomFactor + 1 + 2 * lineHeight);
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
