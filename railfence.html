@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transposition Cipher Tool</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: rgb(0,40,104);
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start; /* Move box up */
+        justify-content: center;
+    }
+    .center-box {
+        background: #6598e9;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2em;
+        /*width: 400px;*/
+        /* height: 400px;  <-- Remove or comment out this line */
+        max-width: 90vw;
+        max-height: 90vh;
+        margin-top: 100px; /* Add space from the top */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+    }
+    .freq-table, .candidate-table { border-collapse: collapse; margin-bottom: 1em; }
+    .freq-table th, .freq-table td, .candidate-table th, .candidate-table td { border: 1px solid #ccc; padding: 4px 8px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    button { margin-top: 1em; }
+    textarea#ciphertext {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: 60px;
+        min-height: 40px;
+        max-height: 100px;
+        resize: vertical;
+        font-size: 1em;
+        border-radius: 6px;
+        border: 1px solid #b0c4de;
+        padding: 0.5em;
+        box-sizing: border-box;
+    }
+    .diff-highlight {
+        background: #fffab3;
+    }
+    .diff-row {
+        background: #fffab3;
+    }
+    </style>
+</head>
+<body>
+    <div class="center-box">
+        <!-- Page 1: Input -->
+        <div id="page-input" class="page active">
+            <h1>Transposition Cipher Tool</h1>
+            <label for="ciphertext">Enter Ciphertext:</label><br>
+            <textarea id="ciphertext" rows="3" cols="60"></textarea><br>
+            <button onclick="goToFrequencyPage()">Analyze</button>
+        </div>
+
+
+        <!-- Page 2: Frequency Comparison -->
+        <div id="page-frequency" class="page">
+            <h2>Letter Frequency Comparison</h2>
+            <div id="frequency-comparison"></div>
+            <button onclick="goToCandidatesPage()">Next: Candidate Decryptions</button>
+        </div>
+
+
+        <!-- Page 3: Candidate Decryptions -->
+        <div id="page-candidates" class="page">
+            <h2>Candidate Decryptions</h2>
+            <div id="candidates"></div>
+        </div>
+
+
+        <!-- Page 4: Visualization & Feedback -->
+        <div id="page-visualization" class="page">
+            <h2>Visualization & Feedback</h2>
+            <div id="visualization"></div>
+            <button onclick="goToInputPage()">Start Over</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.18.0/dist/tf.min.js"></script>
+    <script>
+    // Store analysis results between pages
+    let analysisResults = {};
+
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(div => div.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+
+
+    function goToFrequencyPage() {
+        const text = document.getElementById('ciphertext').value.toUpperCase().replace(/[^A-Z ]/g, '');
+        if (!text) return;
+        analysisResults.ciphertext = text;
+        renderFrequencyComparison(text);
+        showPage('page-frequency');
+    }
+
+
+    function goToCandidatesPage() {
+        if (!analysisResults.ciphertext) {
+            alert("Please enter ciphertext and analyze it first.");
+            showPage('page-input');
+            return;
+        }
+        renderCandidates(analysisResults.ciphertext);
+        showPage('page-candidates');
+    }
+
+
+    function goToInputPage() {
+        showPage('page-input');
+    }
+
+
+    // --- Frequency Comparison ---
+    const ENGLISH_FREQ = [
+        8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153,
+        0.772, 4.025, 2.406, 6.749, 7.507, 1.929, 0.095, 5.987, 6.327, 9.056,
+        2.758, 0.978, 2.360, 0.150, 1.974, 0.074
+    ];
+
+
+    function renderFrequencyComparison(text) {
+        const freq = Array(26).fill(0);
+        for (let c of text) {
+            if (c === ' ') continue;
+            freq[c.charCodeAt(0) - 65]++;
+        }
+        const total = freq.reduce((a, b) => a + b, 0);
+        const freqPct = freq.map(f => (f / total) * 100);
+
+
+        // Find top 3 letters
+        const topCipher = [...freqPct].map((v, i) => ({ l: String.fromCharCode(65 + i), v }))
+            .sort((a, b) => b.v - a.v).slice(0, 3);
+        const topEnglish = ENGLISH_FREQ.map((v, i) => ({ l: String.fromCharCode(65 + i), v }))
+            .sort((a, b) => b.v - a.v).slice(0, 3);
+
+
+        // Display frequency comparison, highlight row if different
+        let freqHtml = `<table class="freq-table"><tr><th>Rank</th><th>Ciphertext Top Letters</th><th>English Top Letters</th></tr>`;
+        for (let i = 0; i < 3; i++) {
+            const rowClass = (topCipher[i].l !== topEnglish[i].l) ? 'diff-row' : '';
+            freqHtml += `<tr class="${rowClass}">
+                <td>${i + 1}</td>
+                <td>${topCipher[i].l} (${topCipher[i].v.toFixed(2)}%)</td>
+                <td>${topEnglish[i].l} (${topEnglish[i].v.toFixed(2)}%)</td>
+            </tr>`;
+        }
+        freqHtml += `</table>`;
+        document.getElementById('frequency-comparison').innerHTML = freqHtml;
+    }
+
+
+    // --- Candidate Decryptions ---
+    const DICTIONARY = ["the", "and", "to", "of", "a", "in", "is", "it", "you", "that", "he", "was", "for", "on", "are", "as", "with", "his", "they", "I"];
+
+
+    function renderCandidates(text) {
+        let candidates = [];
+        // Try keys from 1 to 10
+        for (let key = 1; key <= 10; key++) {
+            const plain = railFenceDecrypt(text, key);
+            candidates.push({ key, plain });
+        }
+        candidates = candidates.map(c => {
+            c.chi2 = chiSquaredScore(c.plain, ENGLISH_FREQ);
+            c.dict = dictionaryScore(c.plain);
+            c.confidence = tf.tidy(() => {
+                const input = tf.tensor2d([[c.chi2, c.dict]]);
+                const weights = tf.tensor2d([[ -1 ], [ 2 ]]);
+                return input.matMul(weights).dataSync()[0];
+            });
+            return c;
+        }).sort((a, b) => b.confidence - a.confidence);
+
+
+        analysisResults.candidates = candidates;
+
+
+        let candHtml = `<table class="candidate-table"><tr><th>Key</th><th>Plaintext</th><th>Chi²</th><th>Dict Score</th><th>Confidence</th><th>Choose</th></tr>`;
+        for (let i = 0; i < candidates.length; i++) {
+            const c = candidates[i];
+            candHtml += `<tr>
+                <td>${c.key}</td>
+                <td>${c.plain}</td>
+                <td>${c.chi2.toFixed(2)}</td>
+                <td>${c.dict}</td>
+                <td>${c.confidence.toFixed(2)}</td>
+                <td><button onclick="chooseCandidate(${i})">Choose</button></td>
+            </tr>`;
+        }
+        candHtml += `</table>`;
+        document.getElementById('candidates').innerHTML = candHtml;
+    }
+
+
+    // When a candidate is chosen, show the visualization in the candidates page
+    function chooseCandidate(index) {
+        const chosen = analysisResults.candidates[index];
+        analysisResults.chosen = chosen;
+        renderVisualization(chosen.key);
+        showPage('page-visualization');
+    }
+
+
+    // Render the rail fence as a table
+    function renderVisualization(key) {
+        const plain = analysisResults.chosen.plain;
+        const rails = Array.from({ length: key }, () => Array(plain.length).fill(''));
+        let dirDown = false;
+        let row = 0;
+
+
+        // Fill rails with the plaintext in zigzag pattern
+        for (let col = 0; col < plain.length; col++) {
+            rails[row][col] = plain[col];
+            if (row === 0 || row === key - 1) dirDown = !dirDown;
+            row += dirDown ? 1 : -1;
+        }
+
+
+        // Build HTML table
+        let html = `<table class="freq-table">`;
+        for (let r = 0; r < key; r++) {
+            html += "<tr>";
+            for (let c = 0; c < plain.length; c++) {
+                html += `<td style="text-align:center;">${rails[r][c] ? rails[r][c] : ""}</td>`;
+            }
+            html += "</tr>";
+        }
+        html += "</table>";
+
+
+        // Show the key and plaintext
+        html = `<b>Rail Fence Visualization (Key=${key})</b><br>` + html +
+            `<div style="margin-top:1em;"><b>Decrypted Plaintext:</b><br><pre>${plain}</pre></div>`;
+
+
+        document.getElementById('visualization').innerHTML = html;
+    }
+
+
+    // --- Rail Fence Decrypt ---
+    function railFenceDecrypt(cipher, key) {
+        if (key <= 1) return cipher;
+        // Step 1: Create the zigzag pattern to mark the positions
+        let rail = Array.from({ length: key }, () => Array(cipher.length).fill(null));
+        let dirDown = false;
+        let row = 0, col = 0;
+
+
+        // Mark the places with '*'
+        for (let i = 0; i < cipher.length; i++) {
+            if (row === 0 || row === key - 1) dirDown = !dirDown;
+            rail[row][col++] = '*';
+            row += dirDown ? 1 : -1;
+        }
+
+
+        // Step 2: Fill the marked places with cipher letters
+        let idx = 0;
+        for (let i = 0; i < key; i++) {
+            for (let j = 0; j < cipher.length; j++) {
+                if (rail[i][j] === '*' && idx < cipher.length) {
+                    rail[i][j] = cipher[idx++];
+                }
+            }
+        }
+
+
+        // Step 3: Read the matrix in zigzag to reconstruct the plaintext
+        let result = '';
+        row = 0; col = 0; dirDown = false;
+        for (let i = 0; i < cipher.length; i++) {
+            if (row === 0 || row === key - 1) dirDown = !dirDown;
+            if (rail[row][col] != null) {
+                result += rail[row][col++];
+            }
+            row += dirDown ? 1 : -1;
+        }
+        return result;
+    }
+
+
+    // --- Rail Fence Visualization ---
+    function railFenceVisual(cipher, key) {
+        let rails = Array.from({ length: key }, () => Array(cipher.length).fill(' '));
+        let dir = 1, row = 0;
+        for (let i = 0; i < cipher.length; i++) {
+            rails[row][i] = cipher[i];
+            row += dir;
+            if (row === 0 || row === key - 1) dir *= -1;
+        }
+        return rails.map(r => r.join('')).join('\n');
+    }
+
+
+    // --- Chi-squared scoring ---
+    function chiSquaredScore(text, englishFreq) {
+        const freq = Array(26).fill(0);
+        let total = 0;
+        for (let c of text) {
+            const idx = c.charCodeAt(0) - 65;
+            if (idx >= 0 && idx < 26) {
+                freq[idx]++;
+                total++;
+            }
+        }
+        let chi2 = 0;
+        for (let i = 0; i < 26; i++) {
+            const expected = englishFreq[i] * total / 100;
+            chi2 += ((freq[i] - expected) ** 2) / (expected || 1);
+        }
+        return chi2;
+    }
+
+
+    // --- Dictionary word scoring ---
+    function dictionaryScore(text) {
+        let score = 0;
+        const words = text.split(/[^A-Z]/);
+        for (let w of words) {
+            if (w.length > 2 && DICTIONARY.includes(w.toLowerCase())) score++;
+        }
+        return score;
+    }
+    </script>
+    <footer style="margin-top:40px; color:#333; font-size:15px; text-align:center;">
+        This tool was developed by an ASCTE student as part of the ASCTE Cyber internship program.
+    </footer>
+</body>
+</html>
+
