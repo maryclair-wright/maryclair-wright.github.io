@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>ALSDE AI Curriculum RGB Color Mixer</title>
+
+  <!-- Load IBM Plex Serif from Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+      font-family: 'IBM Plex Serif', serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 2px solid #2C3882; /* Brand color border */
+      border-radius: 8px;
+      flex: 1;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-weight: 700;
+      color: #2C3882; /* Brand color for heading text */
+    }
+
+    p {
+      line-height: 1.4;
+      margin-bottom: 1.5em;
+    }
+
+    label {
+      font-weight: 600;
+    }
+
+    .slider {
+      width: 90%;
+      margin: 10px 0;
+    }
+
+    /* Color each slider using modern browser support via accent-color */
+    .slider-red {
+      accent-color: red;
+    }
+    .slider-green {
+      accent-color: green;
+    }
+    .slider-blue {
+      accent-color: blue;
+    }
+
+    .value-display {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+    /* Display the RGB value using the brand color */
+    #rgbValue {
+      color: #2C3882;
+    }
+
+    .color-display {
+      width: 200px;
+      height: 200px;       /* Square shape */
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    /* Footer Styles */
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      padding: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Mixing Colors with Red, Green, and Blue</h1>
+    <p>
+      Adjust the sliders to see how the red, green, and blue channels combine 
+      to create different colors. The displayed color and its RGB values update in real-time.
+    </p>
+
+    <!-- Red Slider -->
+    <div>
+      <label for="red">Red: <span id="redValue">128</span></label><br/>
+      <input
+        type="range"
+        id="red"
+        class="slider slider-red"
+        min="0"
+        max="255"
+        value="128"
+      />
+    </div>
+
+    <!-- Green Slider -->
+    <div>
+      <label for="green">Green: <span id="greenValue">128</span></label><br/>
+      <input
+        type="range"
+        id="green"
+        class="slider slider-green"
+        min="0"
+        max="255"
+        value="128"
+      />
+    </div>
+
+    <!-- Blue Slider -->
+    <div>
+      <label for="blue">Blue: <span id="blueValue">128</span></label><br/>
+      <input
+        type="range"
+        id="blue"
+        class="slider slider-blue"
+        min="0"
+        max="255"
+        value="128"
+      />
+    </div>
+
+    <!-- Display the Mixed Color in RGB and Square Preview -->
+    <div class="value-display">
+      Mixed Color (RGB): <span id="rgbValue">(128, 128, 128)</span>
+    </div>
+    <div class="color-display" id="colorDisplay"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="text-align:center; font-size:0.9em; padding:10px; color:#666;">
+    © 2025 Alabama State Department of Education (ALSDE) &amp; Alabama School of Cyber Technology &amp; Engineering (ASCTE). All rights reserved. This curriculum may not be reproduced, distributed, or modified without express written permission from ALSDE and ASCTE.
+  </footer>
+
+  <script>
+    // Get the slider elements
+    const redSlider   = document.getElementById('red');
+    const greenSlider = document.getElementById('green');
+    const blueSlider  = document.getElementById('blue');
+
+    // Get the text display elements for each slider
+    const redValue    = document.getElementById('redValue');
+    const greenValue  = document.getElementById('greenValue');
+    const blueValue   = document.getElementById('blueValue');
+    const rgbValue    = document.getElementById('rgbValue');
+    const colorDisplay= document.getElementById('colorDisplay');
+
+    // Function to update color based on slider values
+    function updateColor() {
+      const r = parseInt(redSlider.value);
+      const g = parseInt(greenSlider.value);
+      const b = parseInt(blueSlider.value);
+
+      // Update the numeric values next to the labels
+      redValue.textContent   = r;
+      greenValue.textContent = g;
+      blueValue.textContent  = b;
+
+      // Update the RGB display text
+      rgbValue.textContent = `(${r}, ${g}, ${b})`;
+
+      // Update the background color of the display box
+      colorDisplay.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Listen for slider input events
+    [redSlider, greenSlider, blueSlider].forEach(slider => {
+      slider.addEventListener('input', updateColor);
+    });
+
+    // Initialize the display
+    updateColor();
+  </script>
+</body>
+</html>
