@@ -37,10 +37,35 @@
     <div class="container">
         <h1>ELT2 Review Podcast</h1>
         <p>Listen to the ELT2 review podcast below:</p>
-        <audio controls>
+        <audio id="podcastAudio" controls>
             <source src="ELT2ReviewPodcast.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
+        <div style="margin-top:20px; font-size:1.1em; color:#002868;">
+            Times listened: <span id="listenCount">0</span>
+        </div>
+        <script>
+            // Use localStorage to persist count across page reloads
+            const audio = document.getElementById('podcastAudio');
+            const countSpan = document.getElementById('listenCount');
+            let count = parseInt(localStorage.getItem('elt2PodcastCount') || '0', 10);
+            countSpan.textContent = count;
+            audio.addEventListener('play', function() {
+                // Only increment if not already playing
+                if (!audio._playing) {
+                    count++;
+                    countSpan.textContent = count;
+                    localStorage.setItem('elt2PodcastCount', count);
+                    audio._playing = true;
+                }
+            });
+            audio.addEventListener('pause', function() {
+                audio._playing = false;
+            });
+            audio.addEventListener('ended', function() {
+                audio._playing = false;
+            });
+        </script>
     </div>
     <footer>
         © 2025 Alabama State Department of Education (ALSDE) &amp; Alabama School of Cyber Technology &amp; Engineering (ASCTE). All rights reserved. This curriculum may not be reproduced, distributed, or modified without express written permission from ALSDE and ASCTE.
