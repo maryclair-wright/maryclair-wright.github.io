@@ -1,0 +1,232 @@
+cte.org" />
+      </div>
+      <div class="controls" style="margin-top:12px">
+        <button id="startBtn" disabled>Start (2:00)</button>
+        <span class="muted" id="attempts">Attempt 1 of 2</span>
+      </div>
+      <div class="font-toggle">
+        <label><input type="checkbox" id="dyslexiaFont" /> Use Dyslexia-Friendly Font</label>
+      </div>
+    </section>
+
+    <!-- TEST SCREEN -->
+    <section id="testScreen" class="card" style="margin-top:16px; display:none">
+      <div class="controls" style="justify-content:space-between">
+        <div class="timer" id="timer">02:00</div>
+        <div class="notice">If you make a mistake, keep going forward.</div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <div>
+          <div class="muted" style="margin-bottom:6px">Target Passage</div>
+          <div id="target" class="target" aria-live="polite"></div>
+        </div>
+        <div>
+          <div class="muted" style="margin-bottom:6px">Your Typing</div>
+          <textarea id="typing" class="typing" placeholder="Start typing here…" spellcheck="false"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS SCREEN -->
+    <section id="resultsScreen" class="card" style="margin-top:16px; display:none">
+      <h3 style="margin-top:0">Results</h3>
+      <div id="summary"></div>
+      <div class="results" style="margin-top:12px">
+        <div class="muted">Your Output</div>
+        <pre id="output"></pre>
+      </div>
+      <div class="controls" style="margin-top:12px">
+        <button id="newAttempt">New Attempt</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ------- Config -------
+    const LIMIT_SECONDS = 120; // 2:00
+    const MAX_ATTEMPTS = 2;
+    const passage = `NASA’s Marshall Space Flight Center, founded in 1960, is located in Huntsville, Alabama. The center is famous for its role in building the Saturn V rocket that carried astronauts to the Moon. Today, engineers here work on projects such as the Space Launch System (SLS): a powerful rocket designed for deep-space missions.
+
+Why is Marshall important? It provides testing facilities, advanced laboratories, and leadership for programs that shape the future of space travel. Students often visit for tours (both in-person and virtual), where they see real rocket engines and simulators. If you go, you might ask: How did Alabama become home to so much space innovation? The answer goes back to the 1950s/1960s, when Dr. Wernher von Braun and his team moved to Huntsville to lead America’s rocket development.
+
+In addition to rockets, Marshall leads research in propulsion, advanced materials, and even 3D printing for space habitats. Teams work across many fields: physics, chemistry, computer science, and engineering. For example, scientists might ask, “What happens if we use new alloys at 2000°F?” Their experiments often require precise tools that measure forces as small as 0.001 newtons. This kind of testing ensures that spacecraft can survive the extreme conditions of launch and orbit.
+
+The center also partners with universities, companies, and local schools to inspire future scientists. Internships give high school and college students a chance to work side by side with NASA professionals. When you consider the number of projects happening at once—launch vehicles, satellite missions, and deep-space research—it’s clear why Marshall remains central to America’s space program. Visitors often leave asking: What will the next 50 years of discovery bring, and how will Alabama continue to play a role?`;
+
+    // ------- State -------
+    let attempts = 1;
+    let timerId = null;
+    let startedAt = null;
+    let index = 0; // position in passage
+
+    // ------- Elements -------
+    const startScreen = document.getElementById('startScreen');
+    const testScreen = document.getElementById('testScreen');
+    const resultsScreen = document.getElementById('resultsScreen');
+
+    const emailEl = document.getElementById('email');
+    const startBtn = document.getElementById('startBtn');
+    const attemptsEl = document.getElementById('attempts');
+
+    const timerEl = document.getElementById('timer');
+    const targetEl = document.getElementById('target');
+    const typingEl = document.getElementById('typing');
+
+    const summaryEl = document.getElementById('summary');
+    const outputEl = document.getElementById('output');
+    const newAttemptBtn = document.getElementById('newAttempt');
+    const dyslexiaToggle = document.getElementById('dyslexiaFont');
+
+    // ------- Helpers -------
+    function setTimerDisplay(s){
+      const m = Math.floor(s/60).toString().padStart(2,'0');
+      const r = Math.floor(s%60).toString().padStart(2,'0');
+      timerEl.textContent = `${m}:${r}`;
+    }
+
+    function escapeHTML(ch){
+      if(ch === '<') return '&lt;';
+      if(ch === '>') return '&gt;';
+      if(ch === '&') return '&amp;';
+      return ch;
+    }
+
+    function renderTarget(){
+      // Find current sentence boundaries
+      let sentenceStart = passage.lastIndexOf('.', index-1)+1;
+      if(sentenceStart < 0) sentenceStart = 0;
+      let sentenceEnd = passage.indexOf('.', index);
+      if(sentenceEnd < 0) sentenceEnd = passage.length;
+
+      const beforeSentence = passage.slice(0, sentenceStart);
+      const sentence = passage.slice(sentenceStart, sentenceEnd+1);
+      const afterSentence = passage.slice(sentenceEnd+1);
+
+      let sentenceHtml = '';
+      for(let i=0;i<sentence.length;i++){
+        const globalIndex = sentenceStart+i;
+        if(globalIndex === index){
+          sentenceHtml += `<span class="currentChar">${escapeHTML(sentence[i])}</span>`;
+        } else {
+          sentenceHtml += escapeHTML(sentence[i]);
+        }
+      }
+
+      targetEl.innerHTML = `${escapeHTML(beforeSentence)}<span class="currentSentence">${sentenceHtml}</span>${escapeHTML(afterSentence)}`;
+      const sel = targetEl.querySelector('.currentChar');
+      if(sel){ sel.scrollIntoView({block:'center'}); }
+    }
+
+    function finish(){
+      clearInterval(timerId); timerId = null;
+      typingEl.disabled = true;
+      const seconds = Math.max(1, Math.round((performance.now() - startedAt)/1000));
+      const minutes = seconds / 60;
+
+      const typed = typingEl.value;
+      let correct = 0;
+      for(let i=0; i<typed.length; i++){
+        if(typed[i] === passage[i]) correct++;
+      }
+      const errors = Math.max(0, typed.length - correct);
+      const grossWpm = Math.round((typed.length/5) / minutes);
+      const accuracy = typed.length ? (correct/typed.length) : 0;
+      const netWpm = Math.round((correct/5) / minutes);
+
+      const when = new Date().toLocaleString();
+      const email = emailEl.value.trim();
+      const lines = [
+        `<div><strong>Email:</strong> ${email}</div>`,
+        `<div><strong>Completed:</strong> ${when}</div>`,
+        `<div><strong>Elapsed:</strong> ${seconds}s</div>`,
+        `<div><strong>Gross WPM:</strong> ${grossWpm}</div>`,
+        `<div><strong>Accuracy:</strong> ${Math.round(accuracy*100)}%</div>`,
+        `<div><strong>Net WPM:</strong> ${netWpm}</div>`,
+        `<div><strong>Chars typed:</strong> ${typed.length} &nbsp;|&nbsp; <strong>Correct:</strong> ${correct} &nbsp;|&nbsp; <strong>Errors:</strong> ${errors}</div>`
+      ];
+      summaryEl.innerHTML = lines.join('');
+      outputEl.textContent = typed;
+
+      testScreen.style.display = 'none';
+      resultsScreen.style.display = 'block';
+    }
+
+    function start(){
+      startedAt = performance.now();
+      index = 0; typingEl.value = ''; typingEl.disabled = false; typingEl.focus();
+      renderTarget();
+      testScreen.style.display = 'block';
+      startScreen.style.display = 'none';
+
+      let remaining = LIMIT_SECONDS;
+      setTimerDisplay(remaining);
+      timerId = setInterval(()=>{
+        remaining--; setTimerDisplay(remaining);
+        if(remaining <= 0){ finish(); }
+      }, 1000);
+    }
+
+    // ------- Event wiring -------
+    function validToStart(){
+      const ok = emailEl.value.trim() !== '';
+      startBtn.disabled = !ok;
+    }
+
+    emailEl.addEventListener('input', validToStart);
+    startBtn.addEventListener('click', start);
+
+    newAttemptBtn.addEventListener('click', ()=>{
+      attempts++;
+      if(attempts > MAX_ATTEMPTS){
+        newAttemptBtn.disabled = true;
+        return;
+      }
+      attemptsEl.textContent = `Attempt ${attempts} of ${MAX_ATTEMPTS}`;
+      resultsScreen.style.display = 'none';
+      startScreen.style.display = 'block';
+      validToStart();
+    });
+
+    typingEl.addEventListener('keydown', (e)=>{
+      if(e.key === 'Backspace' || e.key === 'Delete'){
+        e.preventDefault(); return false;
+      }
+      if((e.ctrlKey||e.metaKey) && ['v','x','a','c'].includes(e.key.toLowerCase())){
+        e.preventDefault(); return false;
+      }
+    });
+
+    typingEl.addEventListener('paste', e=> e.preventDefault());
+    typingEl.addEventListener('copy', e=> e.preventDefault());
+    typingEl.addEventListener('cut', e=> e.preventDefault());
+    typingEl.addEventListener('contextmenu', e=> e.preventDefault());
+
+    typingEl.addEventListener('input', ()=>{
+      typingEl.selectionStart = typingEl.selectionEnd = typingEl.value.length;
+      let len = typingEl.value.length;
+      if(len >= passage.length){
+        typingEl.value = typingEl.value.slice(0, passage.length);
+        index = passage.length;
+        renderTarget();
+        finish();
+        return;
+      }
+      index = len;
+      renderTarget();
+    });
+
+    // Toggle dyslexia-friendly font
+    dyslexiaToggle.addEventListener('change', ()=>{
+      const font = dyslexiaToggle.checked ? 'OpenDyslexic, Verdana, Arial, sans-serif' : 'Verdana, Arial, sans-serif';
+      document.querySelectorAll('.target, .typing, .results pre').forEach(el=>{
+        el.style.fontFamily = font;
+      });
+    });
+
+    setTimerDisplay(LIMIT_SECONDS);
+    renderTarget();
+    attemptsEl.textContent = `Attempt ${attempts} of ${MAX_ATTEMPTS}`;
+    validToStart();
+  </script>
+</body>
+</html>
