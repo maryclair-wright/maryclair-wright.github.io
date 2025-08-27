@@ -1,4 +1,45 @@
-cte.org" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2‑Minute Typing Test</title>
+  <style>
+    :root{
+      --bg:#0A2342; --panel:#F4F4F4; --text:#0A2342; --accent:#2E8BFF; --danger:#C62828; --highlight:#FFF59D;
+    }
+    *{box-sizing:border-box}
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background: var(--bg); margin: 0; color: white; }
+    .container { max-width: 980px; margin: 0 auto; padding: 24px; }
+    .card { background: var(--panel); color: var(--text); border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+    h1 { margin: 0 0 12px 0; font-size: clamp(22px,4vw,30px); }
+    label{font-weight:600}
+    input[type="email"], textarea { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #d0d7de; font-size: 14pt; line-height: 2; }
+    .row{display:grid; grid-template-columns: 1fr; gap: 12px}
+    @media (min-width: 900px){ .row{ grid-template-columns: 1fr 1fr; } }
+    .controls{display:flex; gap: 12px; align-items:center; flex-wrap:wrap}
+    button{ background: var(--accent); color:white; border: none; border-radius: 999px; padding: 10px 16px; font-weight: 700; cursor: pointer; }
+    button[disabled]{opacity:.6; cursor:not-allowed}
+    .timer{font-weight: 800; font-size: 20px}
+    .notice{ color: var(--danger); font-weight:800; font-size: 18px; }
+    .target{ background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 18px; font-size: 14pt; line-height: 2; height: 420px; overflow:auto; font-family: Verdana, Arial, sans-serif; white-space: pre-wrap; }
+    .typing{ background: white; border-radius: 12px; border: 2px solid #e5e7eb; padding: 18px; font-size: 14pt; line-height: 2; height: 420px; resize: none; font-family: Verdana, Arial, sans-serif; }
+    .currentChar{ outline: 2px solid var(--accent); outline-offset: 2px; }
+    .currentSentence{ background: var(--highlight); }
+    .muted{ color:#5b6974 }
+    .results pre{ background:white; border:1px solid #e5e7eb; border-radius:12px; padding:18px; white-space:pre-wrap; font-size: 14pt; line-height: 2; font-family: Verdana, Arial, sans-serif; }
+    .font-toggle{margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>2‑Minute Typing Test</h1>
+
+    <!-- START SCREEN -->
+    <section id="startScreen" class="card">
+      <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="student@ascte.org" />
       </div>
       <div class="controls" style="margin-top:12px">
         <button id="startBtn" disabled>Start (2:00)</button>
@@ -45,13 +86,29 @@ cte.org" />
     // ------- Config -------
     const LIMIT_SECONDS = 120; // 2:00
     const MAX_ATTEMPTS = 2;
-    const passage = `NASA’s Marshall Space Flight Center, founded in 1960, is located in Huntsville, Alabama. The center is famous for its role in building the Saturn V rocket that carried astronauts to the Moon. Today, engineers here work on projects such as the Space Launch System (SLS): a powerful rocket designed for deep-space missions.
+    const passages = [
+      {
+        id: 'NASA Marshall',
+        text: `NASA’s Marshall Space Flight Center, founded in 1960, is located in Huntsville, Alabama. The center is famous for its role in building the Saturn V rocket that carried astronauts to the Moon. Today, engineers here work on projects such as the Space Launch System (SLS): a powerful rocket designed for deep-space missions.
 
 Why is Marshall important? It provides testing facilities, advanced laboratories, and leadership for programs that shape the future of space travel. Students often visit for tours (both in-person and virtual), where they see real rocket engines and simulators. If you go, you might ask: How did Alabama become home to so much space innovation? The answer goes back to the 1950s/1960s, when Dr. Wernher von Braun and his team moved to Huntsville to lead America’s rocket development.
 
 In addition to rockets, Marshall leads research in propulsion, advanced materials, and even 3D printing for space habitats. Teams work across many fields: physics, chemistry, computer science, and engineering. For example, scientists might ask, “What happens if we use new alloys at 2000°F?” Their experiments often require precise tools that measure forces as small as 0.001 newtons. This kind of testing ensures that spacecraft can survive the extreme conditions of launch and orbit.
 
-The center also partners with universities, companies, and local schools to inspire future scientists. Internships give high school and college students a chance to work side by side with NASA professionals. When you consider the number of projects happening at once—launch vehicles, satellite missions, and deep-space research—it’s clear why Marshall remains central to America’s space program. Visitors often leave asking: What will the next 50 years of discovery bring, and how will Alabama continue to play a role?`;
+The center also partners with universities, companies, and local schools to inspire future scientists. Internships give high school and college students a chance to work side by side with NASA professionals. When you consider the number of projects happening at once—launch vehicles, satellite missions, and deep-space research—it’s clear why Marshall remains central to America’s space program. Visitors often leave asking: What will the next 50 years of discovery bring, and how will Alabama continue to play a role?`
+      },
+      {
+        id: 'USS Alabama',
+        text: `The USS Alabama (BB-60), launched in 1942, is a South Dakota-class battleship now anchored in Mobile, Alabama. During World War II, it earned 9 battle stars for service in the Atlantic/Pacific Oceans. Visitors touring the ship today can explore massive gun turrets, narrow passageways, and radar rooms: all reminders of the technology that helped win the war.
+
+Why is the USS Alabama important? It represents the courage of thousands of sailors who served at sea. The ship also provides a living classroom where students can learn about naval engineering, military history, and even basic physics. For instance, guides often ask: How did a vessel weighing over 35,000 tons float? The answer lies in buoyancy, balance, and careful design.`
+      }
+    ];
+
+    // Pick one at random when the page loads
+    const selected = passages[Math.floor(Math.random() * passages.length)];
+    const passageId = selected.id;
+    const passage = selected.text;
 
     // ------- State -------
     let attempts = 1;
@@ -92,8 +149,8 @@ The center also partners with universities, companies, and local schools to insp
     }
 
     function renderTarget(){
-      // Find current sentence boundaries
-      let sentenceStart = passage.lastIndexOf('.', index-1)+1;
+      // Find current sentence boundaries (periods only)
+      let sentenceStart = passage.lastIndexOf('.', index-1) + 1;
       if(sentenceStart < 0) sentenceStart = 0;
       let sentenceEnd = passage.indexOf('.', index);
       if(sentenceEnd < 0) sentenceEnd = passage.length;
@@ -138,6 +195,7 @@ The center also partners with universities, companies, and local schools to insp
       const lines = [
         `<div><strong>Email:</strong> ${email}</div>`,
         `<div><strong>Completed:</strong> ${when}</div>`,
+        `<div><strong>Passage:</strong> ${passageId}</div>`,
         `<div><strong>Elapsed:</strong> ${seconds}s</div>`,
         `<div><strong>Gross WPM:</strong> ${grossWpm}</div>`,
         `<div><strong>Accuracy:</strong> ${Math.round(accuracy*100)}%</div>`,
@@ -154,6 +212,7 @@ The center also partners with universities, companies, and local schools to insp
     function start(){
       startedAt = performance.now();
       index = 0; typingEl.value = ''; typingEl.disabled = false; typingEl.focus();
+      
       renderTarget();
       testScreen.style.display = 'block';
       startScreen.style.display = 'none';
@@ -216,8 +275,9 @@ The center also partners with universities, companies, and local schools to insp
     });
 
     // Toggle dyslexia-friendly font
-    dyslexiaToggle.addEventListener('change', ()=>{
-      const font = dyslexiaToggle.checked ? 'OpenDyslexic, Verdana, Arial, sans-serif' : 'Verdana, Arial, sans-serif';
+    const dyslexiaToggleEl = dyslexiaToggle; // alias for clarity
+    dyslexiaToggleEl.addEventListener('change', ()=>{
+      const font = dyslexiaToggleEl.checked ? 'OpenDyslexic, Verdana, Arial, sans-serif' : 'Verdana, Arial, sans-serif';
       document.querySelectorAll('.target, .typing, .results pre').forEach(el=>{
         el.style.fontFamily = font;
       });
