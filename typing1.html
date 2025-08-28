@@ -115,10 +115,23 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
       }
     ];
 
-    // Pick one at random when the page loads
-    const selected = passages[Math.floor(Math.random() * passages.length)];
-    const passageId = selected.id;
-    const passage = selected.text;
+    // Track which passage was used for each attempt
+    let usedPassages = [];
+    let currentPassageIdx = null;
+
+    function pickNewPassage() {
+      // Pick a passage not yet used
+      const available = passages.map((p, i) => i).filter(i => !usedPassages.includes(i));
+      if (available.length === 0) return 0; // fallback
+      const idx = available[Math.floor(Math.random() * available.length)];
+      usedPassages.push(idx);
+      return idx;
+    }
+
+    // On first load, pick a passage
+    currentPassageIdx = pickNewPassage();
+    let passageId = passages[currentPassageIdx].id;
+    let passage = passages[currentPassageIdx].text;
 
     // ------- State -------
     let attempts = 1;
@@ -250,6 +263,10 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
         newAttemptBtn.disabled = true;
         return;
       }
+      // Pick a different passage for the new attempt
+      currentPassageIdx = pickNewPassage();
+      passageId = passages[currentPassageIdx].id;
+      passage = passages[currentPassageIdx].text;
       attemptsEl.textContent = `Attempt ${attempts} of ${MAX_ATTEMPTS}`;
       resultsScreen.style.display = 'none';
       startScreen.style.display = 'block';

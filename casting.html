@@ -1,285 +1,209 @@
-import React, { useState } from "react";
-
-// ASCTE — Cyber 101 Casting Practice (Expressions + Code Writing + Summary)
-
-export default function Cyber101CastingPractice() {
-  return <App />;
-}
-
-function App() {
-  const [email, setEmail] = useState("");
-  const [startedAt, setStartedAt] = useState(null);
-  const [finishedAt, setFinishedAt] = useState(null);
-  const [results, setResults] = useState({});
-  const [showSummary, setShowSummary] = useState(false);
-
-  const startEnabled = /.+@.+\..+/.test(email.trim());
-  const handleStart = () => { if (startEnabled) setStartedAt(new Date()); };
-
-  const brandFont = {
-    fontFamily:
-      'IBMPlexSans, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-  };
-
-  // random values so each student sees different numbers
-  const randAge = Math.floor(Math.random()*10)+13; // 13–22
-  const randScore = Math.floor(Math.random()*50)+50; // 50–99
-  const randValue = (Math.random()*10).toFixed(1);   // 0.0–9.9
-
-  if (!startedAt) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white text-[#0A2342]" style={brandFont}>
-        <StyleBlock />
-        <div className="w-full max-w-md p-6 border rounded-2xl bg-[#F8FAFC] shadow-sm">
-          <h1 className="text-2xl font-semibold mb-2">ASCTE — Cyber 101 Casting Practice</h1>
-          <p className="text-[13px] text-gray-700 mb-4">
-            Enter your school email to begin. Your <span className="font-semibold">start time</span> will be recorded.
-          </p>
-          <label className="block text-[13px] mb-1">School email</label>
-          <input
-            type="email"
-            className="w-full border rounded-lg px-3 py-2 text-[14px]"
-            placeholder="firstname.lastname@ascte.org"
-            value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-          />
-          <button
-            onClick={handleStart}
-            disabled={!startEnabled}
-            className="mt-4 text-[13px] px-4 py-2 rounded-lg bg-[#0A2342] text-white disabled:opacity-50"
-          >Start</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Casting Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #FFFFF5;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 32px 24px;
+        }
+        h1 {
+            color: #002868;
+        }
+        .problem {
+            background: #F8FAFC;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .problem pre {
+            background: #222;
+            color: #98FB98;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .problem label {
+            font-weight: bold;
+        }
+        .problem input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #bbb;
+            margin-bottom: 8px;
+        }
+        .feedback {
+            font-size: 1.1em;
+            margin-top: 6px;
+        }
+        .correct { color: #228B22; }
+        .incorrect { color: #B22222; }
+        .footer {
+            margin-top: 40px;
+            color: #002868;
+            font-size: 15px;
+        }
+        #emailSection {
+            margin-bottom: 30px;
+        }
+        #summary {
+            margin-top: 30px;
+            background: #f8f8ff;
+            color: #002868;
+            border-radius: 8px;
+            padding: 18px;
+            font-size: 1.1em;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <h1>Casting Practice</h1>
+        <div id="emailSection">
+            <label for="emailInput"><b>Enter your school email to get started:</b></label><br>
+            <input type="email" id="emailInput" placeholder="your.email@school.org" style="width:300px; padding:8px; margin:10px 0; border-radius:5px; border:1px solid #bbb; font-size:1em;" />
+            <br>
+            <button onclick="startPractice()" id="startBtn">Start Practice</button>
+            <div id="emailError" style="color:#B22222; margin-top:8px;"></div>
         </div>
-      </div>
-    );
-  }
-
-  if (showSummary) {
-    return <Summary email={email} startedAt={startedAt} finishedAt={finishedAt} results={results}/>;
-  }
-
-  const allExprDone = ["e1","e2","e3","e4"].every(id => results[id]?.done);
-  const allCodeDone = ["string","float","int"].every(id => results[id]?.done);
-  const allDone = allExprDone && allCodeDone;
-
-  const handleFinish = () => {
-    setFinishedAt(new Date());
-    setShowSummary(true);
-  };
-
-  return (
-    <div className="min-h-screen bg-white text-[#0A2342]" style={brandFont}>
-      <StyleBlock />
-      <header className="px-6 py-5 border-b border-[#E5E7EB]">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">ASCTE — Cyber 101 Casting Practice</h1>
-        </div>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-6 py-8 space-y-6">
-        {showSummary ? (
-          <Summary email={email} startedAt={startedAt} finishedAt={finishedAt} results={results} />
-        ) : (
-          <>
-            <h2 className="text-2xl font-semibold mb-4">Reading Python Expressions with Casting</h2>
-
-            <ExpressionCard id="e1" prompt="What will be displayed when this code runs?" code={`age = ${randAge}
-print("Age: " + str(age))`} answer={`Age: ${randAge}`} onResult={(r)=>setResults(p=>({...p, e1:r}))} />
-            <ExpressionCard id="e2" prompt="What will be displayed when this code runs?" code={`print(str(${randScore}) + " is the Score")`} answer={`${randScore} is the Score`} onResult={(r)=>setResults(p=>({...p, e2:r}))} />
-            <ExpressionCard id="e3" prompt="What will be displayed when this code runs?" code={`pi = 3.14
-print("Pi is " + str(pi))`} answer="Pi is 3.14" onResult={(r)=>setResults(p=>({...p, e3:r}))} />
-            <ExpressionCard id="e4" prompt="What will be displayed when this code runs?" code={`value = ${randValue}
-print("Casted: " + str(int(value)))`} answer={`Casted: ${parseInt(randValue)}`} onResult={(r)=>setResults(p=>({...p, e4:r}))} />
-
-            {allExprDone && (
-              <>
-                <StringOnlyWriting onResult={(r)=>setResults(p=>({...p, string:r}))} />
-                <FloatWriting onResult={(r)=>setResults(p=>({...p, float:r}))} />
-                <IntWriting onResult={(r)=>setResults(p=>({...p, int:r}))} />
-                <div className="pt-2">
-                  <button onClick={()=>{ setFinishedAt(new Date()); setShowSummary(true); }} disabled={!allDone} className="mt-2 text-[13px] px-4 py-2 rounded-lg bg-[#0A2342] text-white disabled:opacity-50">
-                    {allDone ? 'Finish & View Summary' : 'Complete all questions to finish'}
-                  </button>
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </main>
+        <div id="problems" style="display:none;"></div>
+        <div id="summary" style="display:none;"></div>
     </div>
-  );
-}
+    <div class="footer">
+        These tools were developed for teaching Cyber101 and AP Computer Science Principles at ASCTE by Mary Clair Wright and ASCTE Student Interns.
+    </div>
+    <script>
+    // Random values for each session
+    const randAge = Math.floor(Math.random()*10)+13; // 13–22
+    const randScore = Math.floor(Math.random()*50)+50; // 50–99
+    const randValue = (Math.random()*10).toFixed(1);   // 0.0–9.9
 
-function ExpressionCard({ id, prompt, code, answer, onResult }) {
-  const [userAnswer, setUserAnswer] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-  const [locked, setLocked] = useState(false);
+    const problems = [
+      {
+        prompt: 'What will be displayed when this code runs?',
+        code: `age = ${randAge}\nprint("Age: " + str(age))`,
+        answer: `Age: ${randAge}`
+      },
+      {
+        prompt: 'What will be displayed when this code runs?',
+        code: `print(str(${randScore}) + " is the Score")`,
+        answer: `${randScore} is the Score`
+      },
+      {
+        prompt: 'What will be displayed when this code runs?',
+        code: `pi = 3.14\nprint("Pi is " + str(pi))`,
+        answer: `Pi is 3.14`
+      },
+      {
+        prompt: 'What will be displayed when this code runs?',
+        code: `value = ${randValue}\nprint("Casted: " + str(int(value)))`,
+        answer: `Casted: ${parseInt(randValue)}`
+      }
+    ];
 
-  const handleCheck = () => {
-    if (locked) return;
-    const ok = userAnswer === answer;
-    setIsCorrect(ok);
-    setChecked(true);
-    const nextAttempts = attempts + 1;
-    setAttempts(nextAttempts);
-    if (ok || nextAttempts >= 3) {
-      setLocked(true);
-      onResult && onResult({ done:true, correct:ok, final:userAnswer });
+    let userEmail = '';
+    let startTime = null;
+    let stopTime = null;
+    let correctCount = 0;
+    let attemptedCount = 0;
+
+    function startPractice() {
+      const emailInput = document.getElementById('emailInput');
+      const email = emailInput.value.trim();
+      const errorDiv = document.getElementById('emailError');
+      if (!/.+@.+\..+/.test(email)) {
+        errorDiv.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      errorDiv.textContent = '';
+      userEmail = email;
+      startTime = new Date();
+      document.getElementById('emailSection').style.display = 'none';
+      document.getElementById('problems').style.display = '';
+      renderProblems();
     }
-  };
 
-  return (
-    <div className="border rounded-xl p-4 bg-[#F8FAFC]">
-      <p className="text-[16px] mb-2 font-medium">{prompt}</p>
-      <pre className="codeblock rounded-lg p-3 mb-3 overflow-auto">{code}</pre>
-
-      <label className="block text-[14px] mb-1 text-gray-700 font-medium">Type the exact output:</label>
-      <input
-        className="w-full border rounded-lg px-3 py-2 text-[15px] mb-2 bg-[#F1F5F9]"
-        value={userAnswer}
-        disabled={locked}
-        onChange={(e)=>{ setUserAnswer(e.target.value); setChecked(false); }}
-        placeholder="e.g., Age: 17"
-      />
-
-      <div className="flex items-center gap-2">
-        <button className="text-[13px] px-3 py-1.5 rounded-lg border border-[#0A2342] disabled:opacity-40" onClick={handleCheck} disabled={locked}>Check</button>
-        <button className="text-[13px] px-3 py-1.5 rounded-lg border border-[#0A2342] disabled:opacity-40" onClick={()=>{ if(!locked){setUserAnswer(""); setChecked(false);} }} disabled={locked}>Clear</button>
-        <span className="text-[12.5px] text-gray-600">Attempts: {attempts} / 3</span>
-      </div>
-
-      {checked && (
-        <div className={`mt-3 text-[15px] ${isCorrect? 'text-green-700':'text-red-700'}`}>
-          {isCorrect ? 'Correct!' : (locked ? `Out of tries. Expected: ${answer}` : 'Not quite. Try again.')}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function StringOnlyWriting({onResult}){
-  const problems = [
-    {prompt:(<span>Store the user's favorite color in a variable named color. Use exactly this prompt text: <code className="font-mono">"Enter your favorite color"</code></span>), solution:'color = input("Enter your favorite color")'},
-    {prompt:(<span>Store the first letter of the user's last name in a variable named letter. Use exactly this prompt text: <code className="font-mono">"Enter the first letter of your last name"</code></span>), solution:'letter = input("Enter the first letter of your last name")'},
-  ];
-  const problem = problems[Math.floor(Math.random()*problems.length)];
-  return (
-    <div className="space-y-6 mt-10">
-      <h2 className="text-2xl font-semibold">Write a Python Input Statement (String)</h2>
-      <CodeWritingCard prompt={problem.prompt} solution={problem.solution} onResult={onResult}/>
-    </div>
-  );
-}
-
-function FloatWriting({onResult}){
-  const problems = [
-    {prompt:(<span>Store a random number between 0.5 and 0.99 in a variable named guess. Use exactly this prompt text: <code className="font-mono">"Enter a random number between 0.5 and 0.99"</code></span>), solution:'guess = float(input("Enter a random number between 0.5 and 0.99"))'},
-    {prompt:(<span>Store the best decimal value in a variable named decimal. Use exactly this prompt text: <code className="font-mono">"What is the best decimal value?"</code></span>), solution:'decimal = float(input("What is the best decimal value?"))'},
-  ];
-  const problem = problems[Math.floor(Math.random()*problems.length)];
-  return (
-    <div className="space-y-6 mt-10">
-      <h2 className="text-2xl font-semibold">Write a Python Input Statement (Float)</h2>
-      <CodeWritingCard prompt={problem.prompt} solution={problem.solution} onResult={onResult}/>
-    </div>
-  );
-}
-
-function IntWriting({onResult}){
-  const problems = [
-    {prompt:(<span>Store a number between 10 and 20 in a variable named digit. Use exactly this prompt text: <code className="font-mono">"Enter a number between 10 and 20"</code></span>), solution:'digit = int(input("Enter a number between 10 and 20"))'},
-    {prompt:(<span>Store the best highway speed limit in a variable named speed. Use exactly this prompt text: <code className="font-mono">"What is the best speed limit for the highway?"</code></span>), solution:'speed = int(input("What is the best speed limit for the highway?"))'},
-  ];
-  const problem = problems[Math.floor(Math.random()*problems.length)];
-  return (
-    <div className="space-y-6 mt-10">
-      <h2 className="text-2xl font-semibold">Write a Python Input Statement (Int)</h2>
-      <CodeWritingCard prompt={problem.prompt} solution={problem.solution} onResult={onResult}/>
-    </div>
-  );
-}
-
-function CodeWritingCard({ prompt, solution, onResult }){
-  const [userCode, setUserCode] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-  const [locked, setLocked] = useState(false);
-
-  const normalize = (s)=> s.replace(/\s+/g," ").trim();
-
-  const handleCheck = () => {
-    if (locked) return;
-    const ok = normalize(userCode) === normalize(solution);
-    setIsCorrect(ok);
-    setChecked(true);
-    const nextAttempts = attempts+1;
-    setAttempts(nextAttempts);
-    if (ok || nextAttempts>=3){
-      setLocked(true);
-      onResult && onResult({ done:true, correct:ok, final:userCode });
+    function renderProblems() {
+      const container = document.getElementById('problems');
+      container.innerHTML = '';
+      correctCount = 0;
+      attemptedCount = 0;
+      problems.forEach((prob, idx) => {
+        const div = document.createElement('div');
+        div.className = 'problem';
+        div.innerHTML = `
+          <div><b>Problem ${idx+1}:</b> ${prob.prompt}</div>
+          <pre>${prob.code}</pre>
+          <label for="answer${idx}">Type the exact output:</label><br>
+          <input type="text" id="answer${idx}" autocomplete="off" />
+          <button onclick="checkAnswer(${idx})">Check</button>
+          <span class="feedback" id="feedback${idx}"></span>
+        `;
+        container.appendChild(div);
+      });
+      // Add finish button
+      const finishBtn = document.createElement('button');
+      finishBtn.textContent = 'Finish & Show Summary';
+      finishBtn.style = 'margin-top:20px; padding:10px 24px; font-size:1em; border-radius:6px; background:#002868; color:#fff; border:none;';
+      finishBtn.onclick = finishPractice;
+      container.appendChild(finishBtn);
     }
-  };
 
-  return (
-    <div className="border rounded-xl p-4 bg-[#F8FAFC]">
-      <p className="text-[16px] mb-2 font-medium">{prompt}</p>
-      <textarea className="codeinput w-full rounded-lg p-3 border border-[#111827] mb-2" rows={2} value={userCode} disabled={locked} onChange={(e)=>{setUserCode(e.target.value); setChecked(false);}} />
-      <div className="flex items-center gap-2">
-        <button className="text-[13px] px-3 py-1.5 rounded-lg border border-[#0A2342] disabled:opacity-40" onClick={handleCheck} disabled={locked}>Check</button>
-        <button className="text-[13px] px-3 py-1.5 rounded-lg border border-[#0A2342] disabled:opacity-40" onClick={()=>{if(!locked){setUserCode("");setChecked(false);}}} disabled={locked}>Clear</button>
-        <span className="text-[12.5px] text-gray-600">Attempts: {attempts} / 3</span>
-      </div>
-      {checked && (
-        <div className={`mt-3 text-[15px] ${isCorrect? 'text-green-700':'text-red-700'}`}>
-          {isCorrect ? 'Correct!' : (locked? `Out of tries. Expected: ${solution}` : 'Not quite. Try again.')}
-        </div>
-      )}
-    </div>
-  );
-}
+    function checkAnswer(idx) {
+      const input = document.getElementById('answer'+idx);
+      const feedback = document.getElementById('feedback'+idx);
+      if (!input.value.trim()) {
+        feedback.textContent = '';
+        return;
+      }
+      attemptedCount++;
+      if (input.value.trim() === problems[idx].answer) {
+        feedback.textContent = 'Correct!';
+        feedback.className = 'feedback correct';
+        correctCount++;
+      } else {
+        feedback.textContent = `Incorrect. Expected: ${problems[idx].answer}`;
+        feedback.className = 'feedback incorrect';
+      }
+    }
 
-function Summary({ email, startedAt, finishedAt, results }){
-  const fmt = (d)=> d ? new Date(d).toLocaleString() : '—';
-  const rows = Object.entries(results);
+    function finishPractice() {
+      stopTime = new Date();
+      document.getElementById('problems').style.display = 'none';
+      showSummary();
+    }
 
-  return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
-      <h2 className="text-2xl font-semibold">Session Summary</h2>
-      <div className="border rounded-xl p-4 bg-[#F8FAFC]">
-        <div className="text-[14px]"><span className="font-semibold">Email:</span> {email}</div>
-        <div className="text-[14px]"><span className="font-semibold">Started:</span> {fmt(startedAt)}</div>
-        <div className="text-[14px]"><span className="font-semibold">Finished:</span> {fmt(finishedAt)}</div>
-      </div>
-      <table className="w-full text-[13px] border">
-        <thead className="bg-[#F1F5F9]">
-          <tr>
-            <th className="text-left p-2 border">Question</th>
-            <th className="text-left p-2 border">Status</th>
-            <th className="text-left p-2 border">Final Entry</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(([id,v]) => (
-            <tr key={id}>
-              <td className="p-2 border">{id}</td>
-              <td className={`p-2 border ${v.correct? 'text-green-700':'text-red-700'}`}>{v.correct? 'Correct':'Wrong'}</td>
-              <td className="p-2 border font-mono whitespace-pre-wrap">{v.final || '—'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function StyleBlock(){
-  return (
-    <style>{`@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
-:root { --brand:#0A2342; --accent:#00A2FF; --codeBG:#000000; --codeFG:#98FB98; }
-.ibm { font-family: IBMPlexSans, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
-.codeblock, .codeinput { background: var(--codeBG); color: var(--codeFG); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 13px; line-height: 1.4; }
-`}</style>
-  );
-}
+    function showSummary() {
+      const summaryDiv = document.getElementById('summary');
+      summaryDiv.style.display = '';
+      summaryDiv.innerHTML = `
+        <h2>Session Summary</h2>
+        <b>Email:</b> ${userEmail}<br>
+        <b>Start Time:</b> ${startTime ? startTime.toLocaleString() : ''}<br>
+        <b>Stop Time:</b> ${stopTime ? stopTime.toLocaleString() : ''}<br>
+        <b>Correct Answers:</b> ${correctCount} / ${problems.length}<br>
+        <b>Questions Attempted:</b> ${attemptedCount} / ${problems.length}
+      `;
+    }
+    </script>
+</body>
+</html>
