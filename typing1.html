@@ -29,6 +29,8 @@
     .muted{ color:#5b6974 }
     .results pre{ background:white; border:1px solid #e5e7eb; border-radius:12px; padding:18px; white-space:pre-wrap; font-size: 14pt; line-height: 2; font-family: Verdana, Arial, sans-serif; }
     .font-toggle{margin-top:12px}
+    .note { font-size: 12px; color: #666; margin-top: 4px; }
+    .typing-notes { margin-top: 30px; background: #f8f8ff; color: #002868; border-radius: 8px; padding: 18px; font-size: 1.1em; max-width: 600px; margin-left: auto; margin-right: auto; }
   </style>
 </head>
 <body>
@@ -40,6 +42,7 @@
       <div>
         <label for="email">Email</label>
         <input id="email" type="email" placeholder="student@ascte.org" />
+        <div class="note">Enter your school email to get started.</div>
       </div>
       <div class="controls" style="margin-top:12px">
         <button id="startBtn" disabled>Start (2:00)</button>
@@ -47,6 +50,13 @@
       </div>
       <div class="font-toggle">
         <label><input type="checkbox" id="dyslexiaFont" /> Use Dyslexia-Friendly Font</label>
+      </div>
+      <div class="typing-notes">
+        <strong>Typing Test Instructions:</strong><br>
+        • You will type for <b>two minutes</b> or until you finish the passage, whichever comes first.<br>
+        • <b>Backspace</b> and <b>Delete</b> are <u>not allowed</u> during the test.<br>
+        • If you make a mistake, <b>do not try to correct it</b>—just keep typing the next character in the passage.<br>
+        • Focus on accuracy and steady typing, not speed alone.<br>
       </div>
     </section>
 
