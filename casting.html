@@ -169,20 +169,28 @@
       renderProblems();
     }
 
+    // Track attempts for both steps
+    let outputAttempts = [];
+    let codeAttempts = [];
+    let currentStep = 1; // 1 = output, 2 = code-writing
     function renderCodeProblems() {
       const container = document.getElementById('problems');
+      container.innerHTML = '';
+      codeAttempts = [0, 0, 0];
       // Pick one string, one float, one int problem randomly
       const stringProb = codeProblems[Math.floor(Math.random()*2)];
       const floatProb = codeProblems[2 + Math.floor(Math.random()*2)];
       const intProb = codeProblems[4 + Math.floor(Math.random()*2)];
-      [stringProb, floatProb, intProb].forEach((prob, idx) => {
+      const selected = [stringProb, floatProb, intProb];
+      window.selectedCodeProblems = selected;
+      selected.forEach((prob, idx) => {
         const div = document.createElement('div');
         div.className = 'problem';
         div.innerHTML = `
           <div><b>Code Problem ${idx+1}:</b> ${prob.prompt}</div>
           <label for="codeAnswer${idx}">Type the exact line of code:</label><br>
           <input type="text" id="codeAnswer${idx}" autocomplete="off" />
-          <button onclick="checkCodeAnswer(${idx}, '${prob.solution.replace(/'/g, "&#39;")}')">Check</button>
+          <button onclick="checkCodeAnswer(${idx})">Check</button>
           <span class="feedback" id="codeFeedback${idx}"></span>
         `;
         container.appendChild(div);
@@ -195,22 +203,31 @@
       container.appendChild(finishBtn);
     }
 
-    function checkCodeAnswer(idx, solution) {
+    function checkCodeAnswer(idx) {
       const input = document.getElementById('codeAnswer'+idx);
       const feedback = document.getElementById('codeFeedback'+idx);
       if (!input.value.trim()) {
         feedback.textContent = '';
         return;
       }
+      const solution = window.selectedCodeProblems[idx].solution;
       // Normalize whitespace for comparison
       const normalize = s => s.replace(/\s+/g, ' ').trim();
       if (normalize(input.value) === normalize(solution)) {
         feedback.textContent = 'Correct!';
         feedback.className = 'feedback correct';
         correctCount++;
+        input.disabled = true;
       } else {
-        feedback.textContent = `Incorrect. Expected: ${solution}`;
-        feedback.className = 'feedback incorrect';
+        codeAttempts[idx] = (codeAttempts[idx] || 0) + 1;
+        if (codeAttempts[idx] < 2) {
+          feedback.textContent = 'Try again!';
+          feedback.className = 'feedback incorrect';
+        } else {
+          feedback.textContent = `Incorrect. Expected: ${solution}`;
+          feedback.className = 'feedback incorrect';
+          input.disabled = true;
+        }
       }
       attemptedCount++;
     }
@@ -220,6 +237,7 @@
       container.innerHTML = '';
       correctCount = 0;
       attemptedCount = 0;
+      outputAttempts = problems.map(() => 0);
       problems.forEach((prob, idx) => {
         const div = document.createElement('div');
         div.className = 'problem';
@@ -233,8 +251,15 @@
         `;
         container.appendChild(div);
       });
-      // Add code writing problems after the output problems
-      renderCodeProblems();
+      // Add next step button
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next: Code Writing Problems';
+      nextBtn.style = 'margin-top:20px; padding:10px 24px; font-size:1em; border-radius:6px; background:#002868; color:#fff; border:none;';
+      nextBtn.onclick = function() {
+        currentStep = 2;
+        renderCodeProblems();
+      };
+      container.appendChild(nextBtn);
     }
 
     function checkAnswer(idx) {
@@ -244,15 +269,23 @@
         feedback.textContent = '';
         return;
       }
-      attemptedCount++;
       if (input.value.trim() === problems[idx].answer) {
         feedback.textContent = 'Correct!';
         feedback.className = 'feedback correct';
         correctCount++;
+        input.disabled = true;
       } else {
-        feedback.textContent = `Incorrect. Expected: ${problems[idx].answer}`;
-        feedback.className = 'feedback incorrect';
+        outputAttempts[idx] = (outputAttempts[idx] || 0) + 1;
+        if (outputAttempts[idx] < 2) {
+          feedback.textContent = 'Try again!';
+          feedback.className = 'feedback incorrect';
+        } else {
+          feedback.textContent = `Incorrect. Expected: ${problems[idx].answer}`;
+          feedback.className = 'feedback incorrect';
+          input.disabled = true;
+        }
       }
+      attemptedCount++;
     }
 
     function finishPractice() {
