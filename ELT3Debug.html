@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELT3 Debug</title>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'IBM Plex Serif', serif;
+      background: #f8f9fa;
+      color: #222;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 32px 24px;
+    }
+    h1 {
+      color: #002868;
+      margin-top: 0;
+      font-size: 2.2em;
+      font-weight: 700;
+    }
+    h2 {
+      color: #002868;
+      font-size: 1.5em;
+      margin-top: 0;
+    }
+    p {
+      line-height: 1.6;
+    }
+    /* Add more styles as needed */
+    .console-output {
+      background: #222;
+      color: #e0e0e0;
+      font-family: 'IBM Plex Mono', monospace;
+      padding: 18px 20px;
+      border-radius: 7px;
+      margin: 28px 0 18px 0;
+      font-size: 1.08em;
+      line-height: 1.7;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ELT3 Debug</h1>
+    <h2>Instructions</h2>
+    <p>Consider the following expected console output. We have finished writing our code, but there are many errors. Your task is to fix each line of code so that it produces the desired output. (Correct any spelling and grammar mistakes.)</p>
+    <div style="background:#222; color:#e0e0e0; font-family: 'IBM Plex Mono', monospace; padding: 18px 20px; border-radius: 7px; margin: 28px 0 18px 0; font-size: 1.08em; line-height: 1.7; box-shadow: 0 1px 4px rgba(0,0,0,0.07);">
+      Enter your favorite snack chips<br>
+      How Many Snacks should we have? 5<br>
+      I think we should have 5 snacks today!<br>
+      But maybe...<br>
+      10 snacks would be better
+    </div>
+    <h2>Current Code</h2>
+    <pre style="background:#181c20; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:18px 20px; border-radius:7px; margin:28px 0 18px 0; font-size:1.08em; line-height:1.7; box-shadow:0 1px 4px rgba(0,0,0,0.07); counter-reset: line;">
+<span style="display:inline-block; min-width:2em; color:#888;">1</span> snack = "Enter your favorite snack"
+<span style="display:inline-block; min-width:2em; color:#888;">2</span> qty = int(input("How Many Snacks should we have? ")
+<span style="display:inline-block; min-width:2em; color:#888;">3</span> print("I think we should have " + (qty) + " snacks today!")
+<span style="display:inline-block; min-width:2em; color:#888;">4</span> print("But maybe...")
+<span style="display:inline-block; min-width:2em; color:#888;">5</span> print ((qty * 2) + " snacks would be better")
+    </pre>
+    <h2>Fix the Code: Line 1</h2>
+    <div style="margin-bottom: 10px;">
+      <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">1</span>
+      <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">snack = "Enter your favorite snack"</span>
+    </div>
+    <label for="fixLine1">Type the corrected line of code:</label><br>
+    <input id="fixLine1" type="text" autocomplete="off" style="background:#111; color:#00ff00; font-family:'IBM Plex Mono',monospace; font-size:1.08em; border:none; border-radius:5px; padding:8px 10px; width:90%; margin-top:6px; margin-bottom:6px;" />
+    <button onclick="checkFixLine1()" style="margin-left:8px; padding:7px 18px; font-size:1em; border-radius:5px; background:#002868; color:#fff; border:none;">Check</button>
+    <span id="fixLine1Feedback" style="margin-left:12px; font-weight:bold;"></span>
+    <script>
+      function checkFixLine1() {
+        const input = document.getElementById('fixLine1');
+        const feedback = document.getElementById('fixLine1Feedback');
+        const solution = 'snack = input("Enter your favorite snack")';
+        // Normalize whitespace for comparison
+        const normalize = s => s.replace(/\s+/g, ' ').trim();
+        if (normalize(input.value) === normalize(solution)) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = '#00ff00';
+        } else {
+          feedback.textContent = 'Try again!';
+          feedback.style.color = '#ff4444';
+        }
+      }
+    </script>
+    <!-- Content goes here -->
+  </div>
+</body>
+</html>
