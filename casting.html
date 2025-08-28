@@ -120,6 +120,33 @@
       }
     ];
 
+    const codeProblems = [
+      {
+        prompt: 'Store the user\'s favorite color in a variable named color. Use exactly this prompt text: "Enter your favorite color"',
+        solution: 'color = input("Enter your favorite color")'
+      },
+      {
+        prompt: 'Store the first letter of the user\'s last name in a variable named letter. Use exactly this prompt text: "Enter the first letter of your last name"',
+        solution: 'letter = input("Enter the first letter of your last name")'
+      },
+      {
+        prompt: 'Store a random number between 0.5 and 0.99 in a variable named guess. Use exactly this prompt text: "Enter a random number between 0.5 and 0.99"',
+        solution: 'guess = float(input("Enter a random number between 0.5 and 0.99"))'
+      },
+      {
+        prompt: 'Store the best decimal value in a variable named decimal. Use exactly this prompt text: "What is the best decimal value?"',
+        solution: 'decimal = float(input("What is the best decimal value?"))'
+      },
+      {
+        prompt: 'Store a number between 10 and 20 in a variable named digit. Use exactly this prompt text: "Enter a number between 10 and 20"',
+        solution: 'digit = int(input("Enter a number between 10 and 20"))'
+      },
+      {
+        prompt: 'Store the best highway speed limit in a variable named speed. Use exactly this prompt text: "What is the best speed limit for the highway?"',
+        solution: 'speed = int(input("What is the best speed limit for the highway?"))'
+      }
+    ];
+
     let userEmail = '';
     let startTime = null;
     let stopTime = null;
@@ -142,6 +169,52 @@
       renderProblems();
     }
 
+    function renderCodeProblems() {
+      const container = document.getElementById('problems');
+      // Pick one string, one float, one int problem randomly
+      const stringProb = codeProblems[Math.floor(Math.random()*2)];
+      const floatProb = codeProblems[2 + Math.floor(Math.random()*2)];
+      const intProb = codeProblems[4 + Math.floor(Math.random()*2)];
+      [stringProb, floatProb, intProb].forEach((prob, idx) => {
+        const div = document.createElement('div');
+        div.className = 'problem';
+        div.innerHTML = `
+          <div><b>Code Problem ${idx+1}:</b> ${prob.prompt}</div>
+          <label for="codeAnswer${idx}">Type the exact line of code:</label><br>
+          <input type="text" id="codeAnswer${idx}" autocomplete="off" />
+          <button onclick="checkCodeAnswer(${idx}, '${prob.solution.replace(/'/g, "&#39;")}')">Check</button>
+          <span class="feedback" id="codeFeedback${idx}"></span>
+        `;
+        container.appendChild(div);
+      });
+      // Add finish button
+      const finishBtn = document.createElement('button');
+      finishBtn.textContent = 'Finish & Show Summary';
+      finishBtn.style = 'margin-top:20px; padding:10px 24px; font-size:1em; border-radius:6px; background:#002868; color:#fff; border:none;';
+      finishBtn.onclick = finishPractice;
+      container.appendChild(finishBtn);
+    }
+
+    function checkCodeAnswer(idx, solution) {
+      const input = document.getElementById('codeAnswer'+idx);
+      const feedback = document.getElementById('codeFeedback'+idx);
+      if (!input.value.trim()) {
+        feedback.textContent = '';
+        return;
+      }
+      // Normalize whitespace for comparison
+      const normalize = s => s.replace(/\s+/g, ' ').trim();
+      if (normalize(input.value) === normalize(solution)) {
+        feedback.textContent = 'Correct!';
+        feedback.className = 'feedback correct';
+        correctCount++;
+      } else {
+        feedback.textContent = `Incorrect. Expected: ${solution}`;
+        feedback.className = 'feedback incorrect';
+      }
+      attemptedCount++;
+    }
+
     function renderProblems() {
       const container = document.getElementById('problems');
       container.innerHTML = '';
@@ -160,12 +233,8 @@
         `;
         container.appendChild(div);
       });
-      // Add finish button
-      const finishBtn = document.createElement('button');
-      finishBtn.textContent = 'Finish & Show Summary';
-      finishBtn.style = 'margin-top:20px; padding:10px 24px; font-size:1em; border-radius:6px; background:#002868; color:#fff; border:none;';
-      finishBtn.onclick = finishPractice;
-      container.appendChild(finishBtn);
+      // Add code writing problems after the output problems
+      renderCodeProblems();
     }
 
     function checkAnswer(idx) {
