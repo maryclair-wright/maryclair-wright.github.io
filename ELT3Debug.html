@@ -236,10 +236,10 @@
         const input = document.getElementById('fixLine3');
         const feedback = document.getElementById('fixLine3Feedback');
         const solution = 'print("I think we should have " + str(qty) + " snacks today!")';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),])\s*/g, '$1').trim();
         answers[2] = input.value;
-        // Check for comma-separated print
-        if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(normalize(input.value))) {
+        // Check for comma-separated print (allow for spaces and variations)
+        if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(input.value.replace(/\s+/g, ' '))) {
           feedback.textContent = 'While your code will run, this practice focuses on data types and the need to use casting (str()). Try again using + and str().' ;
           feedback.style.color = '#ff9900';
           return;
@@ -360,19 +360,21 @@
         }
         document.getElementById('debugSection').style.display = 'none';
         summaryDiv.style.display = '';
+        // Defensive: ensure answers array is always length 6
+        if (!Array.isArray(answers) || answers.length < 6) answers = [null, null, null, null, null, null];
         summaryDiv.innerHTML = `
           <h2>Session Summary</h2>
           <b>Email:</b> ${userEmail}<br>
           <b>Start Time:</b> ${startTime ? startTime.toLocaleString() : ''}<br>
           <b>Stop Time:</b> ${stopTime ? stopTime.toLocaleString() : ''}<br>
           <table style='margin:20px auto; border-collapse:collapse; font-size:1.08em;'>
-            <tr><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Line</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Your Answer</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Result</th></tr>
-            <tr><td style='padding:6px 16px;'>1</td><td style='padding:6px 16px;'>${answers[0] || ''}</td><td style='padding:6px 16px;'>${correctness[0] || ''}</td></tr>
-            <tr><td style='padding:6px 16px;'>2</td><td style='padding:6px 16px;'>${answers[1] || ''}</td><td style='padding:6px 16px;'>${correctness[1] || ''}</td></tr>
-            <tr><td style='padding:6px 16px;'>3</td><td style='padding:6px 16px;'>${answers[2] || ''}</td><td style='padding:6px 16px;'>${correctness[2] || ''}</td></tr>
-            <tr><td style='padding:6px 16px;'>4</td><td style='padding:6px 16px;'>${answers[3] || ''}</td><td style='padding:6px 16px;'>${correctness[3] || ''}</td></tr>
-            <tr><td style='padding:6px 16px;'>5</td><td style='padding:6px 16px;'>${answers[4] || ''}</td><td style='padding:6px 16px;'>${correctness[4] || ''}</td></tr>
-            <tr><td style='padding:6px 16px;'>6</td><td style='padding:6px 16px;'>${answers[5] || ''}</td><td style='padding:6px 16px;'>${correctness[5] || ''}</td></tr>
+            <tr><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Line</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Attempted?</th></tr>
+            <tr><td style='padding:6px 16px;'>1</td><td style='padding:6px 16px;'>${answers[0] ? 'Yes' : 'No'}</td></tr>
+            <tr><td style='padding:6px 16px;'>2</td><td style='padding:6px 16px;'>${answers[1] ? 'Yes' : 'No'}</td></tr>
+            <tr><td style='padding:6px 16px;'>3</td><td style='padding:6px 16px;'>${answers[2] ? 'Yes' : 'No'}</td></tr>
+            <tr><td style='padding:6px 16px;'>4</td><td style='padding:6px 16px;'>${answers[3] ? 'Yes' : 'No'}</td></tr>
+            <tr><td style='padding:6px 16px;'>5</td><td style='padding:6px 16px;'>${answers[4] ? 'Yes' : 'No'}</td></tr>
+            <tr><td style='padding:6px 16px;'>6</td><td style='padding:6px 16px;'>${answers[5] ? 'Yes' : 'No'}</td></tr>
           </table>
         `;
       }
