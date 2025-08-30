@@ -184,7 +184,7 @@
         const input = document.getElementById('fixLine1');
         const feedback = document.getElementById('fixLine1Feedback');
         const solution = 'snack = input("Enter your favorite snack")';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[0] = input.value;
         if (normalize(input.value) === normalize(solution)) {
           feedback.textContent = 'Correct!';
@@ -210,7 +210,7 @@
         const input = document.getElementById('fixLine2');
         const feedback = document.getElementById('fixLine2Feedback');
         const solution = 'qty = int(input("How Many Snacks should we have? "))';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[1] = input.value;
         if (normalize(input.value) === normalize(solution)) {
           feedback.textContent = 'Correct!';
@@ -236,13 +236,11 @@
         const input = document.getElementById('fixLine3');
         const feedback = document.getElementById('fixLine3Feedback');
         const solution = 'print("I think we should have " + str(qty) + " snacks today!")';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[2] = input.value;
-        // Check for comma-separated print (allow for spaces and variations)
         if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(input.value.replace(/\s+/g, ' ')) || input.value.includes(',')) {
           feedback.textContent = 'While your code will run, this practice focuses on data types and the need to use casting (str()). Try again using + and str().' ;
           feedback.style.color = '#ff9900';
-          // Do not count as an attempt, let them try again
           return;
         }
         if (normalize(input.value) === normalize(solution)) {
@@ -269,7 +267,7 @@
         const input = document.getElementById('fixLine4');
         const feedback = document.getElementById('fixLine4Feedback');
         const solution = 'print("But maybe...")';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[3] = input.value;
         if (normalize(input.value) === normalize(solution)) {
           feedback.textContent = 'Correct!';
@@ -295,9 +293,8 @@
         const input = document.getElementById('fixLine5');
         const feedback = document.getElementById('fixLine5Feedback');
         const solution = 'print (str(qty * 2) + " snacks would be better")';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[4] = input.value;
-        // Check for hardcoded 10 instead of qty * 2
         if (/10\s*\+\s*" snacks would be better"/.test(input.value) || /"10 snacks would be better"/.test(input.value)) {
           feedback.textContent = 'Remember: we want to use a math operator and the existing variable (qty), not just type 10.';
           feedback.style.color = '#ff9900';
@@ -327,7 +324,7 @@
         const input = document.getElementById('fixLine6');
         const feedback = document.getElementById('fixLine6Feedback');
         const solution = 'print("But the best would be " + str(qty * 2) + snack + "!")';
-        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[5] = input.value;
         if (normalize(input.value) === normalize(solution)) {
           feedback.textContent = 'Correct!';
@@ -357,12 +354,16 @@
           summaryDiv = document.createElement('div');
           summaryDiv.id = 'summary';
           summaryDiv.style.marginTop = '30px';
-          document.body.appendChild(summaryDiv);
         }
-        // Make sure summary is inside the main container and not hidden by CSS
+        // Always move summaryDiv to be a direct child of .container, after #debugSection
         var container = document.querySelector('.container');
-        if (container && !container.contains(summaryDiv)) {
+        var debugSection = document.getElementById('debugSection');
+        if (container && summaryDiv.parentNode !== container) {
           container.appendChild(summaryDiv);
+        } else if (container && summaryDiv.previousElementSibling === debugSection) {
+          // already in correct place
+        } else if (container && debugSection && debugSection.nextSibling !== summaryDiv) {
+          container.insertBefore(summaryDiv, debugSection.nextSibling);
         }
         document.getElementById('debugSection').style.display = 'none';
         summaryDiv.style.display = 'block';
