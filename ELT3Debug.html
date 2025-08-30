@@ -323,7 +323,8 @@
       function checkFixLine6() {
         const input = document.getElementById('fixLine6');
         const feedback = document.getElementById('fixLine6Feedback');
-        const solution = 'print("But the best would be " + str(qty * 2) + snack + "!")';
+        // Updated solution to include a space before snack
+        const solution = 'print("But the best would be " + str(qty * 2) + " " + snack + "!")';
         const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),*])\s*/g, '$1').trim();
         answers[5] = input.value;
         if (normalize(input.value) === normalize(solution)) {
@@ -375,13 +376,13 @@
           <b>Start Time:</b> ${startTime ? startTime.toLocaleString() : ''}<br>
           <b>Stop Time:</b> ${stopTime ? stopTime.toLocaleString() : ''}<br>
           <table style='margin:20px auto; border-collapse:collapse; font-size:1.08em;'>
-            <tr><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Line</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Attempted?</th></tr>
-            <tr><td style='padding:6px 16px;'>1</td><td style='padding:6px 16px;'>${answers[0] ? 'Yes' : 'No'}</td></tr>
-            <tr><td style='padding:6px 16px;'>2</td><td style='padding:6px 16px;'>${answers[1] ? 'Yes' : 'No'}</td></tr>
-            <tr><td style='padding:6px 16px;'>3</td><td style='padding:6px 16px;'>${answers[2] ? 'Yes' : 'No'}</td></tr>
-            <tr><td style='padding:6px 16px;'>4</td><td style='padding:6px 16px;'>${answers[3] ? 'Yes' : 'No'}</td></tr>
-            <tr><td style='padding:6px 16px;'>5</td><td style='padding:6px 16px;'>${answers[4] ? 'Yes' : 'No'}</td></tr>
-            <tr><td style='padding:6px 16px;'>6</td><td style='padding:6px 16px;'>${answers[5] ? 'Yes' : 'No'}</td></tr>
+            <tr><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Line</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Attempted?</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Your Answer</th></tr>
+            <tr><td style='padding:6px 16px;'>1</td><td style='padding:6px 16px;'>${answers[0] ? 'Yes' : 'No'}</td><td style='padding:6px 16px;'><code style="font-family:'IBM Plex Mono',monospace; background:#181c20; color:#00ff00; padding:2px 6px; border-radius:4px;">${answers[0] ? answers[0] : ''}</code></td></tr>
+            <tr><td style='padding:6px 16px;'>2</td><td style='padding:6px 16px;'>${answers[1] ? 'Yes' : 'No'}</td><td style='padding:6px 16px;'><code style="font-family:'IBM Plex Mono',monospace; background:#181c20; color:#00ff00; padding:2px 6px; border-radius:4px;">${answers[1] ? answers[1] : ''}</code></td></tr>
+            <tr><td style='padding:6px 16px;'>3</td><td style='padding:6px 16px;'>${answers[2] ? 'Yes' : 'No'}</td><td style='padding:6px 16px;'><code style="font-family:'IBM Plex Mono',monospace; background:#181c20; color:#00ff00; padding:2px 6px; border-radius:4px;">${answers[2] ? answers[2] : ''}</code></td></tr>
+            <tr><td style='padding:6px 16px;'>4</td><td style='padding:6px 16px;'>${answers[3] ? 'Yes' : 'No'}</td><td style='padding:6px 16px;'><code style="font-family:'IBM Plex Mono',monospace; background:#181c20; color:#00ff00; padding:2px 6px; border-radius:4px;">${answers[3] ? answers[3] : ''}</code></td></tr>
+            <tr><td style='padding:6px 16px;'>5</td><td style='padding:6px 16px;'>${answers[4] ? 'Yes' : 'No'}</td><td style='padding:6px 16px;'><code style="font-family:'IBM Plex Mono',monospace; background:#181c20; color:#00ff00; padding:2px 6px; border-radius:4px;">${answers[4] ? answers[4] : ''}</code></td></tr>
+            <tr><td style='padding:6px 16px;'>6</td><td style='padding:6px 16px;'>${answers[5] ? 'Yes' : 'No'}</td><td style='padding:6px 16px;'><code style="font-family:'IBM Plex Mono',monospace; background:#181c20; color:#00ff00; padding:2px 6px; border-radius:4px;">${answers[5] ? answers[5] : ''}</code></td></tr>
           </table>
         `;
       }
