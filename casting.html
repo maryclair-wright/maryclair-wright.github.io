@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,6 +20,16 @@
             padding: 32px 24px;
         }
         h1 {
+            color: #002868;
+        }
+        .infoBox {
+            background: #F0F4FF;
+            border-left: 6px solid #002868;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+            font-size: 1em;
             color: #002868;
         }
         .problem {
@@ -60,6 +70,7 @@
             font-size: 15px;
         }
         #emailSection {
+            margin-top: 30px;
             margin-bottom: 30px;
         }
         #summary {
@@ -73,10 +84,42 @@
             margin-left: auto;
             margin-right: auto;
         }
+        /* Responsive iframe */
+        .iframeWrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 62.5%; /* 500 / 800 = 0.625 */
+            height: 0;
+            margin-bottom: 30px;
+        }
+        .iframeWrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            border: none;
+        }
     </style>
 </head>
 <body>
     <div class="container" id="mainContainer">
+        <div class="infoBox">
+            <p><strong>Casting in Python</strong>, also known as type conversion, is the process of converting a value from one data type to another. This is often necessary when performing operations that require specific data types or when data needs to be presented in a different format.</p>
+            <p>If you need a quick review of casting watch this video: 
+                <a href="https://www.youtube.com/watch?v=2WZvl1R4A6g" target="_blank">Casting Review Video</a>
+            </p>
+        </div>
+
+        <!-- Responsive Embedded PythonTutor practice problem -->
+        <div class="iframeWrapper">
+            <iframe 
+                src="https://pythontutor.com/iframe-embed.html#code=%23we%20can%20turn%20a%20string%20or%20float%20into%20an%20integer%0AaNumber%20%3D%20int%28%224%22%29%0Aprint%28aNumber%29%0A%23we%20can%20turn%20an%20integer%20into%20a%20float%0AaDecimal%20%3D%20float%28aNumber%29%0Aprint%28aDecimal%29%0A%23we%20can%20turn%20an%20integer%20or%20a%20float%20into%20a%20string%0AaString%20%3D%20%22Look%20%22%20%2B%20str%28aDecimal%29%0Aprint%28aString%29&codeDivHeight=400&codeDivWidth=350&cumulative=false&curInstr=6&heapPrimitives=nevernest&origin=opt-frontend.js&py=311&rawInputLstJSON=%5B%5D&textReferences=false">
+            </iframe>
+        </div>
+
         <h1>Casting Practice</h1>
         <div id="emailSection">
             <label for="emailInput"><b>Enter your school email to get started:</b></label><br>
@@ -91,6 +134,7 @@
     <div class="footer">
         These tools were developed for teaching Cyber101 and AP Computer Science Principles at ASCTE by Mary Clair Wright and ASCTE Student Interns.
     </div>
+
     <script>
     // Random values for each session
     const randAge = Math.floor(Math.random()*10)+13; // 13–22
@@ -169,15 +213,15 @@
       renderProblems();
     }
 
-    // Track attempts for both steps
+    // Track attempts
     let outputAttempts = [];
     let codeAttempts = [];
-    let currentStep = 1; // 1 = output, 2 = code-writing
+    let currentStep = 1;
+
     function renderCodeProblems() {
       const container = document.getElementById('problems');
       container.innerHTML = '';
       codeAttempts = [0, 0, 0];
-      // Pick one string, one float, one int problem randomly
       const stringProb = codeProblems[Math.floor(Math.random()*2)];
       const floatProb = codeProblems[2 + Math.floor(Math.random()*2)];
       const intProb = codeProblems[4 + Math.floor(Math.random()*2)];
@@ -189,13 +233,12 @@
         div.innerHTML = `
           <div><b>Code Problem ${idx+1}:</b> ${prob.prompt}</div>
           <label for="codeAnswer${idx}">Type the exact line of code:</label><br>
-          <input type="text" id="codeAnswer${idx}" autocomplete="off" />
+          <input type="text" id="codeAnswer${idx}" autocomplete="off" style="font-family: 'IBM Plex Mono', 'Consolas', 'Courier New', monospace; font-size:1em;" />
           <button onclick="checkCodeAnswer(${idx})">Check</button>
           <span class="feedback" id="codeFeedback${idx}"></span>
         `;
         container.appendChild(div);
       });
-      // Add finish button
       const finishBtn = document.createElement('button');
       finishBtn.textContent = 'Finish & Show Summary';
       finishBtn.style = 'margin-top:20px; padding:10px 24px; font-size:1em; border-radius:6px; background:#002868; color:#fff; border:none;';
@@ -211,7 +254,6 @@
         return;
       }
       const solution = window.selectedCodeProblems[idx].solution;
-      // Normalize whitespace for comparison
       const normalize = s => s.replace(/\s+/g, ' ').trim();
       if (normalize(input.value) === normalize(solution)) {
         feedback.textContent = 'Correct!';
@@ -251,7 +293,6 @@
         `;
         container.appendChild(div);
       });
-      // Add next step button
       const nextBtn = document.createElement('button');
       nextBtn.textContent = 'Next: Code Writing Problems';
       nextBtn.style = 'margin-top:20px; padding:10px 24px; font-size:1em; border-radius:6px; background:#002868; color:#fff; border:none;';
@@ -297,13 +338,15 @@
     function showSummary() {
       const summaryDiv = document.getElementById('summary');
       summaryDiv.style.display = '';
+      // There are 4 output problems and 3 code writing problems
+      const totalQuestions = 4 + 3;
       summaryDiv.innerHTML = `
         <h2>Session Summary</h2>
         <b>Email:</b> ${userEmail}<br>
         <b>Start Time:</b> ${startTime ? startTime.toLocaleString() : ''}<br>
         <b>Stop Time:</b> ${stopTime ? stopTime.toLocaleString() : ''}<br>
-        <b>Correct Answers:</b> ${correctCount} / ${problems.length}<br>
-        <b>Questions Attempted:</b> ${attemptedCount} / ${problems.length}
+        <b>Correct Answers:</b> ${correctCount} / ${totalQuestions}<br>
+        <b>Questions Attempted:</b> ${attemptedCount} / ${totalQuestions}
       `;
     }
     </script>
