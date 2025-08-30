@@ -53,8 +53,18 @@
 <body>
   <div class="container">
     <h1>ELT3 Debug</h1>
+    <!-- Email and start section -->
+    <div id="emailSection">
+      <label for="emailInput"><b>Enter your school email to get started:</b></label><br>
+      <input type="email" id="emailInput" placeholder="your.email@school.org" style="width:300px; padding:8px; margin:10px 0; border-radius:5px; border:1px solid #bbb; font-size:1em;" />
+      <br>
+      <button onclick="startDebug()" id="startBtn">Start Debugging</button>
+      <div id="emailError" style="color:#B22222; margin-top:8px;"></div>
+    </div>
+    <div id="debugSection" style="display:none;">
     <h2>Instructions</h2>
-    <p>Consider the following expected console output. We have finished writing our code, but there are many errors. Your task is to fix each line of code so that it produces the desired output. (Correct any spelling and grammar mistakes.)</p>
+    <p>Debugging is the process of finding and fixing errors, known as "bugs," in computer programs. When a program does not behave as expected, debugging helps identify the source of the problem and allows for its correction.</p>
+    <p>Consider the following expected console output. We have finished writing our code, but there are many errors. Your task is to fix each line of code so that it produces the desired output.</p>
     <div style="background:#222; color:#e0e0e0; font-family: 'IBM Plex Mono', monospace; padding: 18px 20px; border-radius: 7px; margin: 28px 0 18px 0; font-size: 1.08em; line-height: 1.7; box-shadow: 0 1px 4px rgba(0,0,0,0.07);">
       Enter your favorite snack chips<br>
       How Many Snacks should we have? 5<br>
@@ -82,18 +92,87 @@
     <input id="fixLine1" type="text" autocomplete="off" style="background:#111; color:#00ff00; font-family:'IBM Plex Mono',monospace; font-size:1.08em; border:none; border-radius:5px; padding:8px 10px; width:90%; margin-top:6px; margin-bottom:6px;" onpaste="return false;" />
     <button onclick="checkFixLine1()" style="margin-left:8px; padding:7px 18px; font-size:1em; border-radius:5px; background:#002868; color:#fff; border:none;">Check</button>
     <span id="fixLine1Feedback" style="margin-left:12px; font-weight:bold;"></span>
+
+    <div id="line2Section" style="display:none;">
+      <h2>Fix the Code: Line 2</h2>
+      <div style="margin-bottom: 10px;">
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">2</span>
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">qty = int(input("How Many Snacks should we have? "))</span>
+      </div>
+      <label for="fixLine2">Type the corrected line of code:</label><br>
+      <input id="fixLine2" type="text" autocomplete="off" style="background:#111; color:#00ff00; font-family:'IBM Plex Mono',monospace; font-size:1.08em; border:none; border-radius:5px; padding:8px 10px; width:90%; margin-top:6px; margin-bottom:6px;" onpaste="return false;" />
+      <button onclick="checkFixLine2()" style="margin-left:8px; padding:7px 18px; font-size:1em; border-radius:5px; background:#002868; color:#fff; border:none;">Check</button>
+      <span id="fixLine2Feedback" style="margin-left:12px; font-weight:bold;"></span>
+    </div>
+
+    <div id="line3Section" style="display:none;">
+      <h2>Fix the Code: Line 3</h2>
+      <div style="margin-bottom: 10px;">
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">3</span>
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">print("I think we should have " + (qty) + " snacks today!")</span>
+      </div>
+      <label for="fixLine3">Type the corrected line of code:</label><br>
+      <input id="fixLine3" type="text" autocomplete="off" style="background:#111; color:#00ff00; font-family:'IBM Plex Mono',monospace; font-size:1.08em; border:none; border-radius:5px; padding:8px 10px; width:90%; margin-top:6px; margin-bottom:6px;" onpaste="return false;" />
+      <button onclick="checkFixLine3()" style="margin-left:8px; padding:7px 18px; font-size:1em; border-radius:5px; background:#002868; color:#fff; border:none;">Check</button>
+      <span id="fixLine3Feedback" style="margin-left:12px; font-weight:bold;"></span>
+    </div>
+
+    <div id="line4Section" style="display:none;">
+      <h2>Fix the Code: Line 4</h2>
+      <div style="margin-bottom: 10px;">
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">4</span>
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">print("But maybe...")</span>
+      </div>
+      <label for="fixLine4">Type the corrected line of code:</label><br>
+      <input id="fixLine4" type="text" autocomplete="off" style="background:#111; color:#00ff00; font-family:'IBM Plex Mono',monospace; font-size:1.08em; border:none; border-radius:5px; padding:8px 10px; width:90%; margin-top:6px; margin-bottom:6px;" onpaste="return false;" />
+      <button onclick="checkFixLine4()" style="margin-left:8px; padding:7px 18px; font-size:1em; border-radius:5px; background:#002868; color:#fff; border:none;">Check</button>
+      <span id="fixLine4Feedback" style="margin-left:12px; font-weight:bold;"></span>
+    </div>
+
+    <div id="line5Section" style="display:none;">
+      <h2>Fix the Code: Line 5</h2>
+      <div style="margin-bottom: 10px;">
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">5</span>
+        <span style="background:#222; color:#e0e0e0; font-family:'IBM Plex Mono',monospace; padding:6px 10px; border-radius:5px;">print (str(qty * 2) + " snacks would be better")</span>
+      </div>
+      <label for="fixLine5">Type the corrected line of code:</label><br>
+      <input id="fixLine5" type="text" autocomplete="off" style="background:#111; color:#00ff00; font-family:'IBM Plex Mono',monospace; font-size:1.08em; border:none; border-radius:5px; padding:8px 10px; width:90%; margin-top:6px; margin-bottom:6px;" onpaste="return false;" />
+      <button onclick="checkFixLine5()" style="margin-left:8px; padding:7px 18px; font-size:1em; border-radius:5px; background:#002868; color:#fff; border:none;">Check</button>
+      <span id="fixLine5Feedback" style="margin-left:12px; font-weight:bold;"></span>
+    </div>
+    <div id="summary" style="display:none; margin-top:30px;"></div>
     <script>
-      let fixLine1Attempts = 0;
+      let userEmail = '';
+      let startTime = null;
+      let stopTime = null;
+      let answers = [null, null, null, null, null];
+      let correctness = [null, null, null, null, null];
+      function startDebug() {
+        const emailInput = document.getElementById('emailInput');
+        const email = emailInput.value.trim();
+        const errorDiv = document.getElementById('emailError');
+        if (!/.+@.+\..+/.test(email)) {
+          errorDiv.textContent = 'Please enter a valid email address.';
+          return;
+        }
+        errorDiv.textContent = '';
+        userEmail = email;
+        startTime = new Date();
+        document.getElementById('emailSection').style.display = 'none';
+        document.getElementById('debugSection').style.display = '';
+      }
       function checkFixLine1() {
         const input = document.getElementById('fixLine1');
         const feedback = document.getElementById('fixLine1Feedback');
         const solution = 'snack = input("Enter your favorite snack")';
-        // Normalize whitespace for comparison
         const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        answers[0] = input.value;
         if (normalize(input.value) === normalize(solution)) {
           feedback.textContent = 'Correct!';
           feedback.style.color = '#00ff00';
           input.disabled = true;
+          correctness[0] = 'Correct';
+          document.getElementById('line2Section').style.display = '';
         } else {
           fixLine1Attempts++;
           if (fixLine1Attempts < 3) {
@@ -103,12 +182,154 @@
             feedback.textContent = `Incorrect. Expected: ${solution}`;
             feedback.style.color = '#ff4444';
             input.disabled = true;
+            correctness[0] = 'Incorrect';
+            document.getElementById('line2Section').style.display = '';
           }
         }
       }
+      function checkFixLine2() {
+        const input = document.getElementById('fixLine2');
+        const feedback = document.getElementById('fixLine2Feedback');
+        const solution = 'qty = int(input("How Many Snacks should we have? "))';
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        answers[1] = input.value;
+        if (normalize(input.value) === normalize(solution)) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = '#00ff00';
+          input.disabled = true;
+          correctness[1] = 'Correct';
+          document.getElementById('line3Section').style.display = '';
+        } else {
+          fixLine2Attempts++;
+          if (fixLine2Attempts < 3) {
+            feedback.textContent = `Try again! (${3-fixLine2Attempts} attempts left)`;
+            feedback.style.color = '#ff4444';
+          } else {
+            feedback.textContent = `Incorrect. Expected: ${solution}`;
+            feedback.style.color = '#ff4444';
+            input.disabled = true;
+            correctness[1] = 'Incorrect';
+            document.getElementById('line3Section').style.display = '';
+          }
+        }
+      }
+      function checkFixLine3() {
+        const input = document.getElementById('fixLine3');
+        const feedback = document.getElementById('fixLine3Feedback');
+        const solution = 'print("I think we should have " + str(qty) + " snacks today!")';
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        answers[2] = input.value;
+        // Check for comma-separated print
+        if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(normalize(input.value))) {
+          feedback.textContent = 'While your code will run, this practice focuses on data types and the need to use casting (str()). Try again using + and str().' ;
+          feedback.style.color = '#ff9900';
+          return;
+        }
+        if (normalize(input.value) === normalize(solution)) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = '#00ff00';
+          input.disabled = true;
+          correctness[2] = 'Correct';
+          document.getElementById('line4Section').style.display = '';
+        } else {
+          fixLine3Attempts++;
+          if (fixLine3Attempts < 3) {
+            feedback.textContent = `Try again! (${3-fixLine3Attempts} attempts left)`;
+            feedback.style.color = '#ff4444';
+          } else {
+            feedback.textContent = `Incorrect. Expected: ${solution}`;
+            feedback.style.color = '#ff4444';
+            input.disabled = true;
+            correctness[2] = 'Incorrect';
+            document.getElementById('line4Section').style.display = '';
+          }
+        }
+      }
+      function checkFixLine4() {
+        const input = document.getElementById('fixLine4');
+        const feedback = document.getElementById('fixLine4Feedback');
+        const solution = 'print("But maybe...")';
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        answers[3] = input.value;
+        if (normalize(input.value) === normalize(solution)) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = '#00ff00';
+          input.disabled = true;
+          correctness[3] = 'Correct';
+          document.getElementById('line5Section').style.display = '';
+        } else {
+          fixLine4Attempts++;
+          if (fixLine4Attempts < 3) {
+            feedback.textContent = `Try again! (${3-fixLine4Attempts} attempts left)`;
+            feedback.style.color = '#ff4444';
+          } else {
+            feedback.textContent = `Incorrect. Expected: ${solution}`;
+            feedback.style.color = '#ff4444';
+            input.disabled = true;
+            correctness[3] = 'Incorrect';
+            document.getElementById('line5Section').style.display = '';
+          }
+        }
+      }
+      function checkFixLine5() {
+        const input = document.getElementById('fixLine5');
+        const feedback = document.getElementById('fixLine5Feedback');
+        const solution = 'print (str(qty * 2) + " snacks would be better")';
+        const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+()])\s*/g, '$1').trim();
+        answers[4] = input.value;
+        // Check for hardcoded 10 instead of qty * 2
+        if (/10\s*\+\s*" snacks would be better"/.test(input.value) || /"10 snacks would be better"/.test(input.value)) {
+          feedback.textContent = 'Remember: we want to use a math operator and the existing variable (qty), not just type 10.';
+          feedback.style.color = '#ff9900';
+          return;
+        }
+        if (normalize(input.value) === normalize(solution)) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = '#00ff00';
+          input.disabled = true;
+          correctness[4] = 'Correct';
+          showDebugSummary();
+        } else {
+          fixLine5Attempts++;
+          if (fixLine5Attempts < 3) {
+            feedback.textContent = `Try again! (${3-fixLine5Attempts} attempts left)`;
+            feedback.style.color = '#ff4444';
+          } else {
+            feedback.textContent = `Incorrect. Expected: ${solution}`;
+            feedback.style.color = '#ff4444';
+            input.disabled = true;
+            correctness[4] = 'Incorrect';
+            showDebugSummary();
+          }
+        }
+      }
+      function showDebugSummary() {
+        stopTime = new Date();
+        document.getElementById('debugSection').style.display = 'none';
+        const summaryDiv = document.getElementById('summary');
+        summaryDiv.style.display = '';
+        summaryDiv.innerHTML = `
+          <h2>Session Summary</h2>
+          <b>Email:</b> ${userEmail}<br>
+          <b>Start Time:</b> ${startTime ? startTime.toLocaleString() : ''}<br>
+          <b>Stop Time:</b> ${stopTime ? stopTime.toLocaleString() : ''}<br>
+          <table style='margin:20px auto; border-collapse:collapse; font-size:1.08em;'>
+            <tr><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Line</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Your Answer</th><th style='padding:6px 16px; border-bottom:1px solid #bbb;'>Result</th></tr>
+            <tr><td style='padding:6px 16px;'>1</td><td style='padding:6px 16px;'>${answers[0] || ''}</td><td style='padding:6px 16px;'>${correctness[0] || ''}</td></tr>
+            <tr><td style='padding:6px 16px;'>2</td><td style='padding:6px 16px;'>${answers[1] || ''}</td><td style='padding:6px 16px;'>${correctness[1] || ''}</td></tr>
+            <tr><td style='padding:6px 16px;'>3</td><td style='padding:6px 16px;'>${answers[2] || ''}</td><td style='padding:6px 16px;'>${correctness[2] || ''}</td></tr>
+            <tr><td style='padding:6px 16px;'>4</td><td style='padding:6px 16px;'>${answers[3] || ''}</td><td style='padding:6px 16px;'>${correctness[3] || ''}</td></tr>
+            <tr><td style='padding:6px 16px;'>5</td><td style='padding:6px 16px;'>${answers[4] || ''}</td><td style='padding:6px 16px;'>${correctness[4] || ''}</td></tr>
+          </table>
+        `;
+      }
       document.getElementById('fixLine1').addEventListener('paste', function(e) { e.preventDefault(); });
+      document.getElementById('fixLine2').addEventListener('paste', function(e) { e.preventDefault(); });
+      document.getElementById('fixLine3').addEventListener('paste', function(e) { e.preventDefault(); });
+      document.getElementById('fixLine4').addEventListener('paste', function(e) { e.preventDefault(); });
+      document.getElementById('fixLine5').addEventListener('paste', function(e) { e.preventDefault(); });
     </script>
-    <!-- Content goes here -->
+    <!-- ...existing code... -->
   </div>
 </body>
 </html>
