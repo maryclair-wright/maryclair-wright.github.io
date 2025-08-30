@@ -239,7 +239,7 @@
         const normalize = s => s.replace(/\s+/g, ' ').replace(/\s*([=+(),])\s*/g, '$1').trim();
         answers[2] = input.value;
         // Check for comma-separated print (allow for spaces and variations)
-        if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(input.value.replace(/\s+/g, ' '))) {
+        if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(input.value.replace(/\s+/g, ' ')) || input.value.includes(',')) {
           feedback.textContent = 'While your code will run, this practice focuses on data types and the need to use casting (str()). Try again using + and str().' ;
           feedback.style.color = '#ff9900';
           // Do not count as an attempt, let them try again
@@ -351,7 +351,7 @@
       }
       function showDebugSummary() {
         stopTime = new Date();
-        // Defensive: ensure summary div exists
+        // Defensive: ensure summary div exists and is visible
         let summaryDiv = document.getElementById('summary');
         if (!summaryDiv) {
           summaryDiv = document.createElement('div');
@@ -359,8 +359,13 @@
           summaryDiv.style.marginTop = '30px';
           document.body.appendChild(summaryDiv);
         }
+        // Make sure summary is inside the main container and not hidden by CSS
+        var container = document.querySelector('.container');
+        if (container && !container.contains(summaryDiv)) {
+          container.appendChild(summaryDiv);
+        }
         document.getElementById('debugSection').style.display = 'none';
-        summaryDiv.style.display = '';
+        summaryDiv.style.display = 'block';
         // Defensive: ensure answers array is always length 6
         if (!Array.isArray(answers) || answers.length < 6) answers = [null, null, null, null, null, null];
         summaryDiv.innerHTML = `
