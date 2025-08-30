@@ -242,6 +242,7 @@
         if (/^print\s*\(\s*"I think we should have"\s*,\s*qty\s*,\s*"snacks today!"\s*\)$/.test(input.value.replace(/\s+/g, ' '))) {
           feedback.textContent = 'While your code will run, this practice focuses on data types and the need to use casting (str()). Try again using + and str().' ;
           feedback.style.color = '#ff9900';
+          // Do not count as an attempt, let them try again
           return;
         }
         if (normalize(input.value) === normalize(solution)) {
