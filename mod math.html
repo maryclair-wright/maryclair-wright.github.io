@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modulo (%) Practice — Python-Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --maxw: 760px; }
+    html, body { height: 100%; }
+    body { font-family: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif; line-height: 1.45; margin: 0; background: #f7f7f8; color: #111; }
+    main { margin: 0 auto; max-width: var(--maxw); padding: 24px; }
+    .card { background: #fff; border: 1px solid #e6e6e6; border-radius: 14px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+    .stack { display: grid; gap: 12px; }
+    .row { display: flex; gap: 12px; align-items: center; }
+    label { font-size: 14px; color: #333; }
+    input[type="email"], input[type="text"] { width: 100%; padding: 12px 14px; border: 1px solid #d8d8de; border-radius: 10px; font-size: 16px; font-family: "IBM Plex Sans", sans-serif; }
+    button { padding: 10px 14px; border: 1px solid #d0d0d6; border-radius: 10px; background: #fafafa; cursor: pointer; font-size: 15px; font-family: "IBM Plex Sans", sans-serif; }
+    button:hover { background: #f0f0f3; }
+    .muted { color: #555; font-size: 14px; }
+    .question { font-size: 22px; margin: 6px 0 4px; font-family: "IBM Plex Sans", sans-serif; }
+    .status { font-size: 14px; color: #444; }
+    .good { color: #146c2e; }
+    .bad { color: #8b1a1a; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .hidden { display: none; }
+    .summary-table { width: 100%; border-collapse: collapse; }
+    .summary-table th, .summary-table td { border-bottom: 1px solid #ececec; padding: 8px 6px; text-align: left; }
+    footer { font-family: 'IBM Plex Serif', serif; color: #002868; text-align: center; font-size: 15px; margin-top: 60px; padding: 20px 10px; }
+    a { color: #0b57d0; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card stack">
+      <h1>Modulo (%) Practice</h1>
+      <p class="muted">
+        Enter your email to begin. You will work 10 expressions, one at a time. You have two attempts for each. 
+        All problems use the Python modulus operator <span class="mono">%</span> with positive integers.
+      </p>
+      <p class="muted">
+        Need help with the modulus operator? 
+        <a href="https://www.youtube.com/watch?v=iOKaFL77iZE" target="_blank" rel="noopener">Watch this quick refresher video</a>.
+      </p>
+      <ul class="muted" style="margin-top:0;">
+        <li>Questions 1–4: numbers between 3 and 15, first number larger than the second.</li>
+        <li>Questions 5–8: numbers between 10 and 100, first number larger than the second.</li>
+        <li>Questions 9–10: numbers between 2 and 100, first number smaller than the second.</li>
+      </ul>
+    </section>
+
+    <section id="startSection" class="card stack">
+      <label for="emailInput">Email</label>
+      <input type="email" id="emailInput" placeholder="name@example.org" autocomplete="email" required />
+      <div class="row">
+        <button id="startBtn">Start</button>
+        <span class="muted" id="startInfo"></span>
+      </div>
+    </section>
+
+    <section id="quizSection" class="card stack hidden">
+      <div class="row" style="justify-content: space-between;">
+        <div id="progress" class="muted"></div>
+        <div id="chances" class="muted"></div>
+      </div>
+      <div id="questionText" class="question"></div>
+      <label for="answerInput">Answer (integer)</label>
+      <input type="text" id="answerInput" inputmode="numeric" autocomplete="off" />
+      <div class="row">
+        <button id="submitBtn">Submit</button>
+        <span id="feedback" class="status"></span>
+      </div>
+    </section>
+
+    <section id="resultSection" class="card stack hidden">
+      <h2>Finished</h2>
+      <div id="summary"></div>
+    </section>
+  </main>
+
+  <footer>
+    These tools were developed for teaching Cyber101 and AP Computer Science Principles at ASCTE by Mary Clair Wright and ASCTE Student Interns.
+  </footer>
+
+<script>
+(function(){
+  // ---------- Helpers ----------
+  function randi(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function ensureIntString(raw){
+    const s = raw.trim();
+    if (!/^[+]?\d+$/.test(s)) return { ok:false, msg:'Enter a positive integer.' };
+    return { ok:true, value: String(parseInt(s, 10)) };
+  }
+
+  // ---------- Question Generators (all positive integers) ----------
+  function genPairInRange(minA, maxA, minB, maxB, relation){
+    let a = randi(minA, maxA);
+    let b = randi(minB, maxB);
+    // Enforce relation between a and b strictly (> or <)
+    if (relation === 'aGreater'){
+      while (!(a > b)) { a = randi(minA, maxA); b = randi(minB, maxB); }
+    } else if (relation === 'aSmaller'){
+      while (!(a < b)) { a = randi(minA, maxA); b = randi(minB, maxB); }
+    }
+    return [a, b];
+  }
+
+  function buildQuestions(){
+    const qs = [];
+
+    // Q1–4: 3..15, a > b
+    for (let i = 0; i < 4; i++){
+      const [a, b] = genPairInRange(3, 15, 3, 15, 'aGreater');
+      qs.push({ text: `${a} % ${b}`, a, b, correct: String(a % b) });
+    }
+
+    // Q5–8: 10..100, a > b
+    for (let i = 0; i < 4; i++){
+      const [a, b] = genPairInRange(10, 100, 10, 100, 'aGreater');
+      qs.push({ text: `${a} % ${b}`, a, b, correct: String(a % b) });
+    }
+
+    // Q9–10: 2..100, a < b
+    for (let i = 0; i < 2; i++){
+      const [a, b] = genPairInRange(2, 100, 2, 100, 'aSmaller');
+      qs.push({ text: `${a} % ${b}`, a, b, correct: String(a % b) });
+    }
+
+    return qs;
+  }
+
+  // ---------- UI state ----------
+  const ui = {
+    start: document.getElementById('startSection'),
+    quiz: document.getElementById('quizSection'),
+    done: document.getElementById('resultSection'),
+    startBtn: document.getElementById('startBtn'),
+    startInfo: document.getElementById('startInfo'),
+    email: document.getElementById('emailInput'),
+    progress: document.getElementById('progress'),
+    chances: document.getElementById('chances'),
+    qText: document.getElementById('questionText'),
+    answer: document.getElementById('answerInput'),
+    submit: document.getElementById('submitBtn'),
+    feedback: document.getElementById('feedback'),
+    summary: document.getElementById('summary'),
+  };
+
+  let state = {
+    email: '',
+    startISO: null,
+    stopISO: null,
+    questions: [],
+    idx: 0,
+    remaining: 2,
+    correctCount: 0,
+    log: [], // {prompt, correct, answers[]}
+  };
+
+  // ---------- Flow ----------
+  function startQuiz(){
+    const em = ui.email.value.trim();
+    if (!em || !em.includes('@')) { ui.startInfo.textContent = 'Enter a valid email.'; return; }
+    state.email = em;
+    state.startISO = new Date().toISOString();
+    state.questions = buildQuestions();
+    state.idx = 0;
+    state.remaining = 2;
+    state.correctCount = 0;
+    state.log = [];
+    ui.start.classList.add('hidden');
+    ui.quiz.classList.remove('hidden');
+    ui.feedback.textContent = '';
+    showQuestion();
+  }
+
+  function showQuestion(){
+    const q = state.questions[state.idx];
+    ui.progress.textContent = `Question ${state.idx + 1} of ${state.questions.length}`;
+    ui.chances.textContent = `Chances remaining: ${state.remaining}`;
+    ui.qText.textContent = q.text;
+    ui.answer.value = '';
+    ui.answer.focus();
+  }
+
+  function submitAnswer(){
+    const q = state.questions[state.idx];
+    const chk = ensureIntString(ui.answer.value);
+    if (!chk.ok){ ui.feedback.textContent = chk.msg; ui.feedback.className = 'status bad'; return; }
+
+    const userVal = chk.value;
+    const correctNow = (userVal === q.correct);
+
+    // Log attempt
+    let entry = state.log[state.idx];
+    if (!entry){
+      entry = { prompt: q.text, correct: q.correct, answers: [] };
+      state.log[state.idx] = entry;
+    }
+    entry.answers.push(userVal);
+
+    if (correctNow){
+      state.correctCount += 1;
+      ui.feedback.textContent = 'Correct.';
+      ui.feedback.className = 'status good';
+      nextQuestion();
+    } else {
+      state.remaining -= 1;
+      if (state.remaining > 0){
+        ui.feedback.textContent = 'Incorrect. Try again.';
+        ui.feedback.className = 'status bad';
+        ui.chances.textContent = `Chances remaining: ${state.remaining}`;
+        ui.answer.focus();
+      } else {
+        ui.feedback.textContent = `Answer shown: ${q.correct}`;
+        ui.feedback.className = 'status';
+        nextQuestion();
+      }
+    }
+  }
+
+  function nextQuestion(){
+    state.idx += 1;
+    state.remaining = 2;
+    if (state.idx >= state.questions.length){
+      finishQuiz();
+    } else {
+      showQuestion();
+    }
+  }
+
+  function finishQuiz(){
+    state.stopISO = new Date().toISOString();
+    ui.quiz.classList.add('hidden');
+    ui.done.classList.remove('hidden');
+    const start = new Date(state.startISO), stop = new Date(state.stopISO);
+    const elapsed = Math.round((stop - start)/1000);
+
+    const rows = state.log.map((e,i) => {
+      const attempts = e.answers && e.answers.length ? e.answers.join(' | ') : '';
+      return `<tr><td>${i+1}</td><td>${e.prompt}</td><td>${e.correct}</td><td>${attempts}</td></tr>`;
+    }).join('');
+
+    ui.summary.innerHTML = `
+      <p>Email: ${state.email}</p>
+      <p>Start: ${state.startISO}</p>
+      <p>Stop: ${state.stopISO}</p>
+      <p>Time (seconds): ${elapsed}</p>
+      <p>Score: ${state.correctCount} / ${state.questions.length}</p>
+      <h3>Responses</h3>
+      <table class="summary-table">
+        <thead><tr><th>#</th><th>Prompt</th><th>Correct</th><th>Your Attempts</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  // ---------- Wire up ----------
+  ui.startBtn.addEventListener('click', startQuiz);
+  ui.submit.addEventListener('click', submitAnswer);
+  ui.answer.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') submitAnswer(); });
+})();
+</script>
+</body>
+</html>
