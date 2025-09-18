@@ -1,52 +1,64 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ASCTE Cyber 101 Python Strings Expressions 1</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --brand-blue: #002868; /* ASCTE navy */
+      --brand-red: #BF0A30; /* ASCTE red */
+      --bg-gray: #A5A5A4;
+      --code-blue: #6598E9;
+      --white: #ffffff;
+    }
+
+    /* Base */
+    html, body { height: 100%; }
     body {
       font-family: 'IBM Plex Sans', sans-serif;
-      background-color: #A5A5A4;
+      background-color: var(--bg-gray);
       margin: 0;
       padding: 0;
     }
+
     h1 {
       font-size: 2.5em;
-      background-color: #002868;
-      color: white;
+      background-color: var(--brand-blue);
+      color: var(--white);
       padding: 20px;
       text-align: center;
       margin: 0;
     }
+
     .link-below-title {
       text-align: center;
       margin-top: 10px;
       margin-bottom: 20px;
     }
     .link-below-title a {
-      color: #002868;
+      color: var(--brand-blue);
       font-weight: bold;
       text-decoration: underline;
       font-size: 1.1em;
     }
+
+    /* Layout */
     .container {
       display: flex;
       flex-direction: row;
       min-height: 100vh;
       padding: 40px;
+      gap: 40px;
+      box-sizing: border-box;
     }
-    .left-column {
-      flex: 0 0 40%;
-      padding-right: 40px;
-    }
-    .right-column {
-      flex: 0 0 60%;
-    }
+    .left-column { flex: 0 0 40%; }
+    .right-column { flex: 0 0 60%; }
+
+    /* Cards */
     .instructions {
-      background-color: white;
-      color: #002868;
+      background-color: var(--white);
+      color: var(--brand-blue);
       padding: 20px;
       border-radius: 6px;
       font-size: 1.2em;
@@ -61,17 +73,13 @@
       margin-top: 0;
       font-size: 1.4em;
       font-weight: bold;
-      color: #002868;
+      color: var(--brand-blue);
     }
-    .note {
-      font-style: italic;
-      font-size: 0.9em;
-      color: #002868;
-      margin-top: 10px;
-    }
-    .code-block, .index-demo {
+    .note { font-style: italic; font-size: 0.9em; color: var(--brand-blue); margin-top: 10px; }
+
+    .index-demo {
       font-family: 'Courier New', Courier, monospace;
-      background-color: #6598E9;
+      background-color: var(--code-blue);
       padding: 16px;
       border-radius: 6px;
       font-size: 1.3em;
@@ -79,271 +87,274 @@
       margin-top: 10px;
       display: inline-block;
     }
-    label, input, button {
-      font-size: 1em;
-      margin-top: 10px;
+
+    label, input, button { font-size: 1em; margin-top: 10px; display: block; }
+    input[type="text"], input[type="number"] { padding: 8px; width: 300px; margin-bottom: 12px; }
+
+    .message { font-weight: bold; margin-top: 8px; }
+    .message.correct { color: var(--code-blue); }
+    .message.incorrect { color: var(--white); }
+
+    .question { font-size: 1.4em; font-weight: bold; color: var(--brand-blue); margin-top: 20px; }
+
+    .input-correct { background-color: var(--white); color: black; }
+    .input-incorrect { background-color: var(--brand-red); color: var(--white); }
+    .disabled { pointer-events: none; opacity: 0.6; }
+
+    /* NEW: Top-right variable display */
+    .variable-box {
+      position: fixed;
+      top: 90px;   /* below the header */
+      right: 20px;
+      background-color: var(--code-blue);
+      padding: 16px 18px;
+      border-radius: 6px;
+      z-index: 1000;
+      max-width: 38ch;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .variable-box .variable-label {
       display: block;
-    }
-    input[type="text"], input[type="number"] {
-      padding: 8px;
-      width: 300px;
-      margin-bottom: 12px;
-    }
-    .message {
       font-weight: bold;
-      margin-top: 8px;
+      color: #000;
+      margin-bottom: 6px;
     }
-    .message.correct {
-      color: #6598E9;
+    .variable-box .code-text {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.1em;
+      white-space: pre;
+      color: #000;
+      display: inline-block;
     }
-    .message.incorrect {
-      color: white;
+
+    /* Responsive: place the variable box inline under the title on very small screens */
+    @media (max-width: 720px) {
+      .container { flex-direction: column; padding: 20px; }
+      .left-column, .right-column { flex: 1 1 auto; }
+      .variable-box {
+        position: static;
+        margin: 10px auto 0 auto;
+        display: inline-block;
+      }
     }
-    .question {
-      font-size: 1.4em;
-      font-weight: bold;
-      color: #002868;
-      margin-top: 20px;
-    }
-    .input-correct {
-      background-color: white;
-      color: black;
-    }
-    .input-incorrect {
-      background-color: #BF0A30;
-      color: white;
-    }
-    .disabled {
-      pointer-events: none;
-      opacity: 0.6;
-    }
+
+    footer { text-align: center; font-size: 0.9em; padding: 10px; color: #666; }
   </style>
 </head>
-
 <body>
+  <h1>PYTHON STRING EXPRESSIONS 1</h1>
 
-<h1>PYTHON STRING EXPRESSIONS 1</h1>
+  <div class="link-below-title">
+    <a href="https://somup.com/cTft2Is87k" target="_blank" rel="noopener">Review String Methods Video</a>
+  </div>
 
-<div class="link-below-title">
-  <a href="https://somup.com/cTft2Is87k" target="_blank">Review String Methods Video</a>
-</div>
+  <!-- NEW: Fixed, always-visible variable assignment box -->
+  <aside class="variable-box" aria-live="polite">
+    <span class="variable-label">Variable Assigned:</span>
+    <span class="code-text" id="codeBlock">name = ""</span>
+  </aside>
 
-<div class="container">
-  <div class="left-column">
+  <div class="container">
+    <div class="left-column">
+      <div class="instructions">
+        <h2>INSTRUCTIONS</h2>
+        Please answer each question carefully.
+        Use the value stored in the variable name shown at the top right.
+        Enter the correct value or type ERROR if you believe the code causes a runtime error.
+        You have 3 attempts per question.
 
-    <div class="instructions">
-      <h2>INSTRUCTIONS</h2>
-      Please answer each question carefully.
-      Use the value stored in the variable <strong>name</strong> shown below these instructions.
-      Enter the correct value or type <strong>ERROR</strong> if you believe the code causes a runtime error.
-      You have 3 attempts per question.
-      <br><br>
-      Tip: You can complete this exercise as many times as you like to practice your skills.
+        Tip: You can complete this exercise as many times as you like to practice your skills.
 
-      <label for="emailInput">Enter your school email to get started:</label>
-      <input type="text" id="emailInput" placeholder="your.email@school.org">
-      <div id="startInfo" class="note"></div>
-      <div id="stopInfo" class="note"></div>
-      <div id="resultsSummary" style="margin-top: 20px;"></div>
-    </div>
+        <label for="emailInput">Enter your school email to get started:</label>
+        <input type="text" id="emailInput" placeholder="your.email@school.org" />
+        <div id="startInfo" class="note"></div>
+        <div id="stopInfo" class="note"></div>
+        <div id="resultsSummary" style="margin-top: 20px;"></div>
+      </div>
 
-    <div class="section">
-      <p><strong>Variable Assigned:</strong></p>
-      <div class="code-block" id="codeBlock"></div>
-    </div>
-
-    <div class="section">
-      <p><strong>Hint:</strong> Python strings can be indexed like this:</p>
-      <div class="index-demo">
-H e l l o  
-0 1 2 3 4
+      <div class="section">
+        <p><strong>Hint:</strong> Python strings can be indexed like this:</p>
+        <div class="index-demo"> H e l l o   0 1 2 3 4 </div>
       </div>
     </div>
 
+    <div class="right-column" id="assignmentSection" style="display:none;"></div>
   </div>
 
-  <div class="right-column" id="assignmentSection" style="display:none;">
-    <!-- Questions will be dynamically inserted here -->
-  </div>
-</div>
+  <script>
+    // ===== Data setup =====
+    const names = [
+      "Grace Hopper", "Ada Lovelace", "Katherine Johnson", "Dorothy Vaughan",
+      "Mary Jackson", "Radia Perlman", "Margaret Hamilton", "Annie Easley",
+      "Kimberly Bryant", "Reshma Saujani", "Jean E. Sammet", "Evelyn Boyd Granville",
+      "Marsha Rhea Williams", "Clarence Ellis", "Timnit Gebru", "Fei-Fei Li",
+      "Shafi Goldwasser", "Melba Roy Mouton", "Gladys West", "Mark Dean"
+    ];
 
-<script>
-const names = [
-  "Grace Hopper", "Ada Lovelace", "Katherine Johnson", "Dorothy Vaughan",
-  "Mary Jackson", "Radia Perlman", "Margaret Hamilton", "Annie Easley",
-  "Kimberly Bryant", "Reshma Saujani", "Jean E. Sammet", "Evelyn Boyd Granville",
-  "Marsha Rhea Williams", "Clarence Ellis", "Timnit Gebru", "Fei-Fei Li",
-  "Shafi Goldwasser", "Melba Roy Mouton", "Gladys West", "Mark Dean"
-];
+    const assignedName = names[Math.floor(Math.random() * names.length)];
+    // Populate the fixed top-right display
+    document.getElementById("codeBlock").textContent = `name = "${assignedName}"`;
 
-const assignedName = names[Math.floor(Math.random() * names.length)];
-document.getElementById("codeBlock").textContent = `name = "${assignedName}"`;
+    const firstChar = assignedName[0];
 
-const firstChar = assignedName[0];
-
-function getRandomSubstring(str, length) {
-  let start = Math.floor(Math.random() * (str.length - length));
-  if (start === 0) start = 1;
-  return {text: str.slice(start, start + length), index: start};
-}
-
-function generateMissingSubstring(str) {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let attempt = "";
-  do {
-    const a = letters[Math.floor(Math.random() * letters.length)];
-    const b = letters[Math.floor(Math.random() * letters.length)];
-    attempt = a + b;
-  } while (str.includes(attempt));
-  return attempt;
-}
-
-function getNonSpaceIndex(str) {
-  let index;
-  do {
-    index = Math.floor(Math.random() * str.length);
-  } while (str[index] === " ");
-  return index;
-}
-
-function getSpaceIndex(str) {
-  let index;
-  do {
-    index = Math.floor(Math.random() * str.length);
-  } while (str[index] !== " ");
-  return index;
-}
-
-// Generate slices
-const random3 = getRandomSubstring(assignedName, 3);
-const missingSubstring = generateMissingSubstring(assignedName);
-const sliceStart = Math.floor(Math.random() * (assignedName.length - 5)) + 1;
-const sliceEnd = sliceStart + 4;
-const sliceValue = `"${assignedName.slice(sliceStart, sliceEnd)}"`;
-
-const sliceStartOnly = Math.floor(Math.random() * (assignedName.length - 4));
-const sliceValueOnly = `"${assignedName.slice(sliceStartOnly)}"`;
-
-const sliceEndOnly = Math.floor(Math.random() * (assignedName.length - 2));
-const sliceValueEndOnly = `"${assignedName.slice(0, sliceEndOnly)}"`;
-
-const oneCharIndex = getNonSpaceIndex(assignedName);
-const oneCharSlice = `"${assignedName.slice(oneCharIndex, oneCharIndex + 1)}"`;
-
-const spaceIndex = getSpaceIndex(assignedName);
-const spaceCharSlice = `"${assignedName.slice(spaceIndex, spaceIndex + 1)}"`;
-
-const midIndex = Math.floor(assignedName.length / 2);
-const secondHalfSlice = `"${assignedName.slice(midIndex)}"`;
-
-const part1 = getRandomSubstring(assignedName, 2);
-const part2 = getRandomSubstring(assignedName, 2);
-const combinedParts = `"${assignedName.slice(part1.index, part1.index+2) + assignedName.slice(part2.index, part2.index+2)}"`;
-
-const randomStart = Math.floor(Math.random() * (assignedName.length - 3));
-const finalAnswer = `"Answer: ${assignedName.slice(randomStart, randomStart+3)}?"`;
-
-const questions = [
-  {text: `What is the value returned by: <code>len(name)</code>?`, answer: assignedName.length},
-  {text: `What is the value returned by: <code>name.index("${firstChar}")</code>?`, answer: assignedName.indexOf(firstChar)},
-  {text: `What is the value returned by: <code>name.index("${random3.text}")</code>?`, answer: assignedName.indexOf(random3.text)},
-  {text: `What is the value returned by: <code>name.index("${missingSubstring}")</code>?`, answer: "ERROR"},
-  {text: `What is the value returned by: <code>name[${sliceStart}:${sliceEnd}]</code>?`, answer: sliceValue},
-  {text: `What is the value returned by: <code>name[${sliceStartOnly}:]</code>?`, answer: sliceValueOnly},
-  {text: `What is the value returned by: <code>name[:${sliceEndOnly}]</code>?`, answer: sliceValueEndOnly},
-  {text: `What is the value returned by: <code>name[${oneCharIndex}:${oneCharIndex+1}]</code>?`, answer: oneCharSlice},
-  {text: `What is the value returned by: <code>name[${spaceIndex}:${spaceIndex+1}]</code>?`, answer: spaceCharSlice},
-  {text: `What is the value returned by: <code>name[len(name)//2:]</code>?`, answer: secondHalfSlice},
-  {text: `What is the value returned by: <code>name[${part1.index}:${part1.index+2}] + name[${part2.index}:${part2.index+2}]</code>?`, answer: combinedParts},
-  {text: `What is the value returned by: <code>"Answer: " + name[${randomStart}:${randomStart+3}] + "?"</code>? <div class="subnote">(Hint: include a space after the colon, no space before the question mark.)</div>`, answer: finalAnswer}
-];
-
-let attempts = {};
-let correctAnswersList = [];
-
-document.getElementById("emailInput").addEventListener("change", function () {
-  const startTime = new Date().toLocaleString();
-  document.getElementById("startInfo").textContent = "Start Time: " + startTime;
-  document.getElementById("assignmentSection").style.display = "block";
-  buildQuestions();
-});
-
-function buildQuestions() {
-  const assignmentSection = document.getElementById("assignmentSection");
-  assignmentSection.innerHTML = "";
-
-  questions.forEach((q, index) => {
-    const qNum = index + 1;
-    const div = document.createElement("div");
-    div.className = "section";
-    div.innerHTML = `
-      <p class="question">${q.text}</p>
-      <input type="text" id="answer${qNum}" placeholder="Enter your answer">
-      <button onclick="checkAnswer(${qNum})">Submit</button>
-      <div class="message" id="feedback${qNum}"></div>
-    `;
-    assignmentSection.appendChild(div);
-    attempts[qNum] = 0;
-  });
-}
-
-function checkAnswer(qNum) {
-  const input = document.getElementById("answer" + qNum);
-  const feedback = document.getElementById("feedback" + qNum);
-  const userRaw = input.value.trim();
-  const correct = questions[qNum - 1].answer;
-
-  attempts[qNum]++;
-
-  let isCorrect = false;
-  if (typeof correct === "string") {
-    isCorrect = userRaw.toUpperCase() === correct.toUpperCase();
-  } else {
-    isCorrect = parseInt(userRaw) === correct;
-  }
-
-  if (isCorrect) {
-    input.className = "input-correct";
-    feedback.className = "message correct";
-    feedback.textContent = `Correct! Your answer was: ${userRaw}`;
-    correctAnswersList.push(qNum);
-    disableInputs(qNum);
-    if (qNum === questions.length) recordStopTime();
-  } else {
-    if (qNum === 1 && attempts[qNum] === 2) {
-      feedback.className = "message incorrect";
-      feedback.textContent = "Remember: len returns the number of characters in the string, including spaces and special characters.";
-    } else if (attempts[qNum] >= 3) {
-      input.className = "input-incorrect";
-      feedback.className = "message incorrect";
-      feedback.textContent = "Incorrect. The correct answer was: " + correct;
-      disableInputs(qNum);
-      if (qNum === questions.length) recordStopTime();
-    } else {
-      input.className = "input-incorrect";
-      feedback.className = "message incorrect";
-      feedback.textContent = "Incorrect. Try again.";
+    // ===== Helpers =====
+    function getRandomSubstring(str, length) {
+      let start = Math.floor(Math.random() * (str.length - length));
+      if (start === 0) start = 1; // avoid 0 so students think about non-zero starts too
+      return { text: str.slice(start, start + length), index: start };
     }
-  }
-}
 
-function disableInputs(qNum) {
-  document.getElementById("answer" + qNum).disabled = true;
-}
+    function generateMissingSubstring(str) {
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let attempt = "";
+      do {
+        const a = letters[Math.floor(Math.random() * letters.length)];
+        const b = letters[Math.floor(Math.random() * letters.length)];
+        attempt = a + b;
+      } while (str.includes(attempt));
+      return attempt;
+    }
 
-function recordStopTime() {
-  const stopTime = new Date().toLocaleString();
-  document.getElementById("stopInfo").textContent = "Stop Time: " + stopTime;
+    function getNonSpaceIndex(str) {
+      let index;
+      do { index = Math.floor(Math.random() * str.length); } while (str[index] === " ");
+      return index;
+    }
 
-  const totalCorrect = correctAnswersList.length;
-  document.getElementById("resultsSummary").innerHTML = `<strong>Results:</strong><br>Correct: ${totalCorrect} / ${questions.length}`;
-}
+    function getSpaceIndex(str) {
+      let index;
+      do { index = Math.floor(Math.random() * str.length); } while (str[index] !== " ");
+      return index;
+    }
 
-// The large JavaScript part goes here (building questions, timing, feedback) 
-// I can post the new script separately next because of message size!
-</script>
+    // ===== Slice building =====
+    const random3 = getRandomSubstring(assignedName, 3);
+    const missingSubstring = generateMissingSubstring(assignedName);
 
-  <footer style="text-align:center; font-size:0.9em; padding:10px; color:#666;">
+    const sliceStart = Math.floor(Math.random() * (assignedName.length - 5)) + 1;
+    const sliceEnd = sliceStart + 4;
+    const sliceValue = `"${assignedName.slice(sliceStart, sliceEnd)}"`;
+
+    const sliceStartOnly = Math.floor(Math.random() * (assignedName.length - 4));
+    const sliceValueOnly = `"${assignedName.slice(sliceStartOnly)}"`;
+
+    const sliceEndOnly = Math.floor(Math.random() * (assignedName.length - 2));
+    const sliceValueEndOnly = `"${assignedName.slice(0, sliceEndOnly)}"`;
+
+    const oneCharIndex = getNonSpaceIndex(assignedName);
+    const oneCharSlice = `"${assignedName.slice(oneCharIndex, oneCharIndex + 1)}"`;
+
+    const spaceIndex = getSpaceIndex(assignedName);
+    const spaceCharSlice = `"${assignedName.slice(spaceIndex, spaceIndex + 1)}"`;
+
+    const midIndex = Math.floor(assignedName.length / 2);
+    const secondHalfSlice = `"${assignedName.slice(midIndex)}"`;
+
+    const part1 = getRandomSubstring(assignedName, 2);
+    const part2 = getRandomSubstring(assignedName, 2);
+    const combinedParts = `"${assignedName.slice(part1.index, part1.index + 2) + assignedName.slice(part2.index, part2.index + 2)}"`;
+
+    const randomStart = Math.floor(Math.random() * (assignedName.length - 3));
+    const finalAnswer = `"Answer: ${assignedName.slice(randomStart, randomStart + 3)}?"`;
+
+    const questions = [
+      { text: `What is the value returned by: <code>len(name)</code>?`, answer: assignedName.length },
+      { text: `What is the value returned by: <code>name.index("${firstChar}")</code>?`, answer: assignedName.indexOf(firstChar) },
+      { text: `What is the value returned by: <code>name.index("${random3.text}")</code>?`, answer: assignedName.indexOf(random3.text) },
+      { text: `What is the value returned by: <code>name.index("${missingSubstring}")</code>?`, answer: "ERROR" },
+      { text: `What is the value returned by: <code>name[${sliceStart}:${sliceEnd}]</code>?`, answer: sliceValue },
+      { text: `What is the value returned by: <code>name[${sliceStartOnly}:]</code>?`, answer: sliceValueOnly },
+      { text: `What is the value returned by: <code>name[:${sliceEndOnly}]</code>?`, answer: sliceValueEndOnly },
+      { text: `What is the value returned by: <code>name[${oneCharIndex}:${oneCharIndex + 1}]</code>?`, answer: oneCharSlice },
+      { text: `What is the value returned by: <code>name[${spaceIndex}:${spaceIndex + 1}]</code>?`, answer: spaceCharSlice },
+      { text: `What is the value returned by: <code>name[len(name)//2:]</code>?`, answer: secondHalfSlice },
+      { text: `What is the value returned by: <code>name[${part1.index}:${part1.index + 2}] + name[${part2.index}:${part2.index + 2}]</code>?`, answer: combinedParts },
+      { text: `What is the value returned by: <code>"Answer: " + name[${randomStart}:${randomStart + 3}] + "?"</code>? <div class="subnote">(Hint: include a space after the colon, no space before the question mark.)</div>`, answer: finalAnswer }
+    ];
+
+    let attempts = {};
+    let correctAnswersList = [];
+
+    // Start on email entry
+    document.getElementById("emailInput").addEventListener("change", function () {
+      const startTime = new Date().toLocaleString();
+      document.getElementById("startInfo").textContent = "Start Time: " + startTime;
+      document.getElementById("assignmentSection").style.display = "block";
+      buildQuestions();
+    });
+
+    function buildQuestions() {
+      const assignmentSection = document.getElementById("assignmentSection");
+      assignmentSection.innerHTML = "";
+
+      questions.forEach((q, index) => {
+        const qNum = index + 1;
+        const div = document.createElement("div");
+        div.className = "section";
+        div.innerHTML = `
+          <p class="question">${q.text}</p>
+          <input type="text" id="answer${qNum}" placeholder="Enter your answer" />
+          <button type="button" onclick="checkAnswer(${qNum})">Submit</button>
+          <div class="message" id="feedback${qNum}"></div>
+        `;
+        assignmentSection.appendChild(div);
+        attempts[qNum] = 0;
+      });
+    }
+
+    window.checkAnswer = function(qNum) {
+      const input = document.getElementById("answer" + qNum);
+      const feedback = document.getElementById("feedback" + qNum);
+      const userRaw = input.value.trim();
+      const correct = questions[qNum - 1].answer;
+
+      attempts[qNum]++;
+
+      let isCorrect = false;
+      if (typeof correct === "string") {
+        isCorrect = userRaw.toUpperCase() === correct.toUpperCase();
+      } else {
+        isCorrect = parseInt(userRaw, 10) === correct;
+      }
+
+      if (isCorrect) {
+        input.className = "input-correct";
+        feedback.className = "message correct";
+        feedback.textContent = `Correct! Your answer was: ${userRaw}`;
+        correctAnswersList.push(qNum);
+        disableInputs(qNum);
+        if (qNum === questions.length) recordStopTime();
+      } else {
+        if (qNum === 1 && attempts[qNum] === 2) {
+          feedback.className = "message incorrect";
+          feedback.textContent = "Remember: len returns the number of characters in the string, including spaces and special characters.";
+        } else if (attempts[qNum] >= 3) {
+          input.className = "input-incorrect";
+          feedback.className = "message incorrect";
+          feedback.textContent = "Incorrect. The correct answer was: " + correct;
+          disableInputs(qNum);
+          if (qNum === questions.length) recordStopTime();
+        } else {
+          input.className = "input-incorrect";
+          feedback.className = "message incorrect";
+          feedback.textContent = "Incorrect. Try again.";
+        }
+      }
+    }
+
+    function disableInputs(qNum) {
+      document.getElementById("answer" + qNum).disabled = true;
+    }
+
+    function recordStopTime() {
+      const stopTime = new Date().toLocaleString();
+      document.getElementById("stopInfo").textContent = "Stop Time: " + stopTime;
+      const totalCorrect = correctAnswersList.length;
+      document.getElementById("resultsSummary").innerHTML = `<strong>Results:</strong><br>Correct: ${totalCorrect} / ${questions.length}`;
+    }
+  </script>
+
+  <footer>
     © 2025 Alabama State Department of Education (ALSDE) &amp; Alabama School of Cyber Technology &amp; Engineering (ASCTE). All rights reserved. This curriculum may not be reproduced, distributed, or modified without express written permission from ALSDE and ASCTE.
   </footer>
 </body>
