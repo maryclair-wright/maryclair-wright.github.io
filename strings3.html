@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASCTE • String Drill — Replace & Substring</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ascte-primary: #1f6feb;
+      --ascte-accent:  #22c55e;
+      --ascte-warn:    #ef4444;
+      --ascte-soln:    #f59e0b;
+      --bg:    #0b0f1a;
+      --panel: #0f172a;
+      --ink:   #e5e7eb;
+      --muted: #a3aab8;
+      --border:#1f2937;
+      --prompt-bg:#0a1a2b;
+    }
+    body { margin:0; font-family: "IBM Plex Serif", ui-serif, Georgia, serif; background:var(--bg); color:var(--ink); }
+    .brandbar { background: var(--ascte-primary); color: #fff; padding: 10px 16px; font-weight: 600; }
+    .wrap { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items: center; }
+    .editor { width:100%; min-height: 240px; resize: vertical; background:#0b1220; color:#e2e8f0; border:1px solid var(--border); border-radius:12px; padding:12px; font-family: ui-monospace, monospace; font-size: 14px; }
+    .panel { background:#0b1220; border:1px solid var(--border); border-radius:12px; padding:12px; }
+    .panel.prompt { background: white; color: black; }
+    .status { display:flex; align-items:center; gap:8px; font-size:14px; }
+    .dot { width:10px; height:10px; border-radius:50%; background:var(--muted); }
+    .dot.ok { background: var(--ascte-accent); }
+    .dot.fail { background: var(--ascte-warn); }
+    .hidden { display:none; }
+    .solution { color: var(--ascte-soln); white-space: pre-wrap; }
+    .meta { color: var(--muted); font-size: 13px; }
+    table.summary { width:100%; border-collapse: collapse; }
+    table.summary th, table.summary td { border-top:1px solid var(--border); padding:8px; text-align:left; }
+  </style>
+</head>
+<body>
+  <div class="brandbar">ASCTE • String Practice</div>
+  <div class="wrap">
+    <div class="card">
+      <h1>String Drills: Replace & Substrings</h1>
+      <p class="meta">Enter your email to reveal problems. Each problem allows 4 attempts; after the 4th failure the solution appears and we move on. Your results are summarized at the end.</p>
+
+      <div class="row">
+        <label for="email">Student email</label>
+        <input id="email" type="email" placeholder="name@ascte.org" />
+        <button id="startBtn" class="primary">Start</button>
+        <div id="timer" class="meta">Not started</div>
+      </div>
+
+      <hr />
+
+      <div id="workArea" class="hidden">
+        <div class="row" style="justify-content:space-between; align-items:flex-end;">
+          <div class="meta" id="crumb">Exercise 1</div>
+          <div class="meta" id="attempts">Attempts: 0</div>
+        </div>
+
+        <h2>Prompt</h2>
+        <div class="panel prompt" id="promptBox"></div>
+
+        <h2>Your code (Python)</h2>
+        <textarea id="editor" class="editor" spellcheck="false"></textarea>
+        <div class="row" style="margin-top:8px; gap:8px;">
+          <button id="runBtn" class="good">Run tests</button>
+          <button id="nextBtn" class="hidden">Continue</button>
+        </div>
+
+        <h2>Results</h2>
+        <div class="panel">
+          <div class="status"><div id="statusDot" class="dot"></div><div id="statusText">Idle</div></div>
+          <pre id="output">(empty)</pre>
+          <pre id="feedback">(no feedback yet)</pre>
+        </div>
+      </div>
+
+      <div id="summaryArea" class="hidden">
+        <h2>Session Summary</h2>
+        <p id="whoWhen" class="meta"></p>
+        <table class="summary">
+          <thead><tr><th>#</th><th>Exercise</th><th>Status</th><th>Attempts</th><th>Last Output</th></tr></thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+        <div class="row" style="margin-top:12px;">
+          <button id="exportBtn">Export record (JSON)</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+  <script>
+    // Elements
+    const emailEl = document.getElementById('email');
+    const timerEl = document.getElementById('timer');
+    const workArea = document.getElementById('workArea');
+    const summaryArea = document.getElementById('summaryArea');
+    const whoWhen = document.getElementById('whoWhen');
+    const summaryBody = document.getElementById('summaryBody');
+
+    const promptBox = document.getElementById('promptBox');
+    const editorEl = document.getElementById('editor');
+    const runBtn = document.getElementById('runBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const attemptsEl = document.getElementById('attempts');
+    const outputEl = document.getElementById('output');
+    const feedbackEl = document.getElementById('feedback');
+    const crumb = document.getElementById('crumb');
+    const startBtn = document.getElementById('startBtn');
+    const exportBtn = document.getElementById('exportBtn');
+
+    // Timing
+    let startTime=null, endTime=null, tickInterval=null;
+    function fmtDuration(ms){ const s=Math.floor(ms/1000); const m=Math.floor(s/60); const sec=s%60; return `${m}m ${sec}s`; }
+
+    // Runtime
+    let pyodide; let pyodideReady=false;
+    async function bootPyodide(){ if(!pyodideReady){ setStatus(null,'Loading Python...'); pyodide = await loadPyodide(); pyodideReady=true; setStatus(null,'Ready'); } }
+
+    function setStatus(ok, text){ statusDot.classList.remove('ok','fail'); if(ok===true) statusDot.classList.add('ok'); else if(ok===false) statusDot.classList.add('fail'); statusText.textContent = text; }
+
+    // Exercises
+    const exercises = [
+      { id:'ip-replace', title:'Change an IP Address',
+        prompt:`<p>Given <code>ip = "IP: 192.168.0.1"</code>, use <code>replace()</code> to change <code>192</code> to <code>10</code>. Update <code>ip</code> and print it.</p>`,
+        starter:[ '## starter — do not change this line', 'ip = "IP: 192.168.0.1"', '# write 1–2 lines below that change ip and print the modified string' ].join('\n'),
+        expected:'IP: 10.168.0.1',
+        solution:'ip = ip.replace("192","10")\nprint(ip)',
+        seed(){ pyodide.globals.set('ip','IP: 192.168.0.1'); },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'ip = "IP: 192.168.0.1"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); return errs; },
+        check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
+      },
+      { id:'first-three', title:'First Three Letters of a File',
+        prompt:`<p>From <code>filename = "system.log"</code>, print only the first three characters. Use slicing.</p>`,
+        starter:[ '## starter — do not change this line', 'filename = "system.log"', '# write 1–2 lines below that print only the first three characters' ].join('\n'),
+        expected:'sys',
+        solution:'print(filename[:3])',
+        seed(){ pyodide.globals.set('filename','system.log'); },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'filename = "system.log"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); return errs; },
+        check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
+      },
+      { id:'middle-char', title:'Middle of a Password',
+        prompt:`<p>Given <code>pwd = "secretKey"</code>, print the <strong>middle character</strong>. Use <code>len()</code> to calculate the index.</p>`,
+        starter:[ '## starter — do not change this line', 'pwd = "secretKey"', '# write 1–2 lines below that compute the middle index using len() and print that character' ].join('\n'),
+        expected:'r',
+        solution:'mid = len(pwd)//2\nprint(pwd[mid])',
+        seed(){ pyodide.globals.set('pwd','secretKey'); },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'pwd = "secretKey"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to compute the index.'); return errs; },
+        check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
+      },
+      { id:'last4-phone', title:'Last Four Digits of a Phone Number',
+        prompt:`<p>Given <code>info = "Support: 555-1234"</code>, print just <code>"1234"</code> using <code>len()</code> and slicing.</p>`,
+        starter:[ '## starter — do not change this line', 'info = "Support: 555-1234"', '# write 1–2 lines below that slice using len() to get the last four digits' ].join('\n'),
+        expected:'1234',
+        solution:'print(info[len(info)-4:])',
+        seed(){ pyodide.globals.set('info','Support: 555-1234'); },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'info = "Support: 555-1234"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() in your slice.'); if(/\[\s*-\s*\d+/.test(code)) errs.push('Negative indexes are not allowed.'); return errs; },
+        check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
+      },
+      { id:'random-char', title:'Random Character in a Message',
+        prompt:`<p>Given <code>msg = "AccessGranted"</code>, pick a random location between the start and end and print the character at that position. (Hint: use <code>len()</code> with <code>random.randint()</code>.) The random tools are already available—no import needed.</p>`,
+        starter:[ '## starter — do not change this line', 'msg = "AccessGranted"', '# write 1–2 lines below that choose a random index and print the character at that index' ].join('\n'),
+        expected:null, // varies
+        solution:'i = random.randint(0, len(msg)-1)\nprint(msg[i])',
+        seed(){ /* random will be imported for them in program wrapper */ pyodide.globals.set('msg','AccessGranted'); },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'msg = "AccessGranted"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/(random\.randint\(|\brandint\s*\()/.test(code)) errs.push('Use random.randint(...) to pick the index.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to bound the index.'); return errs; },
+        check(code, out){ const got=(out||'').trim(); const ok = 'AccessGranted'.includes(got) && got.length===1; return { pass: ok, feedback: ok? [] : ['Output should be a single character from the message.'] }; }
+      }
+    ];
+
+    // State & attempts
+    let ix=0; const attempts = Array(exercises.length).fill(0);
+    const results = exercises.map(ex => ({ id: ex.id, title: ex.title, pass: false, attempts: 0, lastOutput: '' }));
+
+    function renderExercise(){
+      const ex = exercises[ix];
+      crumb.textContent = `Exercise ${ix+1} of ${exercises.length}`;
+      promptBox.innerHTML = ex.prompt;
+      editorEl.value = ex.starter;
+      attemptsEl.textContent = `Attempts: ${attempts[ix]}`;
+      feedbackEl.textContent = '(no feedback yet)';
+      outputEl.textContent = '(empty)';
+      statusDot.classList.remove('ok','fail');
+      statusText.textContent = 'Idle';
+      nextBtn.classList.add('hidden');
+    }
+
+    function showSummary(){
+      workArea.classList.add('hidden');
+      summaryArea.classList.remove('hidden');
+      endTime = new Date();
+      whoWhen.textContent = `${emailEl.value} — Started ${startTime?.toLocaleString()} — Stopped ${endTime.toLocaleString()}`;
+      summaryBody.innerHTML = results.map((r,i)=>`<tr><td>${i+1}</td><td>${r.title}</td><td>${r.pass? 'Pass' : 'Completed (4 tries)'}</td><td>${r.attempts}</td><td>${r.lastOutput ? r.lastOutput.replace(/</g,'&lt;') : ''}</td></tr>`).join('');
+      // also persist to localStorage
+      const key='string-drill-session-records';
+      const arr = JSON.parse(localStorage.getItem(key)||'[]');
+      arr.push({ email: emailEl.value, startedAt: startTime?.toISOString()||null, endedAt: endTime.toISOString(), results });
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    function recordProgress(pass, printed){
+      results[ix].pass = pass || false;
+      results[ix].attempts = attempts[ix];
+      results[ix].lastOutput = (printed||'').trim();
+    }
+
+    async function runTests(){
+      if(!pyodideReady) await bootPyodide();
+      const ex = exercises[ix];
+      const code = editorEl.value;
+      // Lint
+      const errs = ex.lint(code);
+      if (errs.length){
+        setStatus(false,'Lint failed');
+        feedbackEl.textContent = errs.join('\n');
+        attempts[ix]++; attemptsEl.textContent = `Attempts: ${attempts[ix]}`;
+        if(attempts[ix] >= 4){
+          const sol = document.createElement('div'); sol.className='solution'; sol.textContent = `Solution:\n${ex.solution}`; feedbackEl.appendChild(sol);
+          recordProgress(false, '(no run)');
+          nextBtn.classList.remove('hidden');
+        }
+        return;
+      }
+
+      // Build program wrapper; import random for students when needed
+      const prelude = ex.id==='random-char' ? 'import random\nfrom random import randint\n' : '';
+      const program = `\nimport sys\nfrom io import StringIO\n${prelude}cap=StringIO()\n_sys=sys.stdout\nsys.stdout=cap\n${code}\nsys.stdout=_sys\n_result=cap.getvalue()`;
+      try{
+        ex.seed && ex.seed();
+        await pyodide.runPythonAsync(program);
+        const out = pyodide.globals.get('_result');
+        outputEl.textContent = out || '(no output)';
+        const { pass, feedback } = ex.check(code, out);
+        attempts[ix]++; attemptsEl.textContent = `Attempts: ${attempts[ix]}`;
+        if(pass){
+          setStatus(true,'All tests passed');
+          feedbackEl.textContent = 'Good job.';
+          const sol = document.createElement('div'); sol.className='solution'; sol.textContent = `Solution:\n${ex.solution}`; feedbackEl.appendChild(sol);
+          recordProgress(true, out);
+          nextBtn.classList.remove('hidden');
+        } else {
+          setStatus(false,'Tests failed');
+          feedbackEl.textContent = (feedback||[]).join('\n');
+          if(attempts[ix] >= 4){
+            const sol = document.createElement('div'); sol.className='solution'; sol.textContent = `Solution:\n${ex.solution}`; feedbackEl.appendChild(sol);
+            recordProgress(false, out);
+            nextBtn.classList.remove('hidden');
+          }
+        }
+      } catch(e){
+        setStatus(false,'Runtime error');
+        outputEl.textContent='(error)';
+        feedbackEl.textContent='Runtime error. '+e;
+        attempts[ix]++; attemptsEl.textContent = `Attempts: ${attempts[ix]}`;
+        if(attempts[ix] >= 4){
+          const sol = document.createElement('div'); sol.className='solution'; sol.textContent = `Solution:\n${ex.solution}`; feedbackEl.appendChild(sol);
+          recordProgress(false, '(error)');
+          nextBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    function nextExercise(){
+      if(ix < exercises.length - 1){
+        ix++; renderExercise();
+      } else {
+        showSummary();
+      }
+    }
+
+    function start(){
+      if(!emailEl.value){ alert('Enter email first'); return; }
+      workArea.classList.remove('hidden');
+      startTime=new Date();
+      crumb.textContent = `Exercise 1 of ${exercises.length}`;
+      renderExercise();
+      bootPyodide();
+    }
+
+    function exportRecord(){
+      const blob = new Blob([JSON.stringify({ email: emailEl.value, startedAt: startTime?.toISOString()||null, endedAt: endTime?.toISOString()||null, results }, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='ascte-string-drill-session.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    }
+
+    // Wire up
+    startBtn.addEventListener('click', start);
+    runBtn.addEventListener('click', runTests);
+    nextBtn.addEventListener('click', nextExercise);
+    exportBtn.addEventListener('click', exportRecord);
+  </script>
+</body>
+</html>
