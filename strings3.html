@@ -171,6 +171,15 @@
         seed(){ /* random will be imported for them in program wrapper */ pyodide.globals.set('msg','AccessGranted'); },
         lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(3).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'import random') errs.push('Do not change the import random line.'); if(lines[2]!== 'msg = "AccessGranted"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/(random\.randint\(|\brandint\s*\()/.test(code)) errs.push('Use random.randint(...) to pick the index.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to bound the index.'); return errs; },
         check(code, out){ const got=(out||'').trim(); const ok = 'AccessGranted'.includes(got) && got.length===1; return { pass: ok, feedback: ok? [] : ['Output should be a single character from the message.'] }; }
+      },
+      { id:'first-digit', title:'First Occurrence of a Digit',
+        prompt:`<p>Given <code>hashVal = "a94f1c2e9d3b"</code>, print the index of the first digit <code>"9"</code> using <code>index()</code>.</p>`,
+        starter:[ '## starter — do not change this line', 'hashVal = "a94f1c2e9d3b"', '# write 1–2 lines below that use index() to print the index of the first "9"' ].join('\n'),
+        expected:'1',
+        solution:'print(hashVal.index("9"))',
+        seed(){ pyodide.globals.set('hashVal','a94f1c2e9d3b'); },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'hashVal = "a94f1c2e9d3b"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/\.index\s*\(/.test(code)) errs.push('Use .index() method to find the position.'); if(/print\s*\(\s*["']?1["']?\s*\)/.test(code)) errs.push('Do not hardcode "1" - use the variable and index() method.'); return errs; },
+        check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
       }
     ];
 
