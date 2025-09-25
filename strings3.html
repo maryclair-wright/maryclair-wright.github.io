@@ -142,7 +142,7 @@
         expected:'sys',
         solution:'print(filename[:3])',
         seed(){ pyodide.globals.set('filename','system.log'); },
-        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'filename = "system.log"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); return errs; },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'filename = "system.log"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/\[:/.test(code)) errs.push('Use substring notation with [:] to get the first three characters.'); if(/print\s*\(\s*["']sys["']\s*\)/.test(code)) errs.push('Do not hardcode "sys" - use the variable and substring operations.'); return errs; },
         check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
       },
       { id:'middle-char', title:'Middle of a Password',
@@ -151,7 +151,7 @@
         expected:'r',
         solution:'mid = len(pwd)//2\nprint(pwd[mid])',
         seed(){ pyodide.globals.set('pwd','secretKey'); },
-        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'pwd = "secretKey"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to compute the index.'); return errs; },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'pwd = "secretKey"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to compute the index.'); if(!/\[/.test(code)) errs.push('Use square brackets [] to access the character at the calculated index.'); if(/print\s*\(\s*["'][er]["']\s*\)/.test(code)) errs.push('Do not hardcode the character - use the variable and index calculation.'); return errs; },
         check(code, out){ const got=(out||'').trim(); const validAnswers = ['e', 'r']; return { pass: validAnswers.includes(got), feedback: validAnswers.includes(got)? [] : [`Expected output: e or r (depending on your calculation)`] }; }
       },
       { id:'last4-phone', title:'Last Four Digits of a Phone Number',
