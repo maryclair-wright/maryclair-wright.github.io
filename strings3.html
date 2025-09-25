@@ -23,9 +23,9 @@
     .wrap { max-width: 980px; margin: 24px auto; padding: 0 16px; }
     .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
     .row { display:flex; gap:12px; flex-wrap:wrap; align-items: center; }
-    .editor { width:100%; min-height: 240px; resize: vertical; background:#0b1220; color:#e2e8f0; border:1px solid var(--border); border-radius:12px; padding:12px; font-family: ui-monospace, monospace; font-size: 14px; }
+    .editor { width:100%; min-height: 240px; resize: vertical; background:#0b1220; color:#00ff00; border:1px solid var(--border); border-radius:12px; padding:12px; font-family: ui-monospace, monospace; font-size: 14px; }
     .panel { background:#0b1220; border:1px solid var(--border); border-radius:12px; padding:12px; }
-    .panel.prompt { background: white; color: black; }
+    .panel.prompt { background: white; color: black; font-size: 16px; }
     .status { display:flex; align-items:center; gap:8px; font-size:14px; }
     .dot { width:10px; height:10px; border-radius:50%; background:var(--muted); }
     .dot.ok { background: var(--ascte-accent); }
@@ -62,11 +62,11 @@
         <h2>Prompt</h2>
         <div class="panel prompt" id="promptBox"></div>
 
-        <h2>Your code (Python)</h2>
+        <h2>Type your code solution here (Python)</h2>
         <textarea id="editor" class="editor" spellcheck="false"></textarea>
         <div class="row" style="margin-top:8px; gap:8px;">
           <button id="runBtn" class="good">Run tests</button>
-          <button id="nextBtn" class="hidden">Continue</button>
+          <button id="nextBtn" class="hidden">Continue to Next Problem</button>
         </div>
 
         <h2>Results</h2>
@@ -128,7 +128,7 @@
     // Exercises
     const exercises = [
       { id:'ip-replace', title:'Change an IP Address',
-        prompt:`<p>Given <code>ip = "IP: 192.168.0.1"</code>, use <code>replace()</code> to change <code>192</code> to <code>10</code>. Update <code>ip</code> and print it.</p>`,
+        prompt:`<p>Given <code>ip = "IP: 192.168.0.1"</code>, use <code>replace()</code> to change <code>192</code> to <code>10</code>. Change the value stored in <code>ip</code> and print the results.</p>`,
         starter:[ '## starter — do not change this line', 'ip = "IP: 192.168.0.1"', '# write 1–2 lines below that change ip and print the modified string' ].join('\n'),
         expected:'IP: 10.168.0.1',
         solution:'ip = ip.replace("192","10")\nprint(ip)',
@@ -137,7 +137,7 @@
         check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
       },
       { id:'first-three', title:'First Three Letters of a File',
-        prompt:`<p>From <code>filename = "system.log"</code>, print only the first three characters. Use slicing.</p>`,
+        prompt:`<p>From <code>filename = "system.log"</code>, print only the first three characters. Use substring.</p>`,
         starter:[ '## starter — do not change this line', 'filename = "system.log"', '# write 1–2 lines below that print only the first three characters' ].join('\n'),
         expected:'sys',
         solution:'print(filename[:3])',
@@ -152,24 +152,24 @@
         solution:'mid = len(pwd)//2\nprint(pwd[mid])',
         seed(){ pyodide.globals.set('pwd','secretKey'); },
         lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'pwd = "secretKey"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to compute the index.'); return errs; },
-        check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
+        check(code, out){ const got=(out||'').trim(); const validAnswers = ['e', 'r']; return { pass: validAnswers.includes(got), feedback: validAnswers.includes(got)? [] : [`Expected output: e or r (depending on your calculation)`] }; }
       },
       { id:'last4-phone', title:'Last Four Digits of a Phone Number',
-        prompt:`<p>Given <code>info = "Support: 555-1234"</code>, print just <code>"1234"</code> using <code>len()</code> and slicing.</p>`,
-        starter:[ '## starter — do not change this line', 'info = "Support: 555-1234"', '# write 1–2 lines below that slice using len() to get the last four digits' ].join('\n'),
+        prompt:`<p>Given <code>info = "Support: 555-1234"</code>, print just <code>"1234"</code> using <code>len()</code> and substring.</p>`,
+        starter:[ '## starter — do not change this line', 'info = "Support: 555-1234"', '# write 1–2 lines below that use substring with len() to get the last four digits' ].join('\n'),
         expected:'1234',
         solution:'print(info[len(info)-4:])',
         seed(){ pyodide.globals.set('info','Support: 555-1234'); },
-        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'info = "Support: 555-1234"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() in your slice.'); if(/\[\s*-\s*\d+/.test(code)) errs.push('Negative indexes are not allowed.'); return errs; },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'info = "Support: 555-1234"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/len\s*\(/.test(code)) errs.push('Use len() in your substring.'); if(!/\[/.test(code)) errs.push('Use square brackets [] to access the substring.'); if(/\[\s*-\s*\d+/.test(code)) errs.push('Negative indexes are not allowed.'); if(/print\s*\(\s*["']1234["']\s*\)/.test(code)) errs.push('Do not hardcode "1234" - use the variable and substring operations.'); return errs; },
         check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
       },
       { id:'random-char', title:'Random Character in a Message',
-        prompt:`<p>Given <code>msg = "AccessGranted"</code>, pick a random location between the start and end and print the character at that position. (Hint: use <code>len()</code> with <code>random.randint()</code>.) The random tools are already available—no import needed.</p>`,
-        starter:[ '## starter — do not change this line', 'msg = "AccessGranted"', '# write 1–2 lines below that choose a random index and print the character at that index' ].join('\n'),
+        prompt:`<p>Given <code>msg = "AccessGranted"</code>, pick a random location between the start and end and print the character at that position. (Hint: use <code>len()</code> with <code>random.randint()</code>.)</p>`,
+        starter:[ '## starter — do not change this line', 'import random', 'msg = "AccessGranted"', '# write 1–2 lines below that choose a random index and print the character at that index' ].join('\n'),
         expected:null, // varies
         solution:'i = random.randint(0, len(msg)-1)\nprint(msg[i])',
         seed(){ /* random will be imported for them in program wrapper */ pyodide.globals.set('msg','AccessGranted'); },
-        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'msg = "AccessGranted"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/(random\.randint\(|\brandint\s*\()/.test(code)) errs.push('Use random.randint(...) to pick the index.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to bound the index.'); return errs; },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(3).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'import random') errs.push('Do not change the import random line.'); if(lines[2]!== 'msg = "AccessGranted"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/(random\.randint\(|\brandint\s*\()/.test(code)) errs.push('Use random.randint(...) to pick the index.'); if(!/len\s*\(/.test(code)) errs.push('Use len() to bound the index.'); return errs; },
         check(code, out){ const got=(out||'').trim(); const ok = 'AccessGranted'.includes(got) && got.length===1; return { pass: ok, feedback: ok? [] : ['Output should be a single character from the message.'] }; }
       }
     ];
