@@ -133,7 +133,7 @@
         expected:'IP: 10.168.0.1',
         solution:'ip = ip.replace("192","10")\nprint(ip)',
         seed(){ pyodide.globals.set('ip','IP: 192.168.0.1'); },
-        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'ip = "IP: 192.168.0.1"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); return errs; },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'ip = "IP: 192.168.0.1"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/\.replace\s*\(/.test(code)) errs.push('Use the .replace() method to change the IP address.'); if(/print\s*\(\s*["']IP:\s*10\.168\.0\.1["']\s*\)/.test(code)) errs.push('Do not hardcode the result - use the variable and .replace() method.'); return errs; },
         check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
       },
       { id:'first-three', title:'First Three Letters of a File',
@@ -142,7 +142,7 @@
         expected:'sys',
         solution:'print(filename[:3])',
         seed(){ pyodide.globals.set('filename','system.log'); },
-        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'filename = "system.log"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/\[:/.test(code)) errs.push('Use substring notation with [:] to get the first three characters.'); if(/print\s*\(\s*["']sys["']\s*\)/.test(code)) errs.push('Do not hardcode "sys" - use the variable and substring operations.'); return errs; },
+        lint(code){ const lines=code.trimEnd().split('\n'); const errs=[]; const codeLines = lines.slice(2).filter(l => l.trim() && !l.trim().startsWith('#')); if(lines[0]!== '## starter — do not change this line') errs.push('Do not change the starter comment line.'); if(lines[1]!== 'filename = "system.log"') errs.push('Do not change the starter assignment line.'); if(codeLines.length>2) errs.push('Keep it to 1–2 lines of code after the starter.'); if(!/\[:/.test(code)) errs.push('Use substring notation with [:] to get the first three characters.'); if(/print\s*\(\s*["']?sys["']?\s*\)/i.test(code) && !/filename/.test(code)) errs.push('Do not hardcode "sys" - use the variable and substring operations.'); return errs; },
         check(code, out){ const got=(out||'').trim(); return { pass: got===this.expected, feedback: got===this.expected? [] : [`Expected output: ${this.expected}`] }; }
       },
       { id:'middle-char', title:'Middle of a Password',
