@@ -6,7 +6,7 @@
   <title>2‑Minute Typing Test</title>
   <style>
     :root{
-      --bg:#0A2342; --panel:#F4F4F4; --text:#0A2342; --accent:#2E8BFF; --danger:#C62828; --highlight:#FFF59D;
+      --bg:#0A2342; --panel:#F4F4F4; --text:#0A2342; --accent:#2E8BFF; --danger:#C62828; --highlight:#FFF59D; --success:#2E7D32;
     }
     *{box-sizing:border-box}
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background: var(--bg); margin: 0; color: white; }
@@ -20,10 +20,12 @@
     .controls{display:flex; gap: 12px; align-items:center; flex-wrap:wrap}
     button{ background: var(--accent); color:white; border: none; border-radius: 999px; padding: 10px 16px; font-weight: 700; cursor: pointer; }
     button[disabled]{opacity:.6; cursor:not-allowed}
+    .practice-btn{ background: var(--success); }
     .timer{font-weight: 800; font-size: 20px}
     .notice{ color: var(--danger); font-weight:800; font-size: 18px; }
-    .target{ background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 18px; font-size: 14pt; line-height: 2; height: 420px; overflow:auto; font-family: Verdana, Arial, sans-serif; white-space: pre-wrap; }
-    .typing{ background: white; border-radius: 12px; border: 2px solid #e5e7eb; padding: 18px; font-size: 14pt; line-height: 2; height: 420px; resize: none; font-family: Verdana, Arial, sans-serif; }
+    .practice-notice{ color: var(--success); font-weight:800; font-size: 18px; }
+    .target{ background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 18px; font-size: 14pt; line-height: 2; height: 280px; overflow:auto; font-family: Verdana, Arial, sans-serif; white-space: pre-wrap; }
+    .typing{ background: white; border-radius: 12px; border: 2px solid #e5e7eb; padding: 18px; font-size: 14pt; line-height: 2; height: 280px; resize: none; font-family: Verdana, Arial, sans-serif; }
     .currentChar{ outline: 2px solid var(--accent); outline-offset: 2px; }
     .currentSentence{ background: var(--highlight); }
     .muted{ color:#5b6974 }
@@ -31,6 +33,7 @@
     .font-toggle{margin-top:12px}
     .note { font-size: 12px; color: #666; margin-top: 4px; }
     .typing-notes { margin-top: 30px; background: #f8f8ff; color: #002868; border-radius: 8px; padding: 18px; font-size: 1.1em; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .practice-banner { background: #e8f5e9; color: var(--success); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-weight: 700; text-align: center; }
   </style>
 </head>
 <body>
@@ -45,7 +48,8 @@
         <div class="note">Enter your school email to get started.</div>
       </div>
       <div class="controls" style="margin-top:12px">
-        <button id="startBtn" disabled>Start (2:00)</button>
+        <button id="practiceBtn" class="practice-btn" disabled>Practice (1:00)</button>
+        <button id="startBtn" disabled>Start Test (2:00)</button>
         <span class="muted" id="attempts">Attempt 1 of 2</span>
       </div>
       <div class="font-toggle">
@@ -53,18 +57,22 @@
       </div>
       <div class="typing-notes">
         <strong>Typing Test Instructions:</strong><br>
-        • You will type for <b>two minutes</b> or until you finish the passage, whichever comes first.<br>
-        • <b>Backspace</b> and <b>Delete</b> are <u>not allowed</u> during the test.<br>
-        • If you make a mistake, <b>do not try to correct it</b>—just keep typing the next character in the passage.<br>
-        • Focus on accuracy and steady typing, not speed alone.<br>
+        • <b>Practice Mode (1 minute):</b> Try the typing interface with a passage about Python programming. Get comfortable with the tool and see your results.<br>
+        • <b>Test Mode (2 minutes):</b> Complete the official typing test for your grade.<br>
+        • <b>Backspace</b> and <b>Delete</b> are <u>allowed</u> if you need to correct mistakes.<br>
+        • Focus on accuracy and steady typing.<br>
       </div>
     </section>
 
-    <!-- TEST SCREEN -->
+    <!-- PRACTICE/TEST SCREEN -->
     <section id="testScreen" class="card" style="margin-top:16px; display:none">
+      <div id="practiceBanner" class="practice-banner" style="display:none">
+        🎯 PRACTICE MODE - Get comfortable with the typing tool!
+      </div>
       <div class="controls" style="justify-content:space-between">
         <div class="timer" id="timer">02:00</div>
-        <div class="notice">If you make a mistake, keep going forward.</div>
+        <div class="notice" id="testNotice">Type carefully and use backspace if needed.</div>
+        <div class="practice-notice" id="practiceNotice" style="display:none">Practice typing - results won't be saved.</div>
       </div>
       <div class="row" style="margin-top:12px">
         <div>
@@ -80,32 +88,55 @@
 
     <!-- RESULTS SCREEN -->
     <section id="resultsScreen" class="card" style="margin-top:16px; display:none">
-      <h3 style="margin-top:0">Results</h3>
+      <div id="practiceResultsBanner" class="practice-banner" style="display:none">
+        ✅ Practice Complete! Ready to take the real test?
+      </div>
+      <h3 style="margin-top:0" id="resultsTitle">Results</h3>
       <div id="summary"></div>
       <div class="results" style="margin-top:12px">
         <div class="muted">Your Output</div>
         <pre id="output"></pre>
       </div>
       <div class="controls" style="margin-top:12px">
+        <button id="downloadPdf" style="background:#d32f2f">Download PDF Results</button>
         <button id="newAttempt">New Attempt</button>
+        <button id="takeTest" class="practice-btn" style="display:none">Take the Real Test</button>
+        <button id="tryAgainPractice" style="display:none">Practice Again</button>
       </div>
     </section>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     // ------- Config -------
-    const LIMIT_SECONDS = 120; // 2:00
+    // LIMIT_SECONDS ← 120  // AP CSP: constant for test duration
+    const TEST_LIMIT_SECONDS = 120; // 2:00 for real test
+    const PRACTICE_LIMIT_SECONDS = 60; // 1:00 for practice
+    // MAX_ATTEMPTS ← 2  // AP CSP: maximum number of test attempts allowed
     const MAX_ATTEMPTS = 2;
-    const passages = [
+    
+    // Practice passage about Python programming language
+    const practicePassage = {
+      id: 'Python History',
+      text: `Python is a high-level programming language created by Guido van Rossum in 1991. The language was named after the British comedy group "Monty Python's Flying Circus," not the snake! Van Rossum wanted a name that was short, unique, and slightly mysterious.
+
+Python's design philosophy emphasizes code readability and simplicity. The language uses indentation (whitespace) to define code blocks instead of curly braces {} or keywords. This makes Python code look clean and easy to understand. For example, a simple "Hello, World!" program in Python is just: print("Hello, World!")
+
+Over the years, Python has become one of the most popular programming languages in the world. Why? Because it's versatile and beginner-friendly. Python is used for web development (Django, Flask), data science (NumPy, pandas), artificial intelligence (TensorFlow, PyTorch), automation, and much more. Companies like Google, NASA, Spotify, and Netflix use Python in their technology stacks.
+
+Python 2.0 was released in 2000, and Python 3.0 came out in 2008. The transition from Python 2 to Python 3 was significant because Python 3 was not backward-compatible. This means code written for Python 2 might not work in Python 3 without modifications. Today, Python 2 reached its end-of-life on January 1, 2020, and everyone uses Python 3.`
+    };
+
+    const testPassages = [
       {
         id: 'NASA Marshall',
-        text: `NASA’s Marshall Space Flight Center, founded in 1960, is located in Huntsville, Alabama. The center is famous for its role in building the Saturn V rocket that carried astronauts to the Moon. Today, engineers here work on projects such as the Space Launch System (SLS): a powerful rocket designed for deep-space missions.
+        text: `NASA's Marshall Space Flight Center, founded in 1960, is located in Huntsville, Alabama. The center is famous for its role in building the Saturn V rocket that carried astronauts to the Moon. Today, engineers here work on projects such as the Space Launch System (SLS): a powerful rocket designed for deep-space missions.
 
-Why is Marshall important? It provides testing facilities, advanced laboratories, and leadership for programs that shape the future of space travel. Students often visit for tours (both in-person and virtual), where they see real rocket engines and simulators. If you go, you might ask: How did Alabama become home to so much space innovation? The answer goes back to the 1950s/1960s, when Dr. Wernher von Braun and his team moved to Huntsville to lead America’s rocket development.
+Why is Marshall important? It provides testing facilities, advanced laboratories, and leadership for programs that shape the future of space travel. Students often visit for tours (both in-person and virtual), where they see real rocket engines and simulators. If you go, you might ask: How did Alabama become home to so much space innovation? The answer goes back to the 1950s/1960s, when Dr. Wernher von Braun and his team moved to Huntsville to lead America's rocket development.
 
-In addition to rockets, Marshall leads research in propulsion, advanced materials, and even 3D printing for space habitats. Teams work across many fields: physics, chemistry, computer science, and engineering. For example, scientists might ask, “What happens if we use new alloys at 2000°F?” Their experiments often require precise tools that measure forces as small as 0.001 newtons. This kind of testing ensures that spacecraft can survive the extreme conditions of launch and orbit.
+In addition to rockets, Marshall leads research in propulsion, advanced materials, and even 3D printing for space habitats. Teams work across many fields: physics, chemistry, computer science, and engineering. For example, scientists might ask, "What happens if we use new alloys at 2000°F?" Their experiments often require precise tools that measure forces as small as 0.001 newtons. This kind of testing ensures that spacecraft can survive the extreme conditions of launch and orbit.
 
-The center also partners with universities, companies, and local schools to inspire future scientists. Internships give high school and college students a chance to work side by side with NASA professionals. When you consider the number of projects happening at once—launch vehicles, satellite missions, and deep-space research—it’s clear why Marshall remains central to America’s space program. Visitors often leave asking: What will the next 50 years of discovery bring, and how will Alabama continue to play a role?`
+The center also partners with universities, companies, and local schools to inspire future scientists. Internships give high school and college students a chance to work side by side with NASA professionals. When you consider the number of projects happening at once—launch vehicles, satellite missions, and deep-space research—it's clear why Marshall remains central to America's space program. Visitors often leave asking: What will the next 50 years of discovery bring, and how will Alabama continue to play a role?`
       },
       {
         id: 'USS Alabama',
@@ -116,28 +147,42 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
     ];
 
     // Track which passage was used for each attempt
+    // usedPassages ← []  // AP CSP: list to track which passages have been used
     let usedPassages = [];
+    // currentPassageIdx ← null  // AP CSP: index of current passage
     let currentPassageIdx = null;
+    // isPracticeMode ← false  // AP CSP: flag to track if in practice mode
+    let isPracticeMode = false;
+    // hasCompletedPractice ← false  // AP CSP: flag to track if practice was completed
+    let hasCompletedPractice = false;
 
+    // PROCEDURE pickNewPassage()
+    // AP CSP: Select a random passage that hasn't been used yet
     function pickNewPassage() {
-      // Pick a passage not yet used
-      const available = passages.map((p, i) => i).filter(i => !usedPassages.includes(i));
+      // available ← passages not in usedPassages
+      const available = testPassages.map((p, i) => i).filter(i => !usedPassages.includes(i));
       if (available.length === 0) return 0; // fallback
+      // idx ← RANDOM element from available
       const idx = available[Math.floor(Math.random() * available.length)];
+      // APPEND idx to usedPassages
       usedPassages.push(idx);
       return idx;
     }
 
-    // On first load, pick a passage
+    // On first load, pick a test passage
     currentPassageIdx = pickNewPassage();
-    let passageId = passages[currentPassageIdx].id;
-    let passage = passages[currentPassageIdx].text;
+    let passageId = testPassages[currentPassageIdx].id;
+    let passage = testPassages[currentPassageIdx].text;
 
     // ------- State -------
+    // attempts ← 1  // AP CSP: current attempt number
     let attempts = 1;
+    // timerId ← null  // AP CSP: reference to interval timer
     let timerId = null;
+    // startedAt ← null  // AP CSP: timestamp when test started
     let startedAt = null;
-    let index = 0; // position in passage
+    // currentIndex ← 0  // AP CSP: current position in passage
+    let currentIndex = 0;
 
     // ------- Elements -------
     const startScreen = document.getElementById('startScreen');
@@ -145,47 +190,69 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
     const resultsScreen = document.getElementById('resultsScreen');
 
     const emailEl = document.getElementById('email');
+    const practiceBtn = document.getElementById('practiceBtn');
     const startBtn = document.getElementById('startBtn');
     const attemptsEl = document.getElementById('attempts');
+
+    const practiceBanner = document.getElementById('practiceBanner');
+    const testNotice = document.getElementById('testNotice');
+    const practiceNotice = document.getElementById('practiceNotice');
 
     const timerEl = document.getElementById('timer');
     const targetEl = document.getElementById('target');
     const typingEl = document.getElementById('typing');
 
+    const practiceResultsBanner = document.getElementById('practiceResultsBanner');
+    const resultsTitle = document.getElementById('resultsTitle');
     const summaryEl = document.getElementById('summary');
     const outputEl = document.getElementById('output');
+    const downloadPdfBtn = document.getElementById('downloadPdf');
     const newAttemptBtn = document.getElementById('newAttempt');
+    const takeTestBtn = document.getElementById('takeTest');
+    const tryAgainPracticeBtn = document.getElementById('tryAgainPractice');
     const dyslexiaToggle = document.getElementById('dyslexiaFont');
 
     // ------- Helpers -------
-    function setTimerDisplay(s){
-      const m = Math.floor(s/60).toString().padStart(2,'0');
-      const r = Math.floor(s%60).toString().padStart(2,'0');
-      timerEl.textContent = `${m}:${r}`;
+    // PROCEDURE setTimerDisplay(seconds)
+    // AP CSP: Display time in MM:SS format
+    function setTimerDisplay(seconds){
+      // minutes ← seconds DIV 60
+      const minutes = Math.floor(seconds / 60).toString().padStart(2,'0');
+      // remainder ← seconds MOD 60
+      const remainder = Math.floor(seconds % 60).toString().padStart(2,'0');
+      timerEl.textContent = `${minutes}:${remainder}`;
     }
 
-    function escapeHTML(ch){
-      if(ch === '<') return '&lt;';
-      if(ch === '>') return '&gt;';
-      if(ch === '&') return '&amp;';
-      return ch;
+    // PROCEDURE escapeHTML(character)
+    // AP CSP: Convert special HTML characters to safe entities
+    function escapeHTML(character){
+      if(character === '<') return '&lt;';
+      if(character === '>') return '&gt;';
+      if(character === '&') return '&amp;';
+      return character;
     }
 
+    // PROCEDURE renderTarget()
+    // AP CSP: Display passage with current character and sentence highlighted
     function renderTarget(){
       // Find current sentence boundaries (periods only)
-      let sentenceStart = passage.lastIndexOf('.', index-1) + 1;
+      let sentenceStart = passage.lastIndexOf('.', currentIndex - 1) + 1;
       if(sentenceStart < 0) sentenceStart = 0;
-      let sentenceEnd = passage.indexOf('.', index);
+      let sentenceEnd = passage.indexOf('.', currentIndex);
       if(sentenceEnd < 0) sentenceEnd = passage.length;
 
+      // beforeSentence ← characters from 0 to sentenceStart
       const beforeSentence = passage.slice(0, sentenceStart);
-      const sentence = passage.slice(sentenceStart, sentenceEnd+1);
-      const afterSentence = passage.slice(sentenceEnd+1);
+      // sentence ← characters from sentenceStart to sentenceEnd (inclusive)
+      const sentence = passage.slice(sentenceStart, sentenceEnd + 1);
+      // afterSentence ← characters after sentenceEnd
+      const afterSentence = passage.slice(sentenceEnd + 1);
 
       let sentenceHtml = '';
-      for(let i=0;i<sentence.length;i++){
-        const globalIndex = sentenceStart+i;
-        if(globalIndex === index){
+      // FOR EACH i FROM 0 TO LENGTH(sentence) - 1
+      for(let i = 0; i < sentence.length; i++){
+        const globalIndex = sentenceStart + i;
+        if(globalIndex === currentIndex){
           sentenceHtml += `<span class="currentChar">${escapeHTML(sentence[i])}</span>`;
         } else {
           sentenceHtml += escapeHTML(sentence[i]);
@@ -193,69 +260,157 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
       }
 
       targetEl.innerHTML = `${escapeHTML(beforeSentence)}<span class="currentSentence">${sentenceHtml}</span>${escapeHTML(afterSentence)}`;
-      const sel = targetEl.querySelector('.currentChar');
-      if(sel){ sel.scrollIntoView({block:'center'}); }
+      const selectedChar = targetEl.querySelector('.currentChar');
+      if(selectedChar){ selectedChar.scrollIntoView({block:'center'}); }
     }
 
+    // PROCEDURE finish()
+    // AP CSP: End test, calculate results, display summary
     function finish(){
-      clearInterval(timerId); timerId = null;
+      clearInterval(timerId); 
+      timerId = null;
       typingEl.disabled = true;
-      const seconds = Math.max(1, Math.round((performance.now() - startedAt)/1000));
+      
+      // elapsedMs ← current time - startedAt
+      const elapsedMs = performance.now() - startedAt;
+      // seconds ← MAX(1, ROUND(elapsedMs / 1000))
+      const seconds = Math.max(1, Math.round(elapsedMs / 1000));
+      // minutes ← seconds / 60
       const minutes = seconds / 60;
 
       const typed = typingEl.value;
       let correct = 0;
-      for(let i=0; i<typed.length; i++){
+      // FOR EACH i FROM 0 TO LENGTH(typed) - 1
+      for(let i = 0; i < typed.length; i++){
         if(typed[i] === passage[i]) correct++;
       }
+      // errors ← MAX(0, LENGTH(typed) - correct)
       const errors = Math.max(0, typed.length - correct);
-      const grossWpm = Math.round((typed.length/5) / minutes);
-      const accuracy = typed.length ? (correct/typed.length) : 0;
-      const netWpm = Math.round((correct/5) / minutes);
+      // grossWpm ← ROUND((LENGTH(typed) / 5) / minutes)
+      const grossWpm = Math.round((typed.length / 5) / minutes);
+      // accuracy ← correct / LENGTH(typed) if LENGTH(typed) > 0, else 0
+      const accuracy = typed.length ? (correct / typed.length) : 0;
+      // netWpm ← ROUND((correct / 5) / minutes)
+      const netWpm = Math.round((correct / 5) / minutes);
 
-      const when = new Date().toLocaleString();
+      const whenCompleted = new Date().toLocaleString();
       const email = emailEl.value.trim();
-      const lines = [
-        `<div><strong>Email:</strong> ${email}</div>`,
-        `<div><strong>Completed:</strong> ${when}</div>`,
-        `<div><strong>Passage:</strong> ${passageId}</div>`,
-        `<div><strong>Elapsed:</strong> ${seconds}s</div>`,
-        `<div><strong>Gross WPM:</strong> ${grossWpm}</div>`,
-        `<div><strong>Accuracy:</strong> ${Math.round(accuracy*100)}%</div>`,
-        `<div><strong>Net WPM:</strong> ${netWpm}</div>`,
-        `<div><strong>Chars typed:</strong> ${typed.length} &nbsp;|&nbsp; <strong>Correct:</strong> ${correct} &nbsp;|&nbsp; <strong>Errors:</strong> ${errors}</div>`
-      ];
-      summaryEl.innerHTML = lines.join('');
+      
+      // IF isPracticeMode THEN show practice results
+      if(isPracticeMode){
+        hasCompletedPractice = true;
+        practiceResultsBanner.style.display = 'block';
+        resultsTitle.textContent = 'Practice Results';
+        downloadPdfBtn.style.display = 'none'; // Hide PDF button for practice
+        const lines = [
+          `<div><strong>Practice Passage:</strong> ${passageId}</div>`,
+          `<div><strong>Time:</strong> ${seconds}s</div>`,
+          `<div><strong>Gross WPM:</strong> ${grossWpm}</div>`,
+          `<div><strong>Accuracy:</strong> ${Math.round(accuracy * 100)}%</div>`,
+          `<div><strong>Net WPM:</strong> ${netWpm}</div>`,
+          `<div><strong>Chars typed:</strong> ${typed.length} &nbsp;|&nbsp; <strong>Correct:</strong> ${correct} &nbsp;|&nbsp; <strong>Errors:</strong> ${errors}</div>`,
+          `<div style="margin-top:12px; padding:12px; background:#e3f2fd; border-radius:8px; color:#0d47a1;">
+            <strong>💡 Tip:</strong> This was practice! When you're ready, click "Take the Real Test" to complete your official typing assessment.
+          </div>`
+        ];
+        summaryEl.innerHTML = lines.join('');
+        newAttemptBtn.style.display = 'none';
+        takeTestBtn.style.display = 'inline-block';
+        tryAgainPracticeBtn.style.display = 'inline-block';
+      } else {
+        practiceResultsBanner.style.display = 'none';
+        resultsTitle.textContent = 'Test Results';
+        downloadPdfBtn.style.display = 'inline-block'; // Show PDF button for real test
+        const lines = [
+          `<div><strong>Email:</strong> ${email}</div>`,
+          `<div><strong>Completed:</strong> ${whenCompleted}</div>`,
+          `<div><strong>Passage:</strong> ${passageId}</div>`,
+          `<div><strong>Elapsed:</strong> ${seconds}s</div>`,
+          `<div><strong>Gross WPM:</strong> ${grossWpm}</div>`,
+          `<div><strong>Accuracy:</strong> ${Math.round(accuracy * 100)}%</div>`,
+          `<div><strong>Net WPM:</strong> ${netWpm}</div>`,
+          `<div><strong>Chars typed:</strong> ${typed.length} &nbsp;|&nbsp; <strong>Correct:</strong> ${correct} &nbsp;|&nbsp; <strong>Errors:</strong> ${errors}</div>`
+        ];
+        summaryEl.innerHTML = lines.join('');
+        newAttemptBtn.style.display = 'inline-block';
+        takeTestBtn.style.display = 'none';
+        tryAgainPracticeBtn.style.display = 'none';
+      }
+      
       outputEl.textContent = typed;
-
       testScreen.style.display = 'none';
       resultsScreen.style.display = 'block';
     }
 
-    function start(){
+    // PROCEDURE startTest(practice)
+    // AP CSP: Initialize test screen and start timer
+    // practice parameter: true for practice mode, false for real test
+    function startTest(practice){
+      isPracticeMode = practice;
+      
+      // IF practice mode THEN use practice passage, ELSE use test passage
+      if(practice){
+        passageId = practicePassage.id;
+        passage = practicePassage.text;
+        practiceBanner.style.display = 'block';
+        testNotice.style.display = 'none';
+        practiceNotice.style.display = 'block';
+      } else {
+        passageId = testPassages[currentPassageIdx].id;
+        passage = testPassages[currentPassageIdx].text;
+        practiceBanner.style.display = 'none';
+        testNotice.style.display = 'block';
+        practiceNotice.style.display = 'none';
+      }
+      
       startedAt = performance.now();
-      index = 0; typingEl.value = ''; typingEl.disabled = false; typingEl.focus();
+      currentIndex = 0; 
+      typingEl.value = ''; 
+      typingEl.disabled = false; 
+      typingEl.focus();
       
       renderTarget();
       testScreen.style.display = 'block';
       startScreen.style.display = 'none';
 
-      let remaining = LIMIT_SECONDS;
-      setTimerDisplay(remaining);
+      // timeLimit ← practice mode ? 60 seconds : 120 seconds
+      const timeLimit = practice ? PRACTICE_LIMIT_SECONDS : TEST_LIMIT_SECONDS;
+      let remainingSeconds = timeLimit;
+      setTimerDisplay(remainingSeconds);
+      
+      // Every 1000ms, decrease remainingSeconds and update display
       timerId = setInterval(()=>{
-        remaining--; setTimerDisplay(remaining);
-        if(remaining <= 0){ finish(); }
+        remainingSeconds--; 
+        setTimerDisplay(remainingSeconds);
+        if(remainingSeconds <= 0){ finish(); }
       }, 1000);
     }
 
     // ------- Event wiring -------
+    // PROCEDURE validToStart()
+    // AP CSP: Check if email is filled to enable start buttons
     function validToStart(){
-      const ok = emailEl.value.trim() !== '';
-      startBtn.disabled = !ok;
+      const isValid = emailEl.value.trim() !== '';
+      startBtn.disabled = !isValid;
+      practiceBtn.disabled = !isValid;
     }
 
     emailEl.addEventListener('input', validToStart);
-    startBtn.addEventListener('click', start);
+    practiceBtn.addEventListener('click', ()=> startTest(true));
+    startBtn.addEventListener('click', ()=> startTest(false));
+
+    // After practice, user can take the real test
+    takeTestBtn.addEventListener('click', ()=>{
+      resultsScreen.style.display = 'none';
+      startScreen.style.display = 'block';
+      isPracticeMode = false;
+    });
+
+    // User can practice again
+    tryAgainPracticeBtn.addEventListener('click', ()=>{
+      resultsScreen.style.display = 'none';
+      startScreen.style.display = 'block';
+    });
 
     newAttemptBtn.addEventListener('click', ()=>{
       attempts++;
@@ -265,20 +420,21 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
       }
       // Pick a different passage for the new attempt
       currentPassageIdx = pickNewPassage();
-      passageId = passages[currentPassageIdx].id;
-      passage = passages[currentPassageIdx].text;
+      passageId = testPassages[currentPassageIdx].id;
+      passage = testPassages[currentPassageIdx].text;
       attemptsEl.textContent = `Attempt ${attempts} of ${MAX_ATTEMPTS}`;
       resultsScreen.style.display = 'none';
       startScreen.style.display = 'block';
       validToStart();
     });
 
+    // Still prevent copy/paste/cut operations for test integrity
     typingEl.addEventListener('keydown', (e)=>{
-      if(e.key === 'Backspace' || e.key === 'Delete'){
-        e.preventDefault(); return false;
-      }
-      if((e.ctrlKey||e.metaKey) && ['v','x','a','c'].includes(e.key.toLowerCase())){
-        e.preventDefault(); return false;
+      // Allow backspace and delete - removed the prevention code
+      // Still block copy, paste, cut, select all
+      if((e.ctrlKey || e.metaKey) && ['v','x','a','c'].includes(e.key.toLowerCase())){
+        e.preventDefault(); 
+        return false;
       }
     });
 
@@ -287,30 +443,123 @@ Why is the USS Alabama important? It represents the courage of thousands of sail
     typingEl.addEventListener('cut', e=> e.preventDefault());
     typingEl.addEventListener('contextmenu', e=> e.preventDefault());
 
+    // PROCEDURE onTypingInput()
+    // AP CSP: Update current position and render target as user types
     typingEl.addEventListener('input', ()=>{
+      // Keep cursor at end of text
       typingEl.selectionStart = typingEl.selectionEnd = typingEl.value.length;
-      let len = typingEl.value.length;
-      if(len >= passage.length){
+      let typedLength = typingEl.value.length;
+      
+      // IF typedLength >= LENGTH(passage) THEN
+      if(typedLength >= passage.length){
+        // Truncate to passage length
         typingEl.value = typingEl.value.slice(0, passage.length);
-        index = passage.length;
+        currentIndex = passage.length;
         renderTarget();
         finish();
         return;
       }
-      index = len;
+      // currentIndex ← typedLength
+      currentIndex = typedLength;
       renderTarget();
     });
 
     // Toggle dyslexia-friendly font
-    const dyslexiaToggleEl = dyslexiaToggle; // alias for clarity
+    const dyslexiaToggleEl = dyslexiaToggle;
     dyslexiaToggleEl.addEventListener('change', ()=>{
       const font = dyslexiaToggleEl.checked ? 'OpenDyslexic, Verdana, Arial, sans-serif' : 'Verdana, Arial, sans-serif';
-      document.querySelectorAll('.target, .typing, .results pre').forEach(el=>{
-        el.style.fontFamily = font;
+      document.querySelectorAll('.target, .typing, .results pre').forEach(element=>{
+        element.style.fontFamily = font;
       });
     });
 
-    setTimerDisplay(LIMIT_SECONDS);
+    // PROCEDURE generatePdf()
+    // AP CSP: Create a PDF document with test results
+    function generatePdf(){
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      const email = emailEl.value.trim();
+      const resultsText = summaryEl.innerText;
+      const typedText = outputEl.textContent;
+      
+      // Set up PDF styling
+      doc.setFontSize(18);
+      doc.text('Typing Test Results', 20, 20);
+      
+      doc.setFontSize(12);
+      let yPosition = 35;
+      
+      // Add a header line
+      doc.setLineWidth(0.5);
+      doc.line(20, 25, 190, 25);
+      
+      // Parse and add results summary
+      const resultLines = resultsText.split('\n').filter(line => line.trim() !== '');
+      resultLines.forEach(line => {
+        if(yPosition > 270){
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(line, 20, yPosition);
+        yPosition += 7;
+      });
+      
+      // Add separator
+      yPosition += 5;
+      doc.setLineWidth(0.3);
+      doc.line(20, yPosition, 190, yPosition);
+      yPosition += 10;
+      
+      // Add typed output header
+      doc.setFontSize(14);
+      doc.text('Your Typed Output:', 20, yPosition);
+      yPosition += 10;
+      
+      doc.setFontSize(10);
+      // Split typed text into lines that fit on page
+      const maxLineWidth = 170;
+      const words = typedText.split(' ');
+      let currentLine = '';
+      
+      words.forEach((word, index) => {
+        const testLine = currentLine + word + ' ';
+        const textWidth = doc.getTextWidth(testLine);
+        
+        if(textWidth > maxLineWidth && currentLine !== ''){
+          if(yPosition > 280){
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.text(currentLine, 20, yPosition);
+          yPosition += 6;
+          currentLine = word + ' ';
+        } else {
+          currentLine = testLine;
+        }
+      });
+      
+      // Add any remaining text
+      if(currentLine.trim() !== ''){
+        if(yPosition > 280){
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(currentLine, 20, yPosition);
+      }
+      
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().slice(0,19).replace(/:/g, '-');
+      const filename = `typing-test-${email.split('@')[0]}-${timestamp}.pdf`;
+      
+      // Download the PDF
+      doc.save(filename);
+    }
+
+    // Add event listener for PDF download button
+    downloadPdfBtn.addEventListener('click', generatePdf);
+
+    setTimerDisplay(TEST_LIMIT_SECONDS);
     renderTarget();
     attemptsEl.textContent = `Attempt ${attempts} of ${MAX_ATTEMPTS}`;
     validToStart();
