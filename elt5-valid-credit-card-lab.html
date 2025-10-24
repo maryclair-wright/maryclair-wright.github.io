@@ -244,20 +244,26 @@
 
     <div class="section">
         <h2>Extensions</h2>
+        <p><strong>Complete at least TWO extensions from the list below.</strong> Choose extensions that match your programming comfort level.</p>
         <ol>
-            <li><strong>Mastercard Support:</strong> Modify Part 4 to use <span class="code">elif</span> to also check for Mastercard (starts with 5)<br>
+            <li><strong>Mastercard Support (INTERMEDIATE):</strong> Modify Part 3 to use <span class="code">elif</span> to also check for Mastercard (starts with 5)<br>
             Test with: <span class="code">"5432123456789012"</span> should print Mastercard</li>
             
-            <li><strong>Generate and Verify Security Code:</strong> Write a function that generates a random 3-digit security code (between 100 and 999) using <span class="code">random.randint()</span>. Then ask the user to enter a security code and compare it to the generated code. Print "Security code matches!" or "Security code does not match."</li>
+            <li><strong>Generate and Verify Security Code (BEGINNER):</strong> Write a function that generates a random 3-digit security code (between 100 and 999) using <span class="code">random.randint()</span>. Then ask the user to enter a security code and compare it to the generated code. Print "Security code matches!" or "Security code does not match."</li>
             
-            <li><strong>Premium Card Check:</strong> Write code that uses <span class="code">and</span> to check if a card is BOTH a Visa AND has a last digit divisible by 3, then print "Premium Visa card" or "Standard card"<br>
+            <li><strong>Premium Card Check (BEGINNER):</strong> Write code that uses <span class="code">and</span> to check if a card is BOTH a Visa AND has a last digit divisible by 3, then print "Premium Visa card" or "Standard card"<br>
             Test with: <span class="code">"4532123456789009"</span> should print Premium Visa card</li>
             
-            <li><strong>Flexible Card Type:</strong> Write code that uses <span class="code">or</span> to check if a card is either Visa OR Mastercard, then print "Accepted card type" or "Card type not accepted"<br>
+            <li><strong>Flexible Card Type (BEGINNER/INTERMEDIATE):</strong> Write code that uses <span class="code">or</span> to check if a card is either Visa OR Mastercard, then print "Accepted card type" or "Card type not accepted"<br>
             Test with: <span class="code">"4532123456789012"</span> or <span class="code">"5432123456789012"</span> should print Accepted card type</li>
             
-            <li><strong>Invalid Character Detector:</strong> Write code that uses <span class="code">not</span> to find cards that do NOT contain only digits, then print "Invalid characters found" or "No invalid characters"<br>
+            <li><strong>Invalid Character Detector (ADVANCED):</strong> Write code that uses <span class="code">not</span> to find cards that do NOT contain only digits, then print "Invalid characters found" or "No invalid characters"<br>
             Test with: <span class="code">"4532-1234-5678-9012"</span> should print Invalid characters found</li>
+            
+            <li><strong>Convert to Procedures (INTERMEDIATE):</strong> Go back and convert Parts 2, 3, 4, or 5 into their own separate procedures that can be called independently.</li>
+            
+            <li><strong>Combined Validator (ADVANCED):</strong> Create a procedure called <span class="code">checkValidity(cardNumber)</span> that combines ALL the validation checks (length, card type, security digit, all digits) into one function. It should return <span class="code">True</span> if ALL checks pass, <span class="code">False</span> otherwise.<br>
+            Test with: <span class="code">"4532123456789009"</span> should return True</li>
         </ol>
     </div>
 
