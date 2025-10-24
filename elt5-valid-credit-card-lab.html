@@ -24,18 +24,6 @@
             margin-top: 30px;
             font-size: 1.3em;
         }
-        h3 {
-            color: #BF0A30;
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-        .subtitle {
-            color: #6598E9;
-            font-size: 1.2em;
-            font-style: italic;
-            margin-top: -10px;
-            margin-bottom: 20px;
-        }
         .code {
             color: #BF0A30;
             font-weight: 600;
@@ -63,13 +51,6 @@
             margin: 10px 0;
             color: #002868;
         }
-        .time-note {
-            background-color: #A5A5A4;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            color: #002868;
-        }
         hr {
             border: none;
             border-top: 2px solid #A5A5A4;
@@ -83,146 +64,144 @@
             margin: 10px 0;
             color: #002868;
         }
-        .eligibility {
-            background-color: #6598E9;
-            padding: 15px;
-            border-left: 4px solid #BF0A30;
-            margin: 20px 0;
-            color: #002868;
-        }
     </style>
 </head>
 <body>
     <h1>Credit Card Validator Lab</h1>
-    <div class="subtitle">Cybersecurity Edition</div>
     
-    <div class="time-note">
-        <strong>Time Expectation:</strong> Plan to spend 45-70 minutes on this lab. If you've been working longer than that, it's time to stop and submit what you have! This assignment is designed to challenge you, not overwhelm you - so don't stress if you don't finish everything.
+    <div class="section">
+        <h2>Scenario</h2>
+        <p>You're building a credit card validator for an online payment system. Your job is to check if credit card numbers are formatted correctly before they're processed.</p>
+    </div>
+
+    <div class="section">
+        <h2>Lab Requirements</h2>
+        <ul>
+            <li>You must define at least one procedure (function) in Part 2</li>
+            <li>You are encouraged to define additional procedures throughout the lab (Parts 7 and 8 are good candidates)</li>
+            <li>Use of global variables is optional - you may pass values as parameters instead</li>
+        </ul>
     </div>
 
     <hr>
 
     <div class="section">
-        <h2>Setup Instructions - MANDATORY PROCEDURE</h2>
-        <p><strong>Define a procedure</strong> called <span class="code">getUserCard()</span> that:</p>
-        <ul>
-            <li>Prints a welcome message: <span class="code">"Welcome to the Credit Card Validator!"</span></li>
-            <li>Asks the user to enter their credit card number using <span class="code">input()</span></li>
-            <li><strong>Returns</strong> the credit card number</li>
-        </ul>
-        <p><strong>Then call your procedure</strong> and store the result in a variable called <span class="code">cardNumber</span>:</p>
-        <div class="code-block">cardNumber = getUserCard()</div>
+        <h2>Part 1: Setup & User Input</h2>
+        <p>Write code that asks the user to enter a credit card number and stores it in a variable called <span class="code">cardNumber</span>.</p>
         <div class="test-case">
-            <strong>Test with:</strong> <span class="code">4532 1234 5678 9009</span>
+            <strong>Test with:</strong> <span class="code">4532 1234 5678 9012</span> (with spaces)
         </div>
     </div>
 
-    <div class="important">
-        <h3>From this point forward:</h3>
-        <p>You have a <strong>choice</strong> in how you complete the remaining steps:</p>
-        <ul>
-            <li><strong>Option A:</strong> Write a procedure (function) for each step</li>
-            <li><strong>Option B:</strong> Write the code directly without additional procedures</li>
-        </ul>
-        <p><strong>Choose based on your current comfort level with programming.</strong> The most important goal is to get better at writing <strong>if statements and conditionals</strong> - so focus your energy there!</p>
-    </div>
-
     <hr>
 
     <div class="section">
-        <h2>1. Remove Spaces</h2>
+        <h2>Part 2: Remove Spaces (Method Practice)</h2>
         <p>Credit cards are sometimes entered with spaces like: <span class="code">4532 1234 5678 9012</span></p>
-        <p>Before removing spaces, print a message to the user like <span class="code">"---------- Removing Spaces ----------"</span> to show what your program is doing.</p>
-        <p>Write code that removes all spaces from <span class="code">cardNumber</span>:</p>
+        <p>Define a function called <span class="code">removeSpaces(cardNumber)</span> that:</p>
         <ul>
-            <li>Use <span class="code">.replace(" ", "")</span> to replace all spaces with empty strings</li>
-            <li><strong>Remember:</strong> <span class="code">""</span> means an empty string (nothing between the quotes)</li>
-            <li><strong>In this context:</strong> Replacing spaces with <span class="code">""</span> removes the spaces entirely</li>
+            <li>Takes a card number as a parameter</li>
+            <li>Uses <span class="code">.replace(" ", "")</span> to replace all spaces with empty strings</li>
+            <li>Remember: <span class="code">""</span> means an empty string (nothing between the quotes)</li>
+            <li>In this context: Replacing spaces with <span class="code">""</span> removes the spaces entirely</li>
             <li>Example: <span class="code">"4532 1234"</span> becomes <span class="code">"45321234"</span></li>
-            <li>Store the cleaned result back into <span class="code">cardNumber</span></li>
+            <li>Returns the cleaned card number as a new string (use the <span class="code">return</span> keyword)</li>
         </ul>
-        <div class="test-case">
-            <strong>Test with:</strong> <span class="code">"4532 1234 5678 9012"</span> should become <span class="code">"4532123456789012"</span>
+        <div class="important">
+            <strong>Important:</strong> After defining this function, call it and update the value stored in <span class="code">cardNumber</span>:
+            <div class="code-block">cardNumber = removeSpaces(cardNumber)</div>
+            This stores the returned value (without spaces) back into the <span class="code">cardNumber</span> variable.
         </div>
-        <p><em>From this point forward, you'll work with the cleaned <span class="code">cardNumber</span> (no spaces) for all remaining steps!</em></p>
+        <div class="test-case">
+            <strong>Test with:</strong> <span class="code">"4532 1234 5678 9012"</span> should return <span class="code">"4532123456789012"</span>
+        </div>
     </div>
 
     <hr>
 
     <div class="section">
-        <h2>2. Check Length</h2>
+        <h2>Part 3: Check Length</h2>
         <p>Valid credit cards have exactly 16 digits.</p>
         <p>Before checking the length, print a message to the user like <span class="code">"---------- Checking Length ----------"</span> to show what your program is doing.</p>
         <p>Write an if/else statement that:</p>
         <ul>
-            <li>Checks if the length of <span class="code">cardNumber</span> equals 16</li>
-            <li>If true, print <span class="code">"Valid length"</span></li>
-            <li>If false, print <span class="code">"Invalid length"</span></li>
+            <li>Checks if <span class="code">len(cardNumber)</span> equals 16</li>
+            <li>Prints <span class="code">"Valid length"</span> or <span class="code">"Invalid length"</span></li>
         </ul>
         <div class="test-case">
             <strong>Test with:</strong><br>
-            <span class="code">"4532123456789012"</span> → Valid length<br>
-            <span class="code">"453212345678"</span> → Invalid length
+            <span class="code">"4532123456789012"</span> should print Valid length<br>
+            <span class="code">"453212345678"</span> should print Invalid length
         </div>
     </div>
 
     <hr>
 
     <div class="section">
-        <h2>3. Check Card Type</h2>
-        <p>Visa cards start with the digit <span class="code">4</span>.</p>
-        <p>Before checking the card type, print a message to the user like <span class="code">"---------- Checking Card Type ----------"</span> to show what your program is doing.</p>
+        <h2>Part 4: Check Card Type</h2>
+        <p>Visa cards start with the digit 4.</p>
+        <p>Print a message to the user like <span class="code">"---------- Checking Card Type ----------"</span> before performing the check.</p>
         <p>Write an if/else statement that:</p>
         <ul>
-            <li>Checks the first character of <span class="code">cardNumber</span> (use index <span class="code">[0]</span>)</li>
-            <li>If it's <span class="code">"4"</span>, print <span class="code">"Visa card"</span></li>
-            <li>Otherwise, print <span class="code">"Unknown card type"</span></li>
+            <li>Evaluates to <span class="code">True</span> if the first digit of the card number is <span class="code">"4"</span></li>
+            <li>Prints <span class="code">"Visa card"</span> when the condition is true</li>
+            <li>Prints <span class="code">"Unknown card type"</span> when the condition is false</li>
         </ul>
+        <div class="important">
+            <strong>Important:</strong> Use <strong>bracket notation</strong> (also called substring notation) to access the first character, not the <span class="code">.index()</span> method. The <span class="code">.index()</span> method is used to <em>find</em> where a character is located, not to <em>get</em> a character at a specific position.
+        </div>
         <div class="test-case">
             <strong>Test with:</strong><br>
-            <span class="code">"4532123456789012"</span> → Visa card<br>
-            <span class="code">"3532123456789012"</span> → Unknown card type
+            <span class="code">"4532123456789012"</span> should print Visa card<br>
+            <span class="code">"3532123456789012"</span> should print Unknown card type
         </div>
     </div>
 
     <hr>
 
     <div class="section">
-        <h2>4. Check All Digits</h2>
+        <h2>Part 5: Check Security Digit (Mod Math)</h2>
+        <p>For this system, the last digit must be evenly divisible by 3.</p>
+        <p>Print a message to the user like <span class="code">"---------- Checking Security Digit ----------"</span> before performing the check.</p>
+        <p>Write code that checks if the last digit is divisible by 3 and prints <span class="code">"Valid security digit"</span> or <span class="code">"Invalid security digit"</span>.</p>
+        <div class="test-case">
+            <strong>Test with:</strong><br>
+            <span class="code">"4532123456789012"</span> with last digit 2 should print Invalid security digit<br>
+            <span class="code">"4532123456789009"</span> with last digit 9 should print Valid security digit
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>Part 6: Check All Digits</h2>
         <p>Credit cards should only contain numbers (after spaces are removed).</p>
-        <p>Before checking for digits, print a message to the user like <span class="code">"---------- Checking All Digits ----------"</span> to show what your program is doing.</p>
-        <p>Write an if/else statement that:</p>
-        <ul>
-            <li>Uses <span class="code">.isdigit()</span> to check if the entire string contains only digits</li>
-            <li><strong>Digits</strong> means the numbers 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</li>
-            <li><span class="code">.isdigit()</span> is an existing Python function (like <span class="code">.index()</span> or <span class="code">.replace()</span>)</li>
-            <li><span class="code">.isdigit()</span> <strong>returns</strong> <span class="code">True</span> or <span class="code">False</span> - the conditional check happens inside the function</li>
-            <li>Example: <span class="code">"12345".isdigit()</span> returns <span class="code">True</span>, <span class="code">"123-45".isdigit()</span> returns <span class="code">False</span></li>
-            <li>Call it like: <span class="code">cardNumber.isdigit()</span></li>
-            <li>If true, print <span class="code">"All digits"</span></li>
-            <li>If false, print <span class="code">"Contains non-digits"</span></li>
-        </ul>
+        <p>Print a message to the user like <span class="code">"---------- Checking for Non-Digit Characters ----------"</span> before performing the check.</p>
+        <p>Python has a helpful string method called <span class="code">.isdigit()</span> that returns <span class="code">True</span> if all characters in a string are digits, and <span class="code">False</span> otherwise.</p>
+        <div class="code-block">
+            if cardNumber.isdigit():<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;# your code here
+        </div>
+        <p>Write code that uses <span class="code">.isdigit()</span> to check if the entire card number contains only digits, and prints <span class="code">"All digits"</span> or <span class="code">"Contains non-digits"</span>.</p>
         <div class="test-case">
             <strong>Test with:</strong><br>
-            <span class="code">"4532123456789012"</span> → All digits<br>
-            <span class="code">"4532-1234-5678-9012"</span> → Contains non-digits
+            <span class="code">"4532123456789012"</span> should print All digits<br>
+            <span class="code">"4532-1234-5678-9012"</span> should print Contains non-digits
         </div>
     </div>
 
     <hr>
 
     <div class="section">
-        <h2>5. Format for Display</h2>
-        <p>For security, only show the last 4 digits like: <span class="code">**** **** **** 9012</span></p>
-        <p>Before formatting the display, print a message to the user like <span class="code">"---------- Formatting Display ----------"</span> to show what your program is doing.</p>
-        <p>Write code that:</p>
+        <h2>Part 7: Format for Display (Extension)</h2>
+        <p>For security, only show the last 4 digits when displaying: <span class="code">**** **** **** 9012</span></p>
+        <p>Define a function called <span class="code">formatCard(cardNumber)</span> that:</p>
         <ul>
-            <li>Uses slicing <span class="code">[12:16]</span> to get the last 4 digits</li>
-            <li>Creates a formatted string: <span class="code">"**** **** **** "</span> combined with the last 4 digits</li>
-            <li>Prints the formatted result</li>
+            <li>Uses slicing to get the last 4 digits</li>
+            <li>Returns a formatted string that shows asterisks for the first 12 digits and the actual last 4 digits</li>
         </ul>
         <div class="test-case">
-            <strong>Test with:</strong> <span class="code">"4532123456789012"</span> → Should print <span class="code">"**** **** **** 9012"</span>
+            <strong>Test with:</strong> <span class="code">"4532123456789012"</span> should return <span class="code">"**** **** **** 9012"</span>
         </div>
     </div>
 
@@ -230,103 +209,21 @@
 
     <div class="section">
         <h2>Extensions</h2>
-        <div class="eligibility">
-            <p><strong>To be eligible for Emerging:</strong> Complete the main steps (no extensions required)</p>
-            <p><strong>To be eligible for Proficiency:</strong> Choose ONE extension below</p>
-            <p><strong>To be eligible for Mastery:</strong> Choose ANY TWO extensions below</p>
-        </div>
-        <p>Pick extensions that match your comfort level. These are optional challenges to push your skills further!</p>
-
-        <h3>Extension A: Quick Security Check (New Programmer)</h3>
-        <p>For a quick security check, verify the last digit is divisible by 3.</p>
-        <p>Write an if/else statement that:</p>
-        <ul>
-            <li>Gets the last digit using index <span class="code">[15]</span></li>
-            <li>Converts it to an integer using <span class="code">int()</span></li>
-            <li>Uses modulo (<span class="code">%</span>) to check if it's divisible by 3</li>
-            <li>If <span class="code">lastDigit % 3 == 0</span>, print <span class="code">"Valid security digit"</span></li>
-            <li>Otherwise, print <span class="code">"Invalid security digit"</span></li>
-        </ul>
-        <p><strong>Remember:</strong> A number is divisible by 3 if the remainder is 0 when divided by 3.</p>
-        <div class="test-case">
-            <strong>Test with:</strong><br>
-            <span class="code">"4532123456789012"</span> → last digit is 2, invalid<br>
-            <span class="code">"4532123456789009"</span> → last digit is 9, valid
-        </div>
-
-        <h3>Extension B: Check for Dashes (New Programmer)</h3>
-        <p>Some users enter cards with dashes like: <span class="code">4532-1234-5678-9009</span></p>
-        <p>Write an if statement that:</p>
-        <ul>
-            <li>Checks if the card number does <strong>NOT</strong> contain a dash</li>
-            <li>Use: <span class="code">"-" not in cardNumber</span></li>
-            <li>If true, print <span class="code">"No dashes found"</span></li>
-            <li>If false, print <span class="code">"Contains dashes - please remove them"</span></li>
-        </ul>
-        <div class="test-case">
-            <strong>Test with:</strong><br>
-            <span class="code">"4532123456789009"</span> → No dashes found<br>
-            <span class="code">"4532-1234-5678-9009"</span> → Contains dashes
-        </div>
-
-        <h3>Extension C: Mastercard Check with elif (Intermediate)</h3>
-        <p>Go back to Step 3 (Check Card Type) and rewrite it using if/elif/else:</p>
-        <ul>
-            <li>If first digit is <span class="code">"4"</span>, print <span class="code">"Visa card"</span></li>
-            <li>Else if first digit is <span class="code">"5"</span>, print <span class="code">"Mastercard"</span></li>
-            <li>Else, print <span class="code">"Unknown card type"</span></li>
-        </ul>
-        <div class="test-case">
-            <strong>Test with:</strong><br>
-            <span class="code">"4532123456789012"</span> → Visa card<br>
-            <span class="code">"5432123456789012"</span> → Mastercard<br>
-            <span class="code">"3532123456789012"</span> → Unknown card type
-        </div>
-
-        <h3>Extension D: Create a Format Procedure (Intermediate)</h3>
-        <p>Go back and write a procedure called <span class="code">formatCardDisplay(cardNumber)</span> that:</p>
-        <ul>
-            <li>Takes a card number as a parameter</li>
-            <li>Uses slicing to get the last 4 digits</li>
-            <li>Returns the formatted string: <span class="code">"**** **** **** " + lastFour</span></li>
-        </ul>
-        <p>Then call your procedure and print the result.</p>
-        <div class="test-case">
-            <strong>Test with:</strong> <span class="code">"4532123456789009"</span> → Returns <span class="code">"**** **** **** 9009"</span>
-        </div>
-
-        <h3>Extension E: Security Level Rating (Advanced - uses elif)</h3>
-        <p>Write code using if/elif/else that assigns a security rating:</p>
-        <ul>
-            <li>If length is less than 16, print <span class="code">"Weak - too short"</span></li>
-            <li>Else if length equals 16 AND last digit is divisible by 3, print <span class="code">"Strong security"</span></li>
-            <li>Else if length equals 16, print <span class="code">"Moderate security"</span></li>
-            <li>Else, print <span class="code">"Weak - too long"</span></li>
-        </ul>
-        <div class="test-case">
-            <strong>Test with:</strong><br>
-            <span class="code">"45321234567890"</span> → Weak - too short<br>
-            <span class="code">"4532123456789009"</span> → Strong security (length 16, last digit 9 divisible by 3)<br>
-            <span class="code">"4532123456789012"</span> → Moderate security (length 16, last digit 2 not divisible by 3)
-        </div>
-
-        <h3>Extension F: Complete Validation (Challenge)</h3>
-        <p>Write code that checks ALL conditions using AND/OR logic:</p>
-        <ul>
-            <li>Length is 16 <strong>AND</strong></li>
-            <li>First digit is <span class="code">"4"</span> <strong>OR</strong> <span class="code">"5"</span> <strong>AND</strong></li>
-            <li>Last digit is divisible by 3 <strong>AND</strong></li>
-            <li>All characters are digits</li>
-        </ul>
-        <p>If <strong>ALL</strong> conditions are true, print <span class="code">"Card is valid!"</span></p>
-        <p>Otherwise, print <span class="code">"Card is invalid"</span></p>
-        <p><strong>Bonus:</strong> Try writing this as a procedure called <span class="code">isValidCard(cardNumber)</span> that returns <span class="code">True</span> or <span class="code">False</span>!</p>
-        <div class="test-case">
-            <strong>Test with:</strong><br>
-            <span class="code">"4532123456789009"</span> → Card is valid!<br>
-            <span class="code">"5432123456789010"</span> → Card is invalid (0 not divisible by 3)<br>
-            <span class="code">"3532123456789009"</span> → Card is invalid (doesn't start with 4 or 5)
-        </div>
+        <ol>
+            <li><strong>Mastercard Support:</strong> Modify Part 4 to use <span class="code">elif</span> to also check for Mastercard (starts with 5)<br>
+            Test with: <span class="code">"5432123456789012"</span> should print Mastercard</li>
+            
+            <li><strong>Generate and Verify Security Code:</strong> Write a function that generates a random 3-digit security code (between 100 and 999) using <span class="code">random.randint()</span>. Then ask the user to enter a security code and compare it to the generated code. Print "Security code matches!" or "Security code does not match."</li>
+            
+            <li><strong>Premium Card Check:</strong> Write code that uses <span class="code">and</span> to check if a card is BOTH a Visa AND has a last digit divisible by 3, then print "Premium Visa card" or "Standard card"<br>
+            Test with: <span class="code">"4532123456789009"</span> should print Premium Visa card</li>
+            
+            <li><strong>Flexible Card Type:</strong> Write code that uses <span class="code">or</span> to check if a card is either Visa OR Mastercard, then print "Accepted card type" or "Card type not accepted"<br>
+            Test with: <span class="code">"4532123456789012"</span> or <span class="code">"5432123456789012"</span> should print Accepted card type</li>
+            
+            <li><strong>Invalid Character Detector:</strong> Write code that uses <span class="code">not</span> to find cards that do NOT contain only digits, then print "Invalid characters found" or "No invalid characters"<br>
+            Test with: <span class="code">"4532-1234-5678-9012"</span> should print Invalid characters found</li>
+        </ol>
     </div>
 
 </body>
