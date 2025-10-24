@@ -51,6 +51,14 @@
             margin: 10px 0;
             color: #002868;
         }
+        .time-estimate {
+            background-color: #A5A5A4;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #002868;
+            font-weight: 600;
+        }
         hr {
             border: none;
             border-top: 2px solid #A5A5A4;
@@ -69,6 +77,10 @@
 <body>
     <h1>Credit Card Validator Lab</h1>
     
+    <div class="time-estimate">
+        ⏱️ Estimated Time: 45-70 minutes
+    </div>
+
     <div class="section">
         <h2>Scenario</h2>
         <p>You're building a credit card validator for an online payment system. Your job is to check if credit card numbers are formatted correctly before they're processed.</p>
@@ -77,8 +89,8 @@
     <div class="section">
         <h2>Lab Requirements</h2>
         <ul>
-            <li>You must define at least one procedure (function) in Part 2</li>
-            <li>You are encouraged to define additional procedures throughout the lab (Parts 7 and 8 are good candidates)</li>
+            <li>You must define at least one procedure (function) in the Setup step</li>
+            <li>You are encouraged to define additional procedures throughout the lab (Part 7 is a good candidate)</li>
             <li>Use of global variables is optional - you may pass values as parameters instead</li>
         </ul>
     </div>
@@ -86,17 +98,40 @@
     <hr>
 
     <div class="section">
-        <h2>Part 1: Setup & User Input</h2>
-        <p>Write code that asks the user to enter a credit card number and stores it in a variable called <span class="code">cardNumber</span>.</p>
+        <h2>Setup: Welcome User & Collect Input (MANDATORY PROCEDURE)</h2>
+        <p><strong>Define a procedure</strong> called <span class="code">getUserCard()</span> that:</p>
+        <ul>
+            <li>Prints a welcome message: <span class="code">"Welcome to the Credit Card Validator!"</span></li>
+            <li>Asks the user to enter their credit card number using <span class="code">input()</span></li>
+            <li>Stores the input in a variable</li>
+            <li><strong>Returns</strong> the credit card number</li>
+        </ul>
+        <div class="important">
+            <strong>Then call your procedure</strong> and store the result in a variable called <span class="code">cardNumber</span>:
+            <div class="code-block">cardNumber = getUserCard()</div>
+            This calls your function and stores what it returns into the variable <span class="code">cardNumber</span>.
+            <br><br>
+            <strong>Alternative approach (if you prefer global variables):</strong> You can store <span class="code">cardNumber</span> as a global variable inside the procedure instead of returning it. If you do this, you don't need to use <span class="code">cardNumber = getUserCard()</span>, just call <span class="code">getUserCard()</span> by itself.
+        </div>
         <div class="test-case">
             <strong>Test with:</strong> <span class="code">4532 1234 5678 9012</span> (with spaces)
+        </div>
+        
+        <div class="important" style="margin-top: 20px;">
+            <strong>From this point forward:</strong><br>
+            You have a <strong>choice</strong> in how you complete the remaining steps:
+            <ul>
+                <li><strong>Option A:</strong> Write a procedure (function) for each step</li>
+                <li><strong>Option B:</strong> Write the code directly without additional procedures</li>
+            </ul>
+            <strong>Choose based on your current comfort level with programming.</strong> The most important goal is to get better at writing <strong>if statements and conditionals</strong> - so focus your energy there!
         </div>
     </div>
 
     <hr>
 
     <div class="section">
-        <h2>Part 2: Remove Spaces (Method Practice)</h2>
+        <h2>Part 1: Remove Spaces</h2>
         <p>Credit cards are sometimes entered with spaces like: <span class="code">4532 1234 5678 9012</span></p>
         <p>Define a function called <span class="code">removeSpaces(cardNumber)</span> that:</p>
         <ul>
@@ -120,7 +155,7 @@
     <hr>
 
     <div class="section">
-        <h2>Part 3: Check Length</h2>
+        <h2>Part 2: Check Length</h2>
         <p>Valid credit cards have exactly 16 digits.</p>
         <p>Before checking the length, print a message to the user like <span class="code">"---------- Checking Length ----------"</span> to show what your program is doing.</p>
         <p>Write an if/else statement that:</p>
@@ -138,7 +173,7 @@
     <hr>
 
     <div class="section">
-        <h2>Part 4: Check Card Type</h2>
+        <h2>Part 3: Check Card Type</h2>
         <p>Visa cards start with the digit 4.</p>
         <p>Print a message to the user like <span class="code">"---------- Checking Card Type ----------"</span> before performing the check.</p>
         <p>Write an if/else statement that:</p>
@@ -160,7 +195,7 @@
     <hr>
 
     <div class="section">
-        <h2>Part 5: Check Security Digit (Mod Math)</h2>
+        <h2>Part 4: Check Security Digit (Mod Math)</h2>
         <p>For this system, the last digit must be evenly divisible by 3.</p>
         <p>Print a message to the user like <span class="code">"---------- Checking Security Digit ----------"</span> before performing the check.</p>
         <p>Write code that checks if the last digit is divisible by 3 and prints <span class="code">"Valid security digit"</span> or <span class="code">"Invalid security digit"</span>.</p>
@@ -174,7 +209,7 @@
     <hr>
 
     <div class="section">
-        <h2>Part 6: Check All Digits</h2>
+        <h2>Part 5: Check All Digits</h2>
         <p>Credit cards should only contain numbers (after spaces are removed).</p>
         <p>Print a message to the user like <span class="code">"---------- Checking for Non-Digit Characters ----------"</span> before performing the check.</p>
         <p>Python has a helpful string method called <span class="code">.isdigit()</span> that returns <span class="code">True</span> if all characters in a string are digits, and <span class="code">False</span> otherwise.</p>
@@ -193,7 +228,7 @@
     <hr>
 
     <div class="section">
-        <h2>Part 7: Format for Display</h2>
+        <h2>Part 6: Format for Display</h2>
         <p>For security, only show the last 4 digits when displaying: <span class="code">**** **** **** 9012</span></p>
         <p>Define a function called <span class="code">formatCard(cardNumber)</span> that:</p>
         <ul>
