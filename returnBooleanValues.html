@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boolean Procedure Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            border-radius: 5px;
+        }
+        
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+        
+        .options {
+            margin: 20px 0;
+        }
+        
+        .option {
+            display: block;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #d5dbdb;
+            border-color: #95a5a6;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .button:hover {
+            background-color: #2980b9;
+        }
+        
+        .button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+            border: 2px solid #3498db;
+        }
+        
+        .summary h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .stat {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .progress {
+            margin: 20px 0;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .level-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 15px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .start-screen input[type="email"] {
+            padding: 12px;
+            width: 300px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 20px 0;
+            font-family: 'IBM Plex Serif', serif;
+        }
+        
+        .start-screen p {
+            color: #7f8c8d;
+            margin: 10px 0;
+        }
+        
+        .quiz-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Boolean Procedure Practice</h1>
+        <div class="subtitle">Practice reading procedures that return true or false</div>
+        
+        <div class="start-screen" id="startScreen">
+            <h2>Welcome!</h2>
+            <p>Enter your email address to begin the practice session.</p>
+            <input type="email" id="userEmail" placeholder="your.email@example.com" required>
+            <br>
+            <button class="button" onclick="startQuiz()">Start Practice</button>
+        </div>
+        
+        <div class="quiz-content" id="quizContent">
+        <div class="progress" id="progress">Question 1 of 12</div>
+        <div class="level-indicator" id="levelIndicator">Level 1: If/Else with Math Operations</div>
+        
+        <div class="code-block" id="codeBlock"></div>
+        
+        <div class="question" id="question"></div>
+        
+        <div class="options" id="options"></div>
+        
+        <button class="button" id="submitBtn" onclick="checkAnswer()">Submit Answer</button>
+        <button class="button" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="summary" id="summary" style="display: none;">
+            <h2>Session Summary</h2>
+            <div class="stat" id="dateTime"></div>
+            <div class="stat" id="totalQuestions"></div>
+            <div class="stat" id="correctAnswers"></div>
+            <div class="stat" id="percentage"></div>
+            <div class="stat">
+                <label for="emailInput">Email: </label>
+                <input type="email" id="emailInput" placeholder="your.email@example.com" style="padding: 8px; width: 250px; border: 1px solid #bdc3c7; border-radius: 3px;">
+            </div>
+            <button class="button" onclick="resetQuiz()">Start New Session</button>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let correctCount = 0;
+        let totalQuestions = 12;
+        let questions = [];
+        let currentAnswer = null;
+        let userEmail = '';
+        let startDateTime = '';
+        
+        function startQuiz() {
+            const emailInput = document.getElementById('userEmail');
+            if (!emailInput.value || !emailInput.value.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            userEmail = emailInput.value;
+            startDateTime = new Date().toLocaleString();
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'block';
+            initializeQuestions();
+            displayQuestion();
+        }
+        
+        // Level 1: If/else statements with complex math operations (questions 1-5)
+        const level1Templates = [
+            {
+                generate: () => {
+                    const testValue = Math.floor(Math.random() * 20) + 1;
+                    return {
+                        code: `def isEven(n):
+    if n % 2 == 0:
+        return True
+    else:
+        return False
+
+result = isEven(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue % 2 === 0
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const target = Math.floor(Math.random() * 20) + 10;
+                    const testValue = Math.floor(Math.random() * 40);
+                    return {
+                        code: `def isNotEqual(value):
+    if value != ${target}:
+        return True
+    else:
+        return False
+
+result = isNotEqual(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue !== target
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const testValue = 1;
+                    return {
+                        code: `def lessThanOne(value):
+    if value < 1:
+        return True
+    else:
+        return False
+
+result = lessThanOne(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: false
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const mult1 = Math.floor(Math.random() * 3) + 2;
+                    const sub = Math.floor(Math.random() * 10) + 5;
+                    const threshold = Math.floor(Math.random() * 20) + 10;
+                    const testValue = Math.floor(Math.random() * 20) + 5;
+                    const result = testValue * mult1 - sub;
+                    return {
+                        code: `def meetsTarget(num):
+    if num * ${mult1} - ${sub} >= ${threshold}:
+        return True
+    else:
+        return False
+
+result = meetsTarget(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: result >= threshold
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const threshold1 = Math.floor(Math.random() * 20) + 10;
+                    const threshold2 = Math.floor(Math.random() * 20) + 30;
+                    const testValue1 = Math.floor(Math.random() * 40);
+                    const testValue2 = Math.floor(Math.random() * 60);
+                    return {
+                        code: `def bothLarge(num1, num2):
+    if num1 > ${threshold1} and num2 > ${threshold2}:
+        return True
+    else:
+        return False
+
+result = bothLarge(${testValue1}, ${testValue2})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue1 > threshold1 && testValue2 > threshold2
+                    };
+                }
+            }
+        ];
+        
+        // Level 2: If/else with AND/OR/NOT (questions 6-10)
+        const level2Templates = [
+            {
+                generate: () => {
+                    const low = Math.floor(Math.random() * 10) + 5;
+                    const high = low + Math.floor(Math.random() * 15) + 10;
+                    const testValue = Math.floor(Math.random() * 40);
+                    return {
+                        code: `def isInRange(num):
+    if num >= ${low} and num < ${high}:
+        return True
+    else:
+        return False
+
+result = isInRange(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue >= low && testValue < high
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const threshold1 = Math.floor(Math.random() * 15) + 10;
+                    const threshold2 = Math.floor(Math.random() * 15) + 30;
+                    const testValue = Math.floor(Math.random() * 50);
+                    return {
+                        code: `def isExtreme(x):
+    if x < ${threshold1} or x > ${threshold2}:
+        return True
+    else:
+        return False
+
+result = isExtreme(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue < threshold1 || testValue > threshold2
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const threshold = Math.floor(Math.random() * 20) + 15;
+                    const testValue = Math.floor(Math.random() * 40);
+                    return {
+                        code: `def isNotLarge(value):
+    if not (value > ${threshold}):
+        return True
+    else:
+        return False
+
+result = isNotLarge(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: !(testValue > threshold)
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const divisor1 = 2;
+                    const divisor2 = Math.floor(Math.random() * 2) + 3;
+                    const testValue = Math.floor(Math.random() * 30) + 1;
+                    return {
+                        code: `def isEvenOrDivisible(n):
+    if n % ${divisor1} == 0 or n % ${divisor2} == 0:
+        return True
+    else:
+        return False
+
+result = isEvenOrDivisible(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue % divisor1 === 0 || testValue % divisor2 === 0
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const low = Math.floor(Math.random() * 10) + 10;
+                    const high = low + Math.floor(Math.random() * 20) + 15;
+                    const divisor = 3;
+                    const testValue = Math.floor(Math.random() * 50);
+                    return {
+                        code: `def meetsComplexCriteria(val):
+    if val >= ${low} and val <= ${high} and val % ${divisor} == 0:
+        return True
+    else:
+        return False
+
+result = meetsComplexCriteria(${testValue})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: testValue >= low && testValue <= high && testValue % divisor === 0
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const boolValues = [true, false];
+                    const bool1 = boolValues[Math.floor(Math.random() * 2)];
+                    const bool2 = boolValues[Math.floor(Math.random() * 2)];
+                    return {
+                        code: `def eitherTrue(flag1, flag2):
+    if flag1 or flag2:
+        return True
+    else:
+        return False
+
+result = eitherTrue(${bool1}, ${bool2})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: bool1 || bool2
+                    };
+                }
+            },
+            {
+                generate: () => {
+                    const boolValues = [true, false];
+                    const bool1 = boolValues[Math.floor(Math.random() * 2)];
+                    const target = Math.floor(Math.random() * 20) + 10;
+                    const testNum = Math.floor(Math.random() * 40);
+                    return {
+                        code: `def checkCondition(isActive, value):
+    if isActive or value != ${target}:
+        return True
+    else:
+        return False
+
+result = checkCondition(${bool1}, ${testNum})`,
+                        question: `What value does result hold after the code executes?`,
+                        answer: bool1 || testNum !== target
+                    };
+                }
+            }
+        ];
+        
+        function initializeQuestions() {
+            questions = [];
+            // Level 1: questions 1-5
+            for (let i = 0; i < 5; i++) {
+                questions.push(level1Templates[i].generate());
+            }
+            // Level 2: questions 6-12
+            for (let i = 0; i < 7; i++) {
+                questions.push(level2Templates[i].generate());
+            }
+        }
+        
+        function displayQuestion() {
+            const q = questions[currentQuestion];
+            currentAnswer = q.answer;
+            
+            // Update level indicator
+            let level = "";
+            if (currentQuestion < 5) {
+                level = "Level 1: If/Else with Math Operations";
+            } else {
+                level = "Level 2: If/Else with AND/OR/NOT";
+            }
+            document.getElementById('levelIndicator').textContent = level;
+            
+            // Display code
+            document.getElementById('codeBlock').textContent = q.code;
+            
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('progress').textContent = `Question ${currentQuestion + 1} of ${totalQuestions}`;
+            
+            // Create options
+            const optionsHTML = `
+                <label class="option">
+                    <input type="radio" name="answer" value="true"> true
+                </label>
+                <label class="option">
+                    <input type="radio" name="answer" value="false"> false
+                </label>
+            `;
+            document.getElementById('options').innerHTML = optionsHTML;
+            
+            // Reset buttons and feedback
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+        }
+        
+        function checkAnswer() {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                alert('Please select an answer');
+                return;
+            }
+            
+            const userAnswer = selected.value === 'true';
+            const isCorrect = userAnswer === currentAnswer;
+            
+            if (isCorrect) {
+                correctCount++;
+                document.getElementById('feedback').className = 'feedback correct';
+                document.getElementById('feedback').textContent = '✓ Correct! Well done!';
+            } else {
+                document.getElementById('feedback').className = 'feedback incorrect';
+                document.getElementById('feedback').textContent = `✗ Incorrect. The correct answer is ${currentAnswer}.`;
+            }
+            
+            document.getElementById('feedback').style.display = 'block';
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            // Disable radio buttons
+            document.querySelectorAll('input[name="answer"]').forEach(input => {
+                input.disabled = true;
+            });
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < totalQuestions) {
+                displayQuestion();
+            } else {
+                showSummary();
+            }
+        }
+        
+        function showSummary() {
+            document.getElementById('codeBlock').style.display = 'none';
+            document.getElementById('question').style.display = 'none';
+            document.getElementById('options').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('progress').style.display = 'none';
+            document.getElementById('levelIndicator').style.display = 'none';
+            
+            const now = new Date();
+            const endDateTime = now.toLocaleString();
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            document.getElementById('dateTime').innerHTML = `Start: ${startDateTime}<br>End: ${endDateTime}`;
+            document.getElementById('totalQuestions').textContent = `Total Questions: ${totalQuestions}`;
+            document.getElementById('correctAnswers').textContent = `Correct Answers: ${correctCount}`;
+            document.getElementById('percentage').textContent = `Score: ${percentage}%`;
+            document.getElementById('emailInput').value = userEmail;
+            
+            document.getElementById('summary').style.display = 'block';
+        }
+        
+        function resetQuiz() {
+            currentQuestion = 0;
+            correctCount = 0;
+            userEmail = '';
+            startDateTime = '';
+            
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('summary').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('userEmail').value = '';
+        }
+    </script>
+</body>
+</html>
