@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars Rover Mission Control: Boolean Procedures</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            line-height: 1.6;
+            color: #002868;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #ffffff;
+        }
+        
+        h1 {
+            color: #BF0A30;
+            font-weight: 700;
+            font-size: 2.5em;
+            margin-top: 0;
+            padding-top: 20px;
+            border-bottom: 4px solid #BF0A30;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #002868;
+            font-weight: 700;
+            font-size: 1.8em;
+            margin-top: 50px;
+            margin-bottom: 15px;
+            border-left: 6px solid #6598E9;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #BF0A30;
+            font-weight: 600;
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        
+        p, li {
+            font-size: 1.05em;
+            color: #002868;
+        }
+        
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9em;
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #002868;
+        }
+        
+        pre {
+            background-color: #f5f5f5;
+            border-left: 4px solid #6598E9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        pre code {
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: transparent;
+            padding: 0;
+            color: #002868;
+        }
+        
+        strong {
+            color: #BF0A30;
+            font-weight: 600;
+        }
+        
+        hr {
+            border: none;
+            border-top: 2px solid #A5A5A4;
+            margin: 40px 0;
+        }
+        
+        ul, ol {
+            margin-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .overview {
+            background-color: #f8f9fa;
+            border-left: 4px solid #6598E9;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mars Rover Mission Control: Boolean Procedures</h1>
+    
+    <div class="overview">
+        <h2>Overview</h2>
+        <p>In this activity, you'll build procedures to check various systems on a Mars rover. You'll start simple and gradually add complexity, learning how to use boolean variables to make decisions about rover operations.</p>
+    </div>
+
+    <hr>
+
+    <h2>Level 1: Single Parameter Check</h2>
+
+    <h3>Whole Class Example</h3>
+
+    <p><strong>Scenario:</strong> The rover's communication system has <strong>AVAILABILITY</strong> - it can send data if signal strength is at least 50.</p>
+    
+    <p>Write a procedure named <code>checkSignal</code> that accepts one parameter: <code>signalStrength</code> (integer). The procedure should print whether communication is available. Do NOT return a value. Do NOT use global variables.</p>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 1: Battery Check</strong></p>
+    <p><strong>Scenario:</strong> The rover's battery is available if charge level is greater than 20.</p>
+    
+    <p>Write a procedure named <code>checkBattery</code> that accepts one parameter: <code>chargeLevel</code> (integer). The procedure should print whether the battery is available. Do NOT return a value. Do NOT use global variables.</p>
+
+    <hr>
+
+    <h2>Level 2: Two Parameters with AND (Return Status Message)</h2>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 2: Data Integrity</strong></p>
+    <p><strong>Scenario:</strong> The rover has <strong>DATA INTEGRITY</strong> when transmitting - data is reliable if signal strength is not equal to 0 AND no interference detected.</p>
+    
+    <p>Write a procedure named <code>checkDataIntegrity</code> that accepts two parameters: <code>signalStrength</code> (integer) and <code>hasInterference</code> (boolean). The procedure should return "SECURE: Data integrity maintained" if data is reliable, otherwise returns "WARNING: Data integrity compromised".</p>
+    
+    <p><em>Example of how to call this procedure:</em></p>
+    <pre><code>print(checkDataIntegrity(75, False))
+print(checkDataIntegrity(40, True))</code></pre>
+
+    <p><strong>Problem 3: Rover Operational Status</strong></p>
+    <p><strong>Scenario:</strong> The rover is operational if battery is at least 30 AND solar panels are deployed.</p>
+    
+    <p>Write a procedure named <code>checkOperational</code> that accepts two parameters: <code>batteryLevel</code> (integer) and <code>panelsDeployed</code> (boolean). The procedure should return "OPERATIONAL: All systems go" if operational, otherwise "OFFLINE: Systems not ready".</p>
+
+    <hr>
+
+    <h2>Level 3: Two Parameters with OR</h2>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 4: Power Availability Through Redundancy</strong></p>
+    <p><strong>Scenario:</strong> The rover maintains <strong>AVAILABILITY</strong> through redundancy - power is available if battery level is at least 29 OR solar panels are generating power.</p>
+    
+    <p>Write a procedure named <code>checkPowerAvailability</code> that accepts two parameters: <code>batteryLevel</code> (integer) and <code>solarGenerating</code> (boolean). The procedure should print whether power is available. Do NOT return a value.</p>
+
+    <p><strong>Problem 5: Communication Redundancy</strong></p>
+    <p><strong>Scenario:</strong> Communication is available if main antenna is working OR backup antenna is working.</p>
+    
+    <p>Write a procedure named <code>checkCommunication</code> that accepts two parameters: <code>mainAntenna</code> (boolean) and <code>backupAntenna</code> (boolean). The procedure should print whether communication is available. Do NOT return a value.</p>
+
+    <hr>
+
+    <h2>Level 4: Adding NOT (Return Numbers)</h2>
+
+    <p><strong>Important:</strong> When storing the result in a variable, make sure your variable name is different from both the procedure name and the parameter names. This helps avoid confusion in your code.</p>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 6: Data Processing Check</strong></p>
+    <p><strong>Scenario:</strong> We need to verify <strong>DATA INTEGRITY</strong> - data should be processed if it has NOT been corrupted AND the error count is not equal to 0.</p>
+    
+    <p>Write a procedure named <code>checkDataProcessing</code> that accepts two parameters: <code>isCorrupted</code> (boolean) and <code>errorCount</code> (integer). The procedure should return the integer 1 if data can be processed, otherwise returns 0.</p>
+    
+    <p><em>Example of how to call this procedure and store the result:</em></p>
+    <pre><code>processingStatus = checkDataProcessing(False, 0)
+print("Processing status: " + str(processingStatus))</code></pre>
+    
+    <p><em>Notice: The variable name <code>processingStatus</code> is different from the procedure name <code>checkDataProcessing</code> and the parameter names <code>isCorrupted</code> and <code>errorCount</code>.</em></p>
+
+    <p><strong>Problem 7: Emergency Mode</strong></p>
+    <p><strong>Scenario:</strong> Emergency mode activates if battery is less than 20 AND NOT currently charging.</p>
+    
+    <p>Write a procedure named <code>checkEmergencyMode</code> that accepts two parameters: <code>batteryLevel</code> (float) and <code>isCharging</code> (boolean). The procedure should return the battery level as a float if emergency mode should activate, otherwise returns 0.0. Store the result in a variable with a different name than the procedure or parameters.</p>
+
+    <hr>
+
+    <h2>Level 5: Adding RETURN</h2>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 8: Secure Transmission (Confidentiality)</strong></p>
+    <p><strong>Scenario:</strong> <strong>CONFIDENTIALITY</strong> check - we can transmit sensitive science data if encryption is enabled AND signal strength is at least 60.</p>
+    
+    <p>Write a procedure named <code>canTransmitSecure</code> that accepts two parameters: <code>encryptionOn</code> (boolean) and <code>signalStrength</code> (integer). The procedure should return True if secure transmission is possible, otherwise returns False.</p>
+
+    <hr>
+
+    <h2>Level 6: Complex Logic (CIA Triad)</h2>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 9: Mission Readiness</strong></p>
+    <p><strong>Scenario:</strong> Complete mission readiness check covering the <strong>CIA Triad</strong>:</p>
+    <ul>
+        <li><strong>Confidentiality</strong>: Encryption enabled</li>
+        <li><strong>Integrity</strong>: Sensors calibrated</li>
+        <li><strong>Availability</strong>: Battery is greater than 40 OR solar panels working</li>
+    </ul>
+    
+    <p>Write a procedure named <code>isMissionReady</code> that accepts four parameters: <code>encryptionOn</code> (boolean), <code>sensorsCalibrated</code> (boolean), <code>batteryLevel</code> (integer), and <code>solarWorking</code> (boolean). The procedure should return True if ALL three security properties are satisfied, otherwise returns False.</p>
+
+    <hr>
+
+    <h2>Extension Challenge: Full System Check</h2>
+
+    <p><strong>Problem 10: Complete System Status</strong></p>
+    
+    <p><strong>Scenario:</strong> Check complete system health covering the <strong>CIA Triad</strong>:</p>
+    <ul>
+        <li><strong>Availability</strong>: Battery is at least 30 OR (main antenna working OR backup antenna working)</li>
+        <li><strong>Integrity</strong>: Sensors calibrated AND NOT data corrupted</li>
+        <li><strong>Confidentiality</strong>: Encryption on</li>
+    </ul>
+    
+    <p>Write a procedure named <code>systemHealthy</code> that accepts six parameters: <code>batteryLevel</code> (integer), <code>encryptionOn</code> (boolean), <code>dataCorrupted</code> (boolean), <code>mainAntenna</code> (boolean), <code>backupAntenna</code> (boolean), and <code>sensorsCalibrated</code> (boolean). The procedure should return True if all three CIA properties are satisfied, otherwise returns False.</p>
+
+    <hr>
+
+</body>
+</html>
