@@ -151,6 +151,32 @@ print(checkDataIntegrity(40, True))</code></pre>
 
     <hr>
 
+    <h2>Level 2.5: Single Parameter with Multiple Conditions (if/elif/else)</h2>
+
+    <h3>Problems</h3>
+
+    <p><strong>Problem 3.5: Battery Status Report</strong></p>
+    <p><strong>Scenario:</strong> The rover needs to report battery status with different messages based on charge level:</p>
+    <ul>
+        <li>If battery is at least 50, status is "HEALTHY"</li>
+        <li>If battery is at least 20, status is "LOW"</li>
+        <li>Otherwise, status is "CRITICAL"</li>
+    </ul>
+    
+    <p>Write a procedure named <code>checkBatteryStatus</code> that accepts one parameter: <code>batteryLevel</code> (integer). The procedure should return the appropriate status string.</p>
+
+    <p><strong>Problem 3.6: Signal Quality Assessment</strong></p>
+    <p><strong>Scenario:</strong> The rover needs to assess signal quality with different messages:</p>
+    <ul>
+        <li>If signal strength is greater than 60, quality is "STRONG"</li>
+        <li>If signal strength is at least 30, quality is "WEAK"</li>
+        <li>Otherwise, quality is "NO SIGNAL"</li>
+    </ul>
+    
+    <p>Write a procedure named <code>assessSignalQuality</code> that accepts one parameter: <code>signalStrength</code> (integer). The procedure should return the appropriate quality string.</p>
+
+    <hr>
+
     <h2>Level 3: Two Parameters with OR</h2>
 
     <h3>Problems</h3>
@@ -200,6 +226,16 @@ print("Processing status: " + str(processingStatus))</code></pre>
     
     <p>Write a procedure named <code>canTransmitSecure</code> that accepts two parameters: <code>encryptionOn</code> (boolean) and <code>signalStrength</code> (integer). The procedure should return True if secure transmission is possible, otherwise returns False.</p>
 
+    <p><strong>Problem 8.5: Transmission Priority Level</strong></p>
+    <p><strong>Scenario:</strong> Determine transmission priority based on encryption and signal strength:</p>
+    <ul>
+        <li>If encryption is enabled AND signal strength is at least 70, return "HIGH PRIORITY"</li>
+        <li>If encryption is enabled AND signal strength is at least 40, return "MEDIUM PRIORITY"</li>
+        <li>Otherwise, return "LOW PRIORITY"</li>
+    </ul>
+    
+    <p>Write a procedure named <code>getTransmissionPriority</code> that accepts two parameters: <code>encryptionOn</code> (boolean) and <code>signalStrength</code> (integer). The procedure should return the appropriate priority string.</p>
+
     <hr>
 
     <h2>Level 6: Complex Logic (CIA Triad)</h2>
@@ -218,18 +254,33 @@ print("Processing status: " + str(processingStatus))</code></pre>
 
     <hr>
 
-    <h2>Extension Challenge: Full System Check</h2>
+    <h2>Extension Challenge: Rover Mission Status System</h2>
 
-    <p><strong>Problem 10: Complete System Status</strong></p>
+    <p><strong>Problem 10: Comprehensive Mission Status</strong></p>
     
-    <p><strong>Scenario:</strong> Check complete system health covering the <strong>CIA Triad</strong>:</p>
+    <p><strong>Scenario:</strong> Create a comprehensive mission status system that evaluates the rover's overall readiness based on multiple factors. The system should assess battery level, communication status, and scientific instruments.</p>
+    
+    <p>Write a procedure named <code>evaluateMissionStatus</code> that accepts five parameters:</p>
     <ul>
-        <li><strong>Availability</strong>: Battery is at least 30 OR (main antenna working OR backup antenna working)</li>
-        <li><strong>Integrity</strong>: Sensors calibrated AND NOT data corrupted</li>
-        <li><strong>Confidentiality</strong>: Encryption on</li>
+        <li><code>batteryLevel</code> (integer)</li>
+        <li><code>commSystemOnline</code> (boolean)</li>
+        <li><code>instrumentsCalibrated</code> (boolean)</li>
+        <li><code>solarPanelsDeployed</code> (boolean)</li>
+        <li><code>temperatureCelsius</code> (integer)</li>
     </ul>
     
-    <p>Write a procedure named <code>systemHealthy</code> that accepts six parameters: <code>batteryLevel</code> (integer), <code>encryptionOn</code> (boolean), <code>dataCorrupted</code> (boolean), <code>mainAntenna</code> (boolean), <code>backupAntenna</code> (boolean), and <code>sensorsCalibrated</code> (boolean). The procedure should return True if all three CIA properties are satisfied, otherwise returns False.</p>
+    <p>The procedure should return one of the following mission status strings based on these conditions (check in this order):</p>
+    <ul>
+        <li>If battery is at least 80 AND communication system is online AND instruments are calibrated AND temperature is greater than -50, return "MISSION READY: All systems optimal"</li>
+        <li>If battery is at least 50 AND (communication system is online OR solar panels deployed) AND temperature is greater than -80, return "MISSION READY: Systems functional"</li>
+        <li>If battery is at least 30 AND communication system is online, return "LIMITED OPERATIONS: Minimal systems only"</li>
+        <li>If battery is at least 15, return "SURVIVAL MODE: Awaiting power restoration"</li>
+        <li>Otherwise, return "CRITICAL: Immediate intervention required"</li>
+    </ul>
+    
+    <p><em>Hint: This problem requires you to combine boolean logic (AND/OR/NOT) with if/elif/else statements. Make sure to check conditions from most restrictive to least restrictive.</em></p>
+
+    <hr>
 
     <hr>
 
