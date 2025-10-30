@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Station Control System - Practice Problems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #6598E9;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #002868;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .intro {
+            background: #d4e5f9;
+            border-left: 5px solid #002868;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .intro h2 {
+            color: #002868;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            border: 2px solid #d4e5f9;
+            border-radius: 10px;
+            padding: 30px;
+            background: #fafafa;
+        }
+        
+        .section h3 {
+            color: #6598E9;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-number {
+            background: #6598E9;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .problem {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #6598E9;
+        }
+        
+        .problem h4 {
+            color: #002868;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .code-block {
+            background: #263238;
+            color: #aed581;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 2px solid #6598E9;
+        }
+        
+        .code-block code {
+            display: block;
+            white-space: pre;
+        }
+        
+        .pseudocode {
+            background: #f5f5f5;
+            border: 2px solid #6598E9;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+        
+        .answer-section {
+            background: #e8f5e9;
+            border: 2px solid #66bb6a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .answer-header {
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .answer-note {
+            background: #fff9c4;
+            border-left: 4px solid #fbc02d;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-style: italic;
+            color: #f57f17;
+        }
+        
+        .keyword {
+            color: #6598E9;
+            font-weight: bold;
+        }
+        
+        .string {
+            color: #81c784;
+        }
+        
+        .comment {
+            color: #78909c;
+            font-style: italic;
+        }
+        
+        .output {
+            background: #d4e5f9;
+            border-left: 4px solid #6598E9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .hint {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .hint strong {
+            color: #e65100;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Weather Station Control System</h1>
+            <p>Conditional Logic & Boolean Expressions Practice</p>
+        </div>
+        
+        <div class="content">
+            <div class="intro">
+                <h2>Mission Briefing</h2>
+                <p>Welcome, Weather Technician! You've been assigned to program the control system for a remote weather monitoring station. The station collects data on temperature, humidity, wind speed, and precipitation. Your job is to write the logic that determines when to activate various systems and send alerts.</p>
+            </div>
+
+            <!-- Section 1 -->
+            <div class="section">
+                <h3><span class="section-number">1</span> Basic Sensor Readings</h3>
+                
+                <div class="problem">
+                    <h4>Problem 1.1: Temperature Alert</h4>
+                    <p>The weather station should activate a heat alert when the temperature exceeds 35°C. Write an algorithm that checks the temperature and displays an alert if needed.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        temperature = 38<br>
+                        <strong>Expected Output:</strong> HEAT ALERT: Temperature exceeds safe threshold!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        temperature = 32<br>
+                        <strong>Expected Output:</strong> (no output)
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">temperature</span> = 38
+<span class="keyword">if</span> temperature > 35:
+    <span class="keyword">print</span>(<span class="string">"HEAT ALERT: Temperature exceeds safe threshold!"</span>)</code></div>
+                    </div>
+                </div>
+                
+                <div class="problem">
+                    <h4>Problem 1.2: Humidity Control</h4>
+                    <p>The station's dehumidifier should turn on when humidity reaches 80% or higher. Write an algorithm that checks the humidity level and activates the dehumidifier if necessary.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        humidityLevel = 85<br>
+                        <strong>Expected Output:</strong> Dehumidifier activated
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        humidityLevel = 75<br>
+                        <strong>Expected Output:</strong> (no output)
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">humidityLevel</span> = 85
+<span class="keyword">if</span> humidityLevel >= 80:
+    <span class="keyword">print</span>(<span class="string">"Dehumidifier activated"</span>)</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="section">
+                <h3><span class="section-number">2</span> Multiple Condition Checks</h3>
+                
+                <div class="problem">
+                    <h4>Problem 2.1: Storm Warning System</h4>
+                    <p>A storm warning should be issued when BOTH the wind speed is greater than 50 km/h AND there is active precipitation. Write an algorithm that checks both conditions.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        windSpeed = 65<br>
+                        precipitationActive = True<br>
+                        <strong>Expected Output:</strong> STORM WARNING: Seek shelter immediately!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        windSpeed = 65<br>
+                        precipitationActive = False<br>
+                        <strong>Expected Output:</strong> (no output)
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">windSpeed</span> = 65
+<span class="keyword">precipitationActive</span> = True
+<span class="keyword">if</span> windSpeed > 50 <span class="keyword">and</span> precipitationActive == True:
+    <span class="keyword">print</span>(<span class="string">"STORM WARNING: Seek shelter immediately!"</span>)</code></div>
+                    </div>
+                </div>
+                
+                <div class="problem">
+                    <h4>Problem 2.2: Extreme Weather Detection</h4>
+                    <p>The system should alert for extreme weather if EITHER the temperature is below -20°C OR above 45°C. Write an algorithm that detects extreme temperatures.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        currentTemp = -25<br>
+                        <strong>Expected Output:</strong> EXTREME WEATHER ALERT!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        currentTemp = 20<br>
+                        <strong>Expected Output:</strong> (no output)
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">currentTemp</span> = -25
+<span class="keyword">if</span> currentTemp < -20 <span class="keyword">or</span> currentTemp > 45:
+    <span class="keyword">print</span>(<span class="string">"EXTREME WEATHER ALERT!"</span>)</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="section">
+                <h3><span class="section-number">3</span> Complex Boolean Logic</h3>
+                
+                <div class="problem">
+                    <h4>Problem 3.1: Outdoor Activity Recommendation</h4>
+                    <p>The station should recommend outdoor activities when the temperature is between 15°C and 28°C, humidity is less than 70%, AND it's not raining. Write an algorithm that checks all three conditions.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        temperature = 22<br>
+                        humidity = 55<br>
+                        isRaining = False<br>
+                        <strong>Expected Output:</strong> Perfect weather for outdoor activities!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        temperature = 22<br>
+                        humidity = 75<br>
+                        isRaining = False<br>
+                        <strong>Expected Output:</strong> (no output)
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">temperature</span> = 22
+<span class="keyword">humidity</span> = 55
+<span class="keyword">isRaining</span> = False
+<span class="keyword">if</span> temperature >= 15 <span class="keyword">and</span> temperature <= 28 <span class="keyword">and</span> humidity < 70 <span class="keyword">and</span> isRaining == False:
+    <span class="keyword">print</span>(<span class="string">"Perfect weather for outdoor activities!"</span>)</code></div>
+                    </div>
+                </div>
+                
+                <div class="problem">
+                    <h4>Problem 3.2: Frost Warning System</h4>
+                    <p>Issue a frost warning if the temperature is at or below 2°C AND (humidity is above 85% OR it's nighttime). Write an algorithm with these nested conditions.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        temperature = 1<br>
+                        humidity = 90<br>
+                        isNighttime = True<br>
+                        <strong>Expected Output:</strong> FROST WARNING: Protect sensitive plants!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        temperature = 5<br>
+                        humidity = 90<br>
+                        isNighttime = True<br>
+                        <strong>Expected Output:</strong> (no output)
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">temperature</span> = 1
+<span class="keyword">humidity</span> = 90
+<span class="keyword">isNighttime</span> = True
+<span class="keyword">if</span> temperature <= 2 <span class="keyword">and</span> (humidity > 85 <span class="keyword">or</span> isNighttime == True):
+    <span class="keyword">print</span>(<span class="string">"FROST WARNING: Protect sensitive plants!"</span>)</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="section">
+                <h3><span class="section-number">4</span> Advanced Conditional Logic</h3>
+                
+                <div class="problem">
+                    <h4>Problem 4.1: Air Quality Index System</h4>
+                    <p>The weather station monitors air quality. Write an algorithm that categorizes air quality based on the PM2.5 value:
+                    <ul>
+                        <li>0-50: Good</li>
+                        <li>51-100: Moderate</li>
+                        <li>101-150: Unhealthy for sensitive groups</li>
+                        <li>151+: Unhealthy</li>
+                    </ul>
+                    Use if-elif-else structure.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        pm25Value = 125<br>
+                        <strong>Expected Output:</strong> Air Quality: Unhealthy for sensitive groups
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        pm25Value = 45<br>
+                        <strong>Expected Output:</strong> Air Quality: Good
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">pm25Value</span> = 125
+<span class="keyword">if</span> pm25Value <= 50:
+    <span class="keyword">print</span>(<span class="string">"Air Quality: Good"</span>)
+<span class="keyword">elif</span> pm25Value <= 100:
+    <span class="keyword">print</span>(<span class="string">"Air Quality: Moderate"</span>)
+<span class="keyword">elif</span> pm25Value <= 150:
+    <span class="keyword">print</span>(<span class="string">"Air Quality: Unhealthy for sensitive groups"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">"Air Quality: Unhealthy"</span>)</code></div>
+                    </div>
+                </div>
+                
+                <div class="problem">
+                    <h4>Problem 4.2: Emergency Response Priority</h4>
+                    <p>The system needs to determine emergency response priority based on multiple factors. Write an algorithm that assigns priority levels:
+                    <ul>
+                        <li>CRITICAL: Wind speed > 100 km/h OR temperature < -30°C</li>
+                        <li>HIGH: Wind speed > 75 km/h OR (temperature < -15°C AND precipitationActive)</li>
+                        <li>MODERATE: All other conditions</li>
+                    </ul>
+                    </p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        windSpeed = 85<br>
+                        temperature = -18<br>
+                        precipitationActive = True<br>
+                        <strong>Expected Output:</strong> Priority: HIGH
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        windSpeed = 110<br>
+                        temperature = -18<br>
+                        precipitationActive = True<br>
+                        <strong>Expected Output:</strong> Priority: CRITICAL
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">windSpeed</span> = 85
+<span class="keyword">temperature</span> = -18
+<span class="keyword">precipitationActive</span> = True
+<span class="keyword">if</span> windSpeed > 100 <span class="keyword">or</span> temperature < -30:
+    <span class="keyword">print</span>(<span class="string">"Priority: CRITICAL"</span>)
+<span class="keyword">elif</span> windSpeed > 75 <span class="keyword">or</span> (temperature < -15 <span class="keyword">and</span> precipitationActive == True):
+    <span class="keyword">print</span>(<span class="string">"Priority: HIGH"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">"Priority: MODERATE"</span>)</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="section">
+                <h3><span class="section-number">5</span> Challenge Problems</h3>
+                
+                <div class="problem">
+                    <h4>Problem 5.1: Weather Pattern Analysis</h4>
+                    <p>Write an algorithm that analyzes weather patterns over three days. The station has collected temperature data for three consecutive days stored in a list. Calculate the average temperature and determine if there's a warming trend (each day is warmer than the previous).</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        temperatureReadings = [18, 22, 25]<br>
+                        <strong>Expected Output:</strong><br>
+                        Average temperature: 21.666666666666668°C<br>
+                        Warming trend detected
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        temperatureReadings = [18, 22, 20]<br>
+                        <strong>Expected Output:</strong><br>
+                        Average temperature: 20.0°C
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">temperatureReadings</span> = [18, 22, 25]
+<span class="keyword">sum</span> = temperatureReadings[0] + temperatureReadings[1] + temperatureReadings[2]
+<span class="keyword">average</span> = sum / 3
+<span class="keyword">print</span>(<span class="string">"Average temperature: "</span> + str(average) + <span class="string">"°C"</span>)
+<span class="keyword">if</span> temperatureReadings[1] > temperatureReadings[0] <span class="keyword">and</span> temperatureReadings[2] > temperatureReadings[1]:
+    <span class="keyword">print</span>(<span class="string">"Warming trend detected"</span>)</code></div>
+                    </div>
+                </div>
+                
+                <div class="problem">
+                    <h4>Problem 5.2: Interactive Weather Alert System</h4>
+                    <p>Write an algorithm that takes user input for current temperature and wind speed, then determines if outdoor activities are safe. Activities are safe if temperature is between 10°C and 32°C AND wind speed is less than 40 km/h.</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        User inputs: temperature = 25, windSpeed = 30<br>
+                        <strong>Expected Output:</strong> Safe for outdoor activities!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        User inputs: temperature = 35, windSpeed = 30<br>
+                        <strong>Expected Output:</strong> Conditions not safe for outdoor activities
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">temperature</span> = int(input(<span class="string">"Enter current temperature (°C): "</span>))
+<span class="keyword">windSpeed</span> = int(input(<span class="string">"Enter wind speed (km/h): "</span>))
+
+<span class="keyword">if</span> temperature >= 10 <span class="keyword">and</span> temperature <= 32 <span class="keyword">and</span> windSpeed < 40:
+    <span class="keyword">print</span>(<span class="string">"Safe for outdoor activities!"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">"Conditions not safe for outdoor activities"</span>)</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6 -->
+            <div class="section">
+                <h3><span class="section-number">6</span> Writing Procedures</h3>
+                
+                <div class="problem">
+                    <h4>Problem 6.1: Weather Alert Procedure with Boolean Parameter</h4>
+                    <p>Write a procedure called checkSevereWeather that takes three parameters: windSpeed (number), temperature (number), and isEvacuationZone (boolean). The procedure should print "EVACUATE IMMEDIATELY!" if wind speed is greater than 80 km/h OR temperature is less than -25°C, but ONLY if isEvacuationZone is True. Otherwise, print "Monitor conditions closely".</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        checkSevereWeather(90, -10, True)<br>
+                        <strong>Expected Output:</strong> EVACUATE IMMEDIATELY!
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        checkSevereWeather(90, -10, False)<br>
+                        <strong>Expected Output:</strong> Monitor conditions closely
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">def</span> checkSevereWeather(windSpeed, temperature, isEvacuationZone):
+    <span class="keyword">if</span> (windSpeed > 80 <span class="keyword">or</span> temperature < -25) <span class="keyword">and</span> isEvacuationZone == True:
+        <span class="keyword">print</span>(<span class="string">"EVACUATE IMMEDIATELY!"</span>)
+    <span class="keyword">else</span>:
+        <span class="keyword">print</span>(<span class="string">"Monitor conditions closely"</span>)
+
+<span class="comment"># Test the procedure</span>
+checkSevereWeather(90, -10, True)
+checkSevereWeather(90, -10, False)</code></div>
+                    </div>
+                </div>
+                
+                <div class="problem">
+                    <h4>Problem 6.2: Temperature Conversion and Classification Procedure</h4>
+                    <p>Write a procedure called analyzeTemperature that takes two parameters: tempCelsius (number) and locationCode (string). The procedure should calculate the temperature in Fahrenheit using the formula: (tempCelsius * 9/5) + 32. Then extract the first two characters of the locationCode using substring notation. Print the location prefix, both temperatures, and classify as "Hot" if Fahrenheit is above 86°F OR Celsius is above 30°C, otherwise print "Moderate".</p>
+                    
+                    <div class="output">
+                        <strong>Test Case 1:</strong><br>
+                        analyzeTemperature(32, "NYC001")<br>
+                        <strong>Expected Output:</strong><br>
+                        Location: NY<br>
+                        Temperature: 32°C / 89.6°F<br>
+                        Classification: Hot
+                    </div>
+                    
+                    <div class="output">
+                        <strong>Test Case 2:</strong><br>
+                        analyzeTemperature(20, "LAX045")<br>
+                        <strong>Expected Output:</strong><br>
+                        Location: LA<br>
+                        Temperature: 20°C / 68.0°F<br>
+                        Classification: Moderate
+                    </div>
+                    
+                    <div class="answer-section">
+                        <div class="answer-header">Sample Answer:</div>
+                        <div class="answer-note">
+                            Note: This is ONE possible correct answer. Your code may look different and still be completely correct! There are multiple ways to solve this problem.
+                        </div>
+                        <div class="code-block"><code><span class="comment"># Python Solution</span>
+<span class="keyword">def</span> analyzeTemperature(tempCelsius, locationCode):
+    tempFahrenheit = (tempCelsius * 9 / 5) + 32
+    locationPrefix = locationCode[0:2]
+    
+    <span class="keyword">print</span>(<span class="string">"Location: "</span> + locationPrefix)
+    <span class="keyword">print</span>(<span class="string">"Temperature: "</span> + str(tempCelsius) + <span class="string">"°C / "</span> + str(tempFahrenheit) + <span class="string">"°F"</span>)
+    
+    <span class="keyword">if</span> tempFahrenheit > 86 <span class="keyword">or</span> tempCelsius > 30:
+        <span class="keyword">print</span>(<span class="string">"Classification: Hot"</span>)
+    <span class="keyword">else</span>:
+        <span class="keyword">print</span>(<span class="string">"Classification: Moderate"</span>)
+
+<span class="comment"># Test the procedure</span>
+analyzeTemperature(32, <span class="string">"NYC001"</span>)
+analyzeTemperature(20, <span class="string">"LAX045"</span>)</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="intro" style="margin-top: 40px;">
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li><strong>Comparison Operators:</strong> > (greater than), < (less than), >= (greater than or equal), <= (less than or equal), == (equal to), != (not equal to)</li>
+                    <li><strong>Logical Operators:</strong> AND (both conditions true), OR (at least one condition true), NOT (reverses the boolean value)</li>
+                    <li><strong>Code Style:</strong> Use camelCase for variables, avoid negative indexing, use clear and descriptive variable names</li>
+                    <li><strong>Multiple Solutions:</strong> Remember that there are often many correct ways to solve a problem - your approach may differ from the sample answers!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
