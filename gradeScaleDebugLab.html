@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Classification Debug Lab</title>
+    <title>Grade Classification Debug Lab - Interactive</title>
     <style>
         * {
             margin: 0;
@@ -45,6 +45,14 @@
 
         .content {
             padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
         }
 
         .objective-box {
@@ -112,11 +120,6 @@
 
         .code-block .number {
             color: #000000;
-        }
-
-        .code-block .comment {
-            color: #808080;
-            font-style: italic;
         }
 
         .step {
@@ -204,11 +207,152 @@
             color: #495057;
         }
 
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #002868;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #002868;
+        }
+
+        .code-editor {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #002868;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            line-height: 1.8;
+            resize: vertical;
+            background: #f8f9fa;
+        }
+
+        .code-editor:focus {
+            outline: none;
+            border-color: #BF0A30;
+            background: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #002868;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #001a4d;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .summary-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .summary-section h3 {
+            color: #002868;
+            margin-bottom: 15px;
+        }
+
+        .summary-info {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 5px solid #BF0A30;
+        }
+
+        .summary-info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .summary-info strong {
+            color: #002868;
+        }
+
+        .submitted-code {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #002868;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 15px;
+        }
+
         .footer {
             background: #002868;
             color: white;
             padding: 20px 40px;
             text-align: center;
+        }
+
+        @media print {
+            .btn, .button-group {
+                display: none;
+            }
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
         }
 
         @media (max-width: 768px) {
@@ -223,6 +367,14 @@
             .step {
                 padding: 15px;
             }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -234,27 +386,29 @@
         </div>
 
         <div class="content">
-            <div class="objective-box">
-                <h2>Lab Objectives</h2>
-                <p>By the end of this lab, you will be able to:</p>
-                <ul>
-                    <li>Understand that elif statements are evaluated in sequential order from top to bottom</li>
-                    <li>Recognize that once a condition evaluates to True, all subsequent conditions are skipped</li>
-                    <li>Debug code by using systematic testing strategies</li>
-                    <li>Apply logical reasoning to determine proper condition ordering</li>
-                </ul>
-            </div>
+            <!-- SECTION 0: Objectives and Understanding Logic Errors -->
+            <div id="section0" class="section active">
+                <div class="objective-box">
+                    <h2>Lab Objectives</h2>
+                    <p>By the end of this lab, you will be able to:</p>
+                    <ul>
+                        <li>Understand that elif statements are evaluated in sequential order from top to bottom</li>
+                        <li>Recognize that once a condition evaluates to True, all subsequent conditions are skipped</li>
+                        <li>Debug code by using systematic testing strategies</li>
+                        <li>Apply logical reasoning to determine proper condition ordering</li>
+                    </ul>
+                </div>
 
-            <!-- WARM-UP CODE SEGMENT -->
-            <div class="step">
-                <span class="step-number">W</span>
-                <div class="step-content">
-                    <h3>Understanding Logic Errors</h3>
-                    <p style="font-size: 1.1em; font-weight: bold; color: #002868; background: #f8f9fa; padding: 15px; border-left: 5px solid #BF0A30; border-radius: 5px;">College Board Definition: A logic error is a mistake in an algorithm or program that causes it to behave incorrectly or unexpectedly. The program runs without crashing, but produces incorrect results.</p>
-                    
-                    <p style="margin-top: 15px;">Look at the algorithm below:</p>
-                    
-                    <div class="code-block"><span class="keyword">ans</span> = <span class="number">9</span>
+                <!-- WARM-UP CODE SEGMENT -->
+                <div class="step">
+                    <span class="step-number">W</span>
+                    <div class="step-content">
+                        <h3>Understanding Logic Errors</h3>
+                        <p style="font-size: 1.1em; font-weight: bold; color: #002868; background: #f8f9fa; padding: 15px; border-left: 5px solid #BF0A30; border-radius: 5px;">College Board Definition: A logic error is a mistake in an algorithm or program that causes it to behave incorrectly or unexpectedly. The program runs without crashing, but produces incorrect results.</p>
+                        
+                        <p style="margin-top: 15px;">Look at the algorithm below:</p>
+                        
+                        <div class="code-block"><span class="keyword">ans</span> = <span class="number">9</span>
 
 <span class="keyword">if</span> (ans > <span class="number">3</span>):
     print(<span class="number">3</span>)
@@ -262,142 +416,238 @@
     print(<span class="number">5</span>)
 <span class="keyword">else</span>:
     print(<span class="string">"else"</span>)</div>
-                </div>
-            </div>
-
-            <div class="warning-box">
-                <strong>Important:</strong> The code below has a logic error! Don't assume it works correctly. Your job is to find the bug through testing and analysis.
-            </div>
-
-            <div class="grading-scale">
-                <h3>Sample ASCTE Quiz Grade Scale</h3>
-                <ul>
-                    <li><strong>Mastery:</strong> Score ≥ 87</li>
-                    <li><strong>Proficiency:</strong> Score ≥ 72</li>
-                    <li><strong>Emerging:</strong> Score > 54</li>
-                    <li><strong>Beginning:</strong> Score ≥ 40</li>
-                    <li><strong>Incomplete:</strong> Score < 40</li>
-                </ul>
-            </div>
-
-            <!-- STEP 1 -->
-            <div class="step">
-                <span class="step-number">1</span>
-                <div class="step-content">
-                    <h3>Read the Buggy Code</h3>
-                    <p>Carefully read through the code below. This function is supposed to classify grades according to the ASCTE grading scale, but it has a logic error.</p>
-                    
-                    <div class="code-block"><span class="keyword">def</span> <span class="function">classifyGrade</span>(score):
-    <span class="keyword">if</span> score >= <span class="number">40</span>:
-        <span class="keyword">return</span> <span class="string">"Beginning"</span>
-    <span class="keyword">elif</span> score > <span class="number">54</span>:
-        <span class="keyword">return</span> <span class="string">"Emerging"</span>
-    <span class="keyword">elif</span> score >= <span class="number">72</span>:
-        <span class="keyword">return</span> <span class="string">"Proficiency"</span>
-    <span class="keyword">elif</span> score >= <span class="number">87</span>:
-        <span class="keyword">return</span> <span class="string">"Mastery"</span>
-    <span class="keyword">else</span>:
-        <span class="keyword">return</span> <span class="string">"Incomplete"</span></div>
-                </div>
-            </div>
-
-            <!-- STEP 2 -->
-            <div class="step">
-                <span class="step-number">2</span>
-                <div class="step-content">
-                    <h3>Code Tracing</h3>
-                    <p>Trace through the code with the following two example scores:</p>
-                    
-                    <div class="hint-box">
-                        <strong>Example 1:</strong> classifyGrade(95)
-                    </div>
-
-                    <div class="hint-box">
-                        <strong>Example 2:</strong> classifyGrade(50)
                     </div>
                 </div>
-            </div>
 
-            <!-- STEP 3 -->
-            <div class="step">
-                <span class="step-number">3</span>
-                <div class="step-content">
-                    <h3>Identify the Pattern</h3>
-                    <p>Based on your code tracing, identify what is causing the logic error.</p>
-                    
-                    <div class="hint-box">
-                        <strong>Key Concept:</strong> When Python encounters an if-elif-else structure, it checks each condition in order from top to bottom. As soon as it finds a condition that is True, it executes that block and skips ALL remaining elif and else blocks.
-                    </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="goToSection(1)">Continue to Lab →</button>
                 </div>
             </div>
 
-            <!-- STEP 4 -->
-            <div class="step">
-                <span class="step-number">4</span>
-                <div class="step-content">
-                    <h3>Determine the Solution</h3>
-                    <p>Think about how to fix the code.</p>
+            <!-- SECTION 1: Email Entry -->
+            <div id="section1" class="section">
+                <div class="objective-box">
+                    <h2>Before We Begin...</h2>
+                    <p>Please enter your email address. This will be used to generate your completion certificate.</p>
+                </div>
 
-                    <div class="success-box">
-                        <strong>General Rule:</strong> When using if-elif-else for ranges, always check from most specific to least specific. For grades, this usually means checking highest values first, then working down to lowest values.
-                    </div>
+                <div class="input-group">
+                    <label for="studentEmail">Student Email:</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@example.com" required>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToSection(0)">← Back</button>
+                    <button class="btn btn-primary" onclick="startLab()">Start Lab</button>
                 </div>
             </div>
 
-            <!-- STEP 5 -->
-            <div class="step">
-                <span class="step-number">5</span>
-                <div class="step-content">
-                    <h3>Copy the Code and Test It</h3>
-                    <p>Copy the buggy code below into your Python IDE. Run at least 4 test cases to verify that the bug exists.</p>
-                    
-                    <div class="code-block"><span class="keyword">def</span> <span class="function">classifyGrade</span>(score):
-    <span class="keyword">if</span> score >= <span class="number">40</span>:
-        <span class="keyword">return</span> <span class="string">"Beginning"</span>
-    <span class="keyword">elif</span> score > <span class="number">54</span>:
-        <span class="keyword">return</span> <span class="string">"Emerging"</span>
-    <span class="keyword">elif</span> score >= <span class="number">72</span>:
-        <span class="keyword">return</span> <span class="string">"Proficiency"</span>
-    <span class="keyword">elif</span> score >= <span class="number">87</span>:
-        <span class="keyword">return</span> <span class="string">"Mastery"</span>
-    <span class="keyword">else</span>:
-        <span class="keyword">return</span> <span class="string">"Incomplete"</span></div>
-                </div>
-            </div>
+            <!-- SECTION 2: Problem Introduction & Steps 1-3 -->
+            <div id="section2" class="section">
 
-            <!-- STEP 6 -->
-            <div class="step">
-                <span class="step-number">6</span>
-                <div class="step-content">
-                    <h3>Write the Corrected Code</h3>
-                    <p>In your IDE, write a corrected version of the function called classifyGradeCorrected. Make sure to:</p>
+                <div class="warning-box">
+                    <strong>Important:</strong> The code below has a logic error! Don't assume it works correctly. Your job is to find the bug through testing and analysis.
+                </div>
+
+                <div class="grading-scale">
+                    <h3>Sample ASCTE Quiz Grade Scale</h3>
                     <ul>
-                        <li>Use camelCase for the function name</li>
-                        <li>Put the conditions in the correct order</li>
-                        <li>Keep all the same return values</li>
+                        <li><strong>Mastery:</strong> Score ≥ 87</li>
+                        <li><strong>Proficiency:</strong> Score ≥ 72</li>
+                        <li><strong>Emerging:</strong> Score > 54</li>
+                        <li><strong>Beginning:</strong> Score ≥ 40</li>
+                        <li><strong>Incomplete:</strong> Score < 40</li>
                     </ul>
                 </div>
-            </div>
 
-            <!-- STEP 7 -->
-            <div class="step">
-                <span class="step-number">7</span>
-                <div class="step-content">
-                    <h3>Test Your Corrected Code</h3>
-                    <p>Test your corrected function with the same test cases you used earlier to verify it now works properly.</p>
-
-                    <div class="success-box">
-                        <strong>Success Check:</strong> All your test cases should now produce the correct results!
+                <!-- STEP 1 -->
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h3>Read the Buggy Code</h3>
+                        <p>Carefully read through the code below. This function is supposed to classify grades according to the ASCTE grading scale, but it has a logic error.</p>
+                        
+                        <div class="code-block"><span class="keyword">def</span> <span class="function">classifyGrade</span>(score):
+    <span class="keyword">if</span> score >= <span class="number">40</span>:
+        <span class="keyword">return</span> <span class="string">"Beginning"</span>
+    <span class="keyword">elif</span> score > <span class="number">54</span>:
+        <span class="keyword">return</span> <span class="string">"Emerging"</span>
+    <span class="keyword">elif</span> score >= <span class="number">72</span>:
+        <span class="keyword">return</span> <span class="string">"Proficiency"</span>
+    <span class="keyword">elif</span> score >= <span class="number">87</span>:
+        <span class="keyword">return</span> <span class="string">"Mastery"</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="string">"Incomplete"</span></div>
                     </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h3>Code Tracing</h3>
+                        <p>Trace through the code with the following two example scores:</p>
+                        
+                        <div class="hint-box">
+                            <strong>Example 1:</strong> classifyGrade(95)
+                        </div>
+
+                        <div class="hint-box">
+                            <strong>Example 2:</strong> classifyGrade(50)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h3>Identify the Pattern</h3>
+                        <p>Based on your code tracing, identify what is causing the logic error.</p>
+                        
+                        <div class="hint-box">
+                            <strong>Key Concept:</strong> When Python encounters an if-elif-else structure, it checks each condition in order from top to bottom. As soon as it finds a condition that is True, it executes that block and skips ALL remaining elif and else blocks.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="goToSection(3)">Ready to Fix the Code →</button>
                 </div>
             </div>
 
+            <!-- SECTION 3: Code Solution -->
+            <div id="section3" class="section">
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <h3>Write Your Corrected Code</h3>
+                        <p>Write a corrected version of the function called <code>classifyGradeCorrected</code>. Make sure to:</p>
+                        <ul>
+                            <li>Use camelCase for the function name</li>
+                            <li>Put the conditions in the correct order</li>
+                            <li>Keep all the same return values</li>
+                        </ul>
+
+                        <div class="success-box">
+                            <strong>General Rule:</strong> When using if-elif-else for ranges, always check from most specific to least specific. For grades, this usually means checking highest values first, then working down to lowest values.
+                        </div>
+
+                        <div class="input-group">
+                            <label for="codeEditor">Your Solution:</label>
+                            <textarea id="codeEditor" class="code-editor" placeholder="def classifyGradeCorrected(score):
+    # Write your corrected code here
+    "></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToSection(2)">← Back</button>
+                    <button class="btn btn-success" onclick="submitSolution()">Submit Solution</button>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Summary -->
+            <div id="section4" class="section">
+                <div class="summary-section">
+                    <h3>🎉 Lab Complete!</h3>
+                    
+                    <div class="summary-info">
+                        <p><strong>Student Email:</strong> <span id="summaryEmail"></span></p>
+                        <p><strong>Submission Date:</strong> <span id="summaryDate"></span></p>
+                        <p><strong>Submission Time:</strong> <span id="summaryTime"></span></p>
+                    </div>
+
+                    <h3 style="margin-top: 30px;">Your Submitted Solution:</h3>
+                    <div class="submitted-code" id="submittedCode"></div>
+
+                    <div class="success-box" style="margin-top: 30px;">
+                        <strong>Remember:</strong> Order matters in conditional statements! Always check from most specific to least specific when working with ranges.
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="printPDF()">Save as PDF</button>
+                </div>
+            </div>
         </div>
 
         <div class="footer">
-            <p><strong>Lab Complete!</strong> Make sure you've tested your corrected code thoroughly.</p>
-            <p>Remember: Order matters in conditional statements! Always check from most specific to least specific.</p>
+            <p><strong>Grade Classification Debug Lab</strong></p>
+            <p>Interactive Version - AP Computer Science Principles</p>
         </div>
     </div>
+
+    <script>
+        let studentData = {
+            email: '',
+            code: '',
+            completionDate: '',
+            completionTime: ''
+        };
+
+        function goToSection(sectionNum) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show target section
+            document.getElementById('section' + sectionNum).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function startLab() {
+            const email = document.getElementById('studentEmail').value;
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            studentData.email = email;
+            goToSection(2);
+        }
+
+        function submitSolution() {
+            const code = document.getElementById('codeEditor').value;
+            
+            if (!code.trim()) {
+                alert('Please write your solution before submitting.');
+                return;
+            }
+
+            // Store the solution
+            studentData.code = code;
+            
+            // Get current date and time
+            const now = new Date();
+            studentData.completionDate = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            studentData.completionTime = now.toLocaleTimeString('en-US');
+
+            // Display summary
+            document.getElementById('summaryEmail').textContent = studentData.email;
+            document.getElementById('summaryDate').textContent = studentData.completionDate;
+            document.getElementById('summaryTime').textContent = studentData.completionTime;
+            document.getElementById('submittedCode').textContent = studentData.code;
+
+            // Go to summary section
+            goToSection(4);
+        }
+
+        function printPDF() {
+            // Try to print
+            try {
+                window.print();
+            } catch (error) {
+                alert('Print dialog could not be opened. Please use your browser menu: File > Print, then choose "Save as PDF" as the printer.');
+            }
+        }
+    </script>
 </body>
 </html>
