@@ -518,6 +518,37 @@
 
             <!-- SECTION 3: Code Solution -->
             <div id="section3" class="section">
+                <div class="grading-scale">
+                    <h3>ASCTE Quiz Grade Scale (Reference)</h3>
+                    <ul>
+                        <li><strong>Mastery:</strong> Score ≥ 87</li>
+                        <li><strong>Proficiency:</strong> Score ≥ 72</li>
+                        <li><strong>Emerging:</strong> Score > 54</li>
+                        <li><strong>Beginning:</strong> Score ≥ 40</li>
+                        <li><strong>Incomplete:</strong> Score < 40</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">R</span>
+                    <div class="step-content">
+                        <h3>Original Buggy Code (Reference)</h3>
+                        <p>For reference, here is the original code with the logic error:</p>
+                        
+                        <div class="code-block"><span class="keyword">def</span> <span class="function">classifyGrade</span>(score):
+    <span class="keyword">if</span> score >= <span class="number">40</span>:
+        <span class="keyword">return</span> <span class="string">"Beginning"</span>
+    <span class="keyword">elif</span> score > <span class="number">54</span>:
+        <span class="keyword">return</span> <span class="string">"Emerging"</span>
+    <span class="keyword">elif</span> score >= <span class="number">72</span>:
+        <span class="keyword">return</span> <span class="string">"Proficiency"</span>
+    <span class="keyword">elif</span> score >= <span class="number">87</span>:
+        <span class="keyword">return</span> <span class="string">"Mastery"</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="string">"Incomplete"</span></div>
+                    </div>
+                </div>
+
                 <div class="step">
                     <span class="step-number">4</span>
                     <div class="step-content">
@@ -544,12 +575,39 @@
 
                 <div class="button-group">
                     <button class="btn btn-secondary" onclick="goToSection(2)">← Back</button>
-                    <button class="btn btn-success" onclick="submitSolution()">Submit Solution</button>
+                    <button class="btn btn-success" onclick="saveCodeAndContinue()">Continue to Written Response →</button>
                 </div>
             </div>
 
-            <!-- SECTION 4: Summary -->
+            <!-- SECTION 4: Written Explanation (FRQ Style) -->
             <div id="section4" class="section">
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <h3>Written Response (AP CSP FRQ Style)</h3>
+                        <p style="font-size: 1.1em; font-weight: bold; color: #002868; background: #f8f9fa; padding: 15px; border-left: 5px solid #BF0A30; border-radius: 5px; margin-bottom: 20px;">
+                            Consider the classifyGrade procedure from this lab. Explain what a logic error is and how it differs from syntax errors or runtime errors. Describe the logic error present in the original code. Explain how the behavior of this procedure was incorrect because of the error and how your corrected version fixes this error.
+                        </p>
+
+                        <div class="hint-box">
+                            <strong>Reminder:</strong> Write your response in AEC format (Answer, Evidence, Connect). Use proper terminology like "conditional statements," "sequential evaluation," "boolean conditions," and "control flow" in your response.
+                        </div>
+
+                        <div class="input-group">
+                            <label for="writtenResponse">Your Written Explanation:</label>
+                            <textarea id="writtenResponse" class="code-editor" style="min-height: 250px;" placeholder="Write your response here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToSection(3)">← Back</button>
+                    <button class="btn btn-success" onclick="submitComplete()">Submit Lab</button>
+                </div>
+            </div>
+
+            <!-- SECTION 5: Summary -->
+            <div id="section5" class="section">
                 <div class="summary-section">
                     <h3>🎉 Lab Complete!</h3>
                     
@@ -561,6 +619,9 @@
 
                     <h3 style="margin-top: 30px;">Your Submitted Solution:</h3>
                     <div class="submitted-code" id="submittedCode"></div>
+
+                    <h3 style="margin-top: 30px;">Your Written Explanation:</h3>
+                    <div class="submitted-code" id="submittedExplanation" style="white-space: pre-wrap;"></div>
 
                     <div class="success-box" style="margin-top: 30px;">
                         <strong>Remember:</strong> Order matters in conditional statements! Always check from most specific to least specific when working with ranges.
@@ -575,7 +636,7 @@
 
         <div class="footer">
             <p><strong>Grade Classification Debug Lab</strong></p>
-            <p>Interactive Version - AP Computer Science Principles</p>
+            <p>Interactive Version - ASCTE Cyber 101</p>
         </div>
     </div>
 
@@ -583,6 +644,7 @@
         let studentData = {
             email: '',
             code: '',
+            writtenResponse: '',
             completionDate: '',
             completionTime: ''
         };
@@ -609,16 +671,31 @@
             goToSection(2);
         }
 
-        function submitSolution() {
+        function saveCodeAndContinue() {
             const code = document.getElementById('codeEditor').value;
             
             if (!code.trim()) {
-                alert('Please write your solution before submitting.');
+                alert('Please write your solution before continuing.');
                 return;
             }
 
-            // Store the solution
+            // Store the code solution
             studentData.code = code;
+            
+            // Go to written response section
+            goToSection(4);
+        }
+
+        function submitComplete() {
+            const writtenResponse = document.getElementById('writtenResponse').value;
+            
+            if (!writtenResponse.trim()) {
+                alert('Please write your explanation before submitting.');
+                return;
+            }
+
+            // Store the written response
+            studentData.writtenResponse = writtenResponse;
             
             // Get current date and time
             const now = new Date();
@@ -635,9 +712,10 @@
             document.getElementById('summaryDate').textContent = studentData.completionDate;
             document.getElementById('summaryTime').textContent = studentData.completionTime;
             document.getElementById('submittedCode').textContent = studentData.code;
+            document.getElementById('submittedExplanation').textContent = studentData.writtenResponse;
 
             // Go to summary section
-            goToSection(4);
+            goToSection(5);
         }
 
         function printPDF() {
