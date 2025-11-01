@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Light Camera Command System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+        }
+
+        .instructions ul {
+            margin-left: 40px;
+            margin-top: 8px;
+            list-style-type: circle;
+        }
+
+        .instructions ul li {
+            margin-bottom: 5px;
+        }
+
+        .concept-box {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .concept-box p {
+            margin-bottom: 10px;
+        }
+
+        .extensions {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-top: 30px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .extensions ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .extensions li {
+            margin-bottom: 15px;
+        }
+
+        code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Red Light Camera Command System</h1>
+        <p><strong>Traffic Engineering & Safety Management</strong></p>
+
+        <div class="instructions">
+            <h2>Activity Instructions</h2>
+            <ol>
+                <li>Create a procedure called <code>registerCameraIntersection()</code></li>
+                <li>At the start of your procedure, print: <code>"---Red Light Camera Intersection Monitoring Station---"</code></li>
+                <li>Create a <strong>try/except</strong> block to catch ValueError</li>
+                <li>Inside the <strong>try</strong> block, collect user input:
+                    <ul>
+                        <li>Prompt for camera ID number and convert it to an integer</li>
+                        <li>Prompt for intersection name</li>
+                        <li><strong>Why inside try?</strong> The <code>int()</code> conversion can raise a ValueError if the user enters invalid input (like text instead of a number). By placing the input collection inside the try block, we can catch this error immediately when it occurs.</li>
+                    </ul>
+                </li>
+                <li>After collecting input, use an <strong>if/else</strong> statement to check:
+                    <ul>
+                        <li>If camera ID > 1000 AND "Main" is in the intersection name:
+                            <ul>
+                                <li>Set <code>priorityLevel = "HIGH"</code></li>
+                                <li>Isolate the first half of the value stored in <code>intersectionName</code></li>
+                                <li>Print a formatted string that includes: priority level, then camera ID, then the first half of intersection name</li>
+                            </ul>
+                        </li>
+                        <li>Otherwise → set <code>priorityLevel = "STANDARD"</code> and print appropriate output</li>
+                    </ul>
+                </li>
+                <li>In the <strong>except ValueError</strong> block:
+                    <ul>
+                        <li>Display an error message explaining the invalid input</li>
+                        <li>Optionally, ask the user to re-enter the information or set <code>priorityLevel = "ERROR"</code></li>
+                    </ul>
+                </li>
+                <li>Print or return the <code>priorityLevel</code> from your procedure</li>
+                <li>Call your procedure and store the result in a variable (if you chose to return the value)</li>
+            </ol>
+        </div>
+
+        <div class="concept-box">
+            <h3>Example Output</h3>
+            <p><strong>Example 1 - HIGH Priority (No Exception):</strong></p>
+            <div style="background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                ---Red Light Camera Intersection Monitoring Station---<br>
+                Enter camera ID: 1250<br>
+                Enter intersection name: Main-5th<br>
+                HIGH 1250 Main
+            </div>
+            <p style="margin-top: 15px;"><strong>Example 2 - ValueError Exception:</strong></p>
+            <div style="background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                ---Red Light Camera Intersection Monitoring Station---<br>
+                Enter camera ID: abc<br>
+                Error: Invalid camera ID. Please enter a number.
+            </div>
+        </div>
+
+        <div class="concept-box">
+            <h3>Why ValueError is the Right Choice</h3>
+            <ul>
+                <li>When we use <code>int(input())</code>, we're asking Python to convert user input (always a string) into an integer</li>
+                <li style="margin-left: 20px;">If the user types something like "abc" or "12.5", Python receives the correct data type (string), but the value doesn't meet the requirements for conversion to an integer</li>
+                <li style="margin-left: 20px;">The type is correct (string), but the value is inappropriate for the operation (converting to int)</li>
+                <li style="margin-left: 20px;">This is exactly what ValueError is designed to catch</li>
+                <li><strong>Contrast:</strong> TypeError occurs with incompatible types like <code>"5" + 3</code>; ZeroDivisionError occurs when dividing by zero</li>
+            </ul>
+        </div>
+
+        <div class="extensions">
+            <h3>Extension Challenges</h3>
+            <ul>
+                <li><strong>Camera ID Validation Range:</strong> Add validation to ensure the camera ID is between 100 and 9999. If outside this range, set <code>priorityLevel</code> to "INVALID" with an appropriate message.</li>
+                <li><strong>Data Logging String Builder:</strong> Create a <code>generateLogEntry()</code> procedure that takes camera ID, intersection name, and priority level as parameters. Ask the user for the current hour (0-23) and return a formatted string like: <code>"[14:00] Camera #1250 at Main-5th registered with HIGH priority"</code></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
