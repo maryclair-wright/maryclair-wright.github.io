@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel Center Store - Security Analysis</title>
+    <style>
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333;
+        }
+        
+        header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            margin-top: 10px;
+            opacity: 0.95;
+        }
+        
+        h2 {
+            color: #002868;
+            border-bottom: 3px solid #002868;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        
+        h3 {
+            color: #BF0A30;
+            margin-top: 25px;
+        }
+        
+        .intro-box {
+            background-color: #6598E9;
+            color: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 5px;
+        }
+        
+        .cia-reminder {
+            background-color: #A5A5A4;
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .cia-reminder h4 {
+            margin-top: 0;
+            color: white;
+        }
+        
+        .data-states-reminder {
+            background-color: #002868;
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .data-states-reminder h4 {
+            margin-top: 0;
+            color: white;
+        }
+        
+        .phase-section {
+            background-color: #f8f8f8;
+            border-left: 5px solid #BF0A30;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .deployment-section {
+            background-color: #f8f8f8;
+            border-left: 5px solid #002868;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .question-block {
+            background-color: white;
+            border: 2px solid #6598E9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .question-label {
+            color: #BF0A30;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .hint {
+            font-style: italic;
+            color: #666;
+            font-size: 0.95em;
+            margin: 8px 0;
+        }
+        
+        .example {
+            background-color: #6598E9;
+            color: white;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+        
+        input[type="email"], input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #A5A5A4;
+            border-radius: 5px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 1em;
+            margin-top: 8px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input[type="email"]:focus, input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #BF0A30;
+        }
+        
+        .email-section {
+            background-color: #002868;
+            color: white;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .start-button, .generate-button {
+            background-color: #BF0A30;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-family: 'IBM Plex Serif', serif;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .start-button:hover, .generate-button:hover {
+            background-color: #8B0820;
+        }
+        
+        .start-button:disabled, .generate-button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .completion-box {
+            background-color: #002868;
+            color: white;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .completion-box h2 {
+            color: white;
+            border: none;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        #activity-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sentinel Center Store</h1>
+        <div class="subtitle">Wireless Payment System Security Analysis</div>
+    </header>
+
+    <div id="email-entry">
+        <div class="email-section">
+            <h2 style="color: white; border: none; margin-top: 0;">Before You Begin</h2>
+            <p style="font-size: 1.1em;">Enter your ASCTE email address to start the activity.</p>
+            <input type="email" id="student-email" placeholder="yourname@asctestudent.org" style="max-width: 400px; margin: 20px auto; display: block;">
+            <button class="start-button" onclick="startActivity()">Start Activity</button>
+            <p id="email-error" style="color: #BF0A30; margin-top: 15px; display: none; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <div id="activity-content">
+        <div class="intro-box">
+            <h2 style="margin-top: 0; color: white; border: none;">The Scenario</h2>
+            <p>When ASCTE's new Sentinel Center opens, there will be a school store selling spirit wear, school supplies, and water bottles. The school needs to design a <strong>wireless tap-to-pay payment system</strong> so students can make purchases quickly and safely using their phones or payment cards.</p>
+            
+            <p>Think about using Apple Pay, Google Pay, or tapping your card at a store - you tap your device on a reader and the payment goes through wirelessly. That's what this system will be like!</p>
+            
+            <p><strong>Your job:</strong> Analyze this payment system through the engineering lifecycle and identify what types of cyber protections are needed at each phase.</p>
+        </div>
+
+        <div class="cia-reminder">
+            <h4>Remember the CIA Triad:</h4>
+            <ul>
+                <li><strong>Confidentiality:</strong> Keeping information private and secret from people who shouldn't see it</li>
+                <li><strong>Integrity:</strong> Making sure information is accurate and hasn't been changed by unauthorized people</li>
+                <li><strong>Availability:</strong> Making sure the system works when people need it</li>
+            </ul>
+        </div>
+
+        <div class="data-states-reminder">
+            <h4>Remember Data States:</h4>
+            <ul>
+                <li><strong>Data at Rest:</strong> Data that is stored somewhere (in a database, on a hard drive, etc.)</li>
+                <li><strong>Data in Transit:</strong> Data that is being sent from one place to another (over wifi, through cables, etc.)</li>
+                <li><strong>Data in Use:</strong> Data that is currently being processed or displayed on a screen</li>
+            </ul>
+        </div>
+
+        <h2>Part 1: Understanding the System</h2>
+        
+        <p>Before we analyze security through the engineering lifecycle, let's understand what this wireless payment system does.</p>
+        
+        <div class="question-block">
+            <label class="question-label">Question 1: What information does this system handle?</label>
+            <p>List at least 3 types of information this wireless payment system will need to work with.</p>
+            <div class="example">Example: Payment card number</div>
+            <p class="hint">Think about: What information is needed to complete a purchase? What records might be kept?</p>
+            <textarea id="q1" placeholder="Type your answer here..."></textarea>
+        </div>
+
+        <div class="question-block">
+            <label class="question-label">Question 1B: Reading transaction logs</label>
+            <p>Below is sample log data from a payment system. Read through the logs and answer the questions.</p>
+            <div style="background-color: #f4f4f4; padding: 15px; margin: 15px 0; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.9em; overflow-x: auto;">
+2025-11-16 11:47:23 | Transaction ID: TXN-20251116-00147 | Terminal: SENT-STORE-01 | Amount: $12.50 | Status: APPROVED | Last4: 4532<br>
+2025-11-16 11:48:01 | Transaction ID: TXN-20251116-00148 | Terminal: SENT-STORE-01 | Amount: $8.00 | Status: APPROVED | Last4: 7821<br>
+2025-11-16 11:49:15 | Transaction ID: TXN-20251116-00149 | Terminal: SENT-STORE-01 | Amount: $15.75 | Status: DECLINED | Last4: 3344<br>
+2025-11-16 11:50:42 | Transaction ID: TXN-20251116-00150 | Terminal: SENT-STORE-01 | Amount: $6.25 | Status: APPROVED | Last4: 9012<br>
+2025-11-16 12:03:18 | Transaction ID: TXN-20251116-00151 | Terminal: SENT-STORE-01 | Amount: $22.00 | Status: APPROVED | Last4: 4532
+            </div>
+            <p><strong>A. List at least 4 different types of information you can see in these transaction logs.</strong></p>
+            <textarea id="q1b-a" placeholder="Type your answer here..." style="min-height: 80px;"></textarea>
+            <p><strong>B. Why do you think the logs only show "Last4: 4532" instead of the full card number?</strong></p>
+            <textarea id="q1b-b" placeholder="Type your answer here..." style="min-height: 60px;"></textarea>
+            <p><strong>C. Notice transaction TXN-20251116-00149 shows "DECLINED". Why might it be important to keep a record of declined transactions, not just approved ones?</strong></p>
+            <textarea id="q1b-c" placeholder="Type your answer here..." style="min-height: 60px;"></textarea>
+        </div>
+
+        <div class="question-block">
+            <label class="question-label">Question 2: Identify CIA needs</label>
+            <p>For each type of information below, identify which part of the CIA triad is MOST important and explain why in one sentence.</p>
+            <p><strong>A. Payment card numbers</strong></p>
+            <textarea id="q2a" placeholder="CIA component and why..." style="min-height: 60px;"></textarea>
+            <p><strong>B. Transaction records (what was purchased and when)</strong></p>
+            <textarea id="q2b" placeholder="CIA component and why..." style="min-height: 60px;"></textarea>
+            <p><strong>C. The payment system working when students need to buy items during lunch</strong></p>
+            <textarea id="q2c" placeholder="CIA component and why..." style="min-height: 60px;"></textarea>
+        </div>
+
+        <h2>Part 2: Design Process Security Analysis</h2>
+        
+        <p>Now you'll think about security during the <strong>Design Process</strong> phases of the engineering lifecycle.</p>
+
+        <div class="phase-section">
+            <h3>Phase 1: Define Problem</h3>
+            
+            <p>This is where we clearly state what we're trying to accomplish.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 3: What is the purpose of this system?</label>
+                <p>In 2-3 sentences, describe the purpose of this wireless payment system for the Sentinel Center store.</p>
+                <textarea id="q3" placeholder="Type your answer here..."></textarea>
+            </div>
+            
+            <div class="question-block">
+                <label class="question-label">Question 4: Cybersecurity concern</label>
+                <p>Identify one cybersecurity concern related to the CIA triad that could affect this payment system. State which part of the CIA triad it relates to.</p>
+                <div class="example">Example: Payment card information could be seen by unauthorized people during transmission (Confidentiality concern)</div>
+                <textarea id="q4" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase-section">
+            <h3>Phase 2: Generate Concepts</h3>
+            
+            <p>This is the brainstorming phase where we think of different ways to address security needs.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 5: Data state identification</label>
+                <p>When payment information travels wirelessly from a phone or card to the payment reader, what state is the data in? Why does this create a security concern?</p>
+                <p class="hint">Remember: Data at rest, data in transit, or data in use?</p>
+                <textarea id="q5" placeholder="Type your answer here..."></textarea>
+            </div>
+            
+            <div class="question-block">
+                <label class="question-label">Question 6: Protecting confidentiality</label>
+                <p>Payment card numbers need to be kept confidential. During which data state(s) does the payment card number need confidentiality protection? Check all that apply and explain why.</p>
+                <p class="hint">Think about: When the card number is stored, when it's being sent, when it's displayed on screen</p>
+                <textarea id="q6" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase-section">
+            <h3>Phase 3: Finalize Design</h3>
+            
+            <p>Now we make specific decisions about how the system will work.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 7: Transaction records integrity</label>
+                <p>The system will keep records of all transactions (what was bought, when, and how much). Which part of the CIA triad is MOST important for these transaction records? Explain why.</p>
+                <textarea id="q7" placeholder="Type your answer here..."></textarea>
+            </div>
+            
+            <div class="question-block">
+                <label class="question-label">Question 8: Thinking about backup plans</label>
+                <p>If the wireless payment system stops working during lunch, the store might use a paper backup system to write down purchases. What information would need to be written down? Which part of the CIA triad would be MOST at risk with a paper backup system compared to the digital system?</p>
+                <textarea id="q8" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase-section">
+            <h3>Phase 4: Create Prototype</h3>
+            
+            <p>This is when we build a working model of the system to test.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 9: Security in the prototype</label>
+                <p>Even in a prototype, we need to think about security. Name one part of the CIA triad that should be tested in the prototype and explain why it's important to test it early.</p>
+                <textarea id="q9" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase-section">
+            <h3>Phase 5: Test Prototype</h3>
+            
+            <p>Testing helps us find problems before the system goes live.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 10: Identifying security issues</label>
+                <p>During testing, you notice that when a payment goes through, the full card number briefly appears on the payment terminal screen. Which part of the CIA triad is at risk? What data state is the card number in when it's displayed on the screen?</p>
+                <textarea id="q10" placeholder="Type your answer here..."></textarea>
+            </div>
+            
+            <div class="question-block">
+                <label class="question-label">Question 11: Availability testing</label>
+                <p>How could you test whether the system remains available when many students try to use it at the same time (like during lunch rush)?</p>
+                <textarea id="q11" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase-section">
+            <h3>Phase 6: Verify Solution</h3>
+            
+            <p>Before presenting the solution, we verify that it meets security requirements.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 12: Why integrate cyber into design?</label>
+                <p>Look back at all the phases you've worked through (Define Problem, Generate Concepts, Finalize Design, Create Prototype, Test Prototype, Verify Solution, Present Solution). You've been thinking about cybersecurity at EACH of these phases, not just at the end.</p>
+                <p><strong>Why is it important to think about cybersecurity throughout the entire design process instead of just adding security features at the end?</strong></p>
+                <p class="hint">Think about: What could go wrong if you only think about security after everything is already built?</p>
+                <textarea id="q12" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase-section">
+            <h3>Phase 7: Present Solution</h3>
+            
+            <p>When presenting the final system design, security features need to be explained.</p>
+            
+            <div class="question-block">
+                <label class="question-label">Question 13: Explaining security to the principal</label>
+                <p>Write 2-3 sentences explaining to the principal why this payment system protects student information. Use at least two parts of the CIA triad in your explanation.</p>
+                <textarea id="q13" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <h2>Part 3: Deployment & Release Security</h2>
+        
+        <p>After the design is complete, the system moves into <strong>Deployment & Release</strong>. Security considerations continue!</p>
+
+        <div class="deployment-section">
+            <h3>Customer Validation & Production</h3>
+            
+            <div class="question-block">
+                <label class="question-label">Question 14: Real-world testing</label>
+                <p>Before the system goes live, real students should test it. What is one security-related thing you would want to know from these test users?</p>
+                <p class="hint">Think about: Do users feel their information is protected? Is anything confusing that could lead to security problems?</p>
+                <textarea id="q14" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="deployment-section">
+            <h3>Maintenance & Support</h3>
+            
+            <div class="question-block">
+                <label class="question-label">Question 15: Data at rest</label>
+                <p>Once the system is running, transaction records will be stored in a database. What state is this data in? Which part of the CIA triad is most important for this stored data?</p>
+                <textarea id="q15" placeholder="Type your answer here..."></textarea>
+            </div>
+            
+            <div class="question-block">
+                <label class="question-label">Question 16: Applying what you learned</label>
+                <p>Think about another system at school - the attendance system that tracks when students are present or absent each day.</p>
+                <p><strong>Choose ONE part of the CIA triad (Confidentiality, Integrity, or Availability) and explain why it's important for the attendance system. Give a specific example of what could go wrong if that part of the CIA triad isn't protected.</strong></p>
+                <p class="hint">This helps you practice applying CIA triad thinking to different systems</p>
+                <textarea id="q16" placeholder="Type your answer here..."></textarea>
+            </div>
+        </div>
+
+        <div class="completion-box">
+            <h2>Ready to Submit?</h2>
+            <p>Click the button below to generate a PDF of your complete work. Make sure you've answered all questions!</p>
+            <button class="generate-button" onclick="generatePDF()">Generate PDF of My Work</button>
+            <div id="generation-status" style="margin-top: 20px; font-size: 1.1em;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let studentEmail = '';
+        
+        function startActivity() {
+            const emailInput = document.getElementById('student-email');
+            const email = emailInput.value.trim();
+            const errorElement = document.getElementById('email-error');
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!email) {
+                errorElement.textContent = 'Please enter your email address';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            if (!emailRegex.test(email)) {
+                errorElement.textContent = 'Please enter a valid email address';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            if (!email.toLowerCase().includes('ascte')) {
+                errorElement.textContent = 'Please use your ASCTE email address';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            studentEmail = email;
+            document.getElementById('email-entry').style.display = 'none';
+            document.getElementById('activity-content').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+        
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const statusElement = document.getElementById('generation-status');
+            statusElement.textContent = 'Generating your PDF...';
+            statusElement.style.color = 'white';
+            
+            let yPosition = 20;
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 20;
+            const maxWidth = pageWidth - (2 * margin);
+            
+            doc.setFontSize(18);
+            doc.setTextColor(191, 10, 48);
+            doc.text('Sentinel Center Store - Security Analysis', margin, yPosition);
+            
+            yPosition += 10;
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Student: ' + studentEmail, margin, yPosition);
+            doc.text('Date: ' + new Date().toLocaleDateString(), pageWidth - margin - 50, yPosition);
+            
+            yPosition += 15;
+            
+            const questions = [
+                {num: 1, text: 'Question 1: What information does this system handle?'},
+                {num: '1b-a', text: 'Question 1B-A: Information types in transaction logs'},
+                {num: '1b-b', text: 'Question 1B-B: Why only show last 4 digits of card?'},
+                {num: '1b-c', text: 'Question 1B-C: Why keep records of declined transactions?'},
+                {num: '2a', text: 'Question 2A: CIA for payment card numbers'},
+                {num: '2b', text: 'Question 2B: CIA for transaction records'},
+                {num: '2c', text: 'Question 2C: CIA for system working during lunch'},
+                {num: 3, text: 'Question 3: What is the purpose of this system?'},
+                {num: 4, text: 'Question 4: Cybersecurity concern'},
+                {num: 5, text: 'Question 5: Data state identification'},
+                {num: 6, text: 'Question 6: Protecting confidentiality'},
+                {num: 7, text: 'Question 7: Transaction records integrity'},
+                {num: 8, text: 'Question 8: Thinking about backup plans'},
+                {num: 9, text: 'Question 9: Security in the prototype'},
+                {num: 10, text: 'Question 10: Identifying security issues'},
+                {num: 11, text: 'Question 11: Availability testing'},
+                {num: 12, text: 'Question 12: Why integrate cyber into design?'},
+                {num: 13, text: 'Question 13: Explaining security to the principal'},
+                {num: 14, text: 'Question 14: Real-world testing'},
+                {num: 15, text: 'Question 15: Data at rest'},
+                {num: 16, text: 'Question 16: Applying what you learned'}
+            ];
+            
+            questions.forEach((q) => {
+                const answer = document.getElementById('q' + q.num).value || '(No answer provided)';
+                
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                doc.setFontSize(11);
+                doc.setTextColor(191, 10, 48);
+                const questionLines = doc.splitTextToSize(q.text, maxWidth);
+                doc.text(questionLines, margin, yPosition);
+                yPosition += (questionLines.length * 6);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                const answerLines = doc.splitTextToSize(answer, maxWidth);
+                answerLines.forEach(line => {
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    doc.text(line, margin, yPosition);
+                    yPosition += 5;
+                });
+                
+                yPosition += 8;
+            });
+            
+            const fileName = 'SentinelStore_Security_' + studentEmail.split('@')[0] + '.pdf';
+            doc.save(fileName);
+            
+            statusElement.textContent = 'PDF generated successfully! Check your downloads folder.';
+            statusElement.style.color = '#6598E9';
+        }
+        
+        document.getElementById('student-email').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startActivity();
+            }
+        });
+    </script>
+</body>
+</html>
