@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using Iteration to Draw Snowflakes in Python</title>
+    <style>
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #002868;
+        }
+        
+        h1 {
+            color: #BF0A30;
+            border-bottom: 3px solid #002868;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #002868;
+            margin-top: 30px;
+        }
+        
+        h3 {
+            color: #6598E9;
+            margin-top: 20px;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        pre {
+            font-family: 'Courier New', monospace;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-left: 4px solid #BF0A30;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+        
+        .step-box {
+            background-color: #f9f9f9;
+            border: 2px solid #6598E9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .challenge-box {
+            background-color: #fff5f5;
+            border: 2px solid #BF0A30;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .discovery-box {
+            background-color: #f0f7ff;
+            border: 2px solid #002868;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+
+        
+        ul, ol {
+            margin-left: 20px;
+        }
+        
+        a {
+            color: #6598E9;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Using Iteration to Draw Snowflakes in Python</h1>
+    
+    <p><strong>Objective:</strong> Use nested iteration to create geometric patterns while exploring how loops can generate complex visual designs from simple repeated instructions.</p>
+    
+    <p><strong>Time Required:</strong> 35-45 minutes</p>
+    
+    <p><strong>What You'll Learn:</strong></p>
+    <ul>
+        <li>How to use the turtle graphics library</li>
+        <li>Combining loops with drawing commands</li>
+        <li>Understanding how nested iteration creates complex patterns</li>
+        <li>The mathematical relationship between loop iterations and angles</li>
+    </ul>
+
+    <div class="step-box">
+        <h2>Step 1: Import the Turtle Library</h2>
+        
+        <p>The <code>turtle</code> library is a pre-installed Python library that enables users to create pictures and shapes by providing them with a virtual canvas. Think of it like controlling a robot that leaves a trail wherever it moves.</p>
+        
+        <pre>import turtle</pre>
+        
+        <p>Run this line to make the turtle library available in your program.</p>
+    </div>
+
+    <div class="step-box">
+        <h2>Step 2: Create Your Turtle Object</h2>
+        
+        <p>Make a turtle object to do your drawing. You can name it whatever you like. This example uses <code>elsa</code> because snowflakes, but choose any name that makes sense to you.</p>
+        
+        <pre>elsa = turtle.Turtle()</pre>
+        
+        <p><strong>Important:</strong> When writing code, you must match the spelling, punctuation, and case exactly. This has to be <code>turtle.Turtle()</code> or it won't create a turtle. Notice the capital T in <code>Turtle()</code>.</p>
+        
+        <p><strong>Understanding the Coordinate Plane:</strong> Your turtle starts at position (0, 0), which is the center of the screen. The turtle canvas uses a coordinate plane where:</p>
+        <ul>
+            <li>Positive x values are to the right, negative x values are to the left</li>
+            <li>Positive y values are up, negative y values are down</li>
+            <li>The turtle starts facing to the right (east)</li>
+        </ul>
+        
+        <iframe src="https://runestone.academy/ns/books/published/welcomecs/_images/spaceCoord1.png" width="400" height="400" style="border: 2px solid #002868; display: block; margin: 20px auto;"></iframe>
+        
+        <p><a href="https://runestone.academy/ns/books/published/welcomecs/_images/spaceCoord1.png" target="_blank">Click here to view the coordinate plane image</a> if it doesn't display above.</p>
+        
+        <p>If you want to move your turtle to a different starting location to test the coordinate system, you can use:</p>
+        
+        <pre>elsa.goto(100, 50)  # Moves turtle to position (100, 50)</pre>
+        
+        <p>You can also adjust the drawing speed. Try adding this line:</p>
+        
+        <pre>elsa.speed(5)</pre>
+        
+        <p>Speed can be set from 1 (slowest) to 10 (fast), or 0 (instant).</p>
+        
+        <p><strong>Run your code now and see what happens on the screen.</strong></p>
+    </div>
+
+    <div class="step-box">
+        <h2>Step 3: Draw a Simple Line Pattern</h2>
+        
+        <p>Get your turtle to draw a possible piece of a snowflake. Play around with the forward movement values and the degree of the right turns to get familiar with how turtles operate.</p>
+        
+        <pre>elsa.forward(100)
+elsa.right(45)
+elsa.forward(50)
+elsa.right(45)
+elsa.forward(100)</pre>
+        
+        <div class="discovery-box">
+            <strong>Experiment:</strong> Try changing the numbers in <code>forward()</code> and <code>right()</code>. What happens when you use 90 degrees instead of 45? What about 120 degrees?
+        </div>
+        
+        <p><strong>Run your code now and see what happens on the screen.</strong></p>
+    </div>
+
+    <div class="step-box">
+        <h2>Step 4: Add Some Iteration</h2>
+        
+        <p>Instead of writing the same commands over and over, use a loop to repeat your pattern. Start by creating a simple branch that repeats.</p>
+        
+        <pre>for i in range(4):
+    elsa.forward(50)
+    elsa.right(90)</pre>
+        
+        <div class="discovery-box">
+            <strong>Question:</strong> What shape does this code draw? Why does using 90 degrees with 4 repetitions create this shape?
+        </div>
+        
+        <p>Now try making a branch pattern:</p>
+        
+        <pre>for i in range(3):
+    elsa.forward(30)
+    elsa.backward(30)
+    elsa.right(45)</pre>
+        
+        <p><strong>Run your code now and see what happens on the screen.</strong></p>
+    </div>
+
+    <div class="step-box">
+        <h2>Step 5: Add Winter Colors and Background</h2>
+        
+        <p>Now that you understand how your turtle can draw, make it look snowflakey by adding some cold-weather colors. Here is a <a href="https://trinket.io/docs/colors" target="_blank">link to color words turtle knows</a>. Play around and make your own wintery color combinations.</p>
+        
+        <p>You can also change the background color to make your snowflake stand out:</p>
+        
+        <pre>turtle.bgcolor("midnight blue")</pre>
+        
+        <p>Now add color to your turtle's drawing:</p>
+        
+        <pre>elsa.color("cyan")
+elsa.pensize(2)</pre>
+        
+        <p><strong>Run your code now and see what happens on the screen.</strong></p>
+    </div>
+
+    <div class="step-box">
+        <h2>Step 6: Attempt Nested Iteration</h2>
+        
+        <p>Now for the challenge: how can you turn your single branch into a full snowflake that repeats all the way around? You will need to use nested iteration, which means putting one loop inside another loop.</p>
+        
+        <div class="discovery-box">
+            <strong>Your Task:</strong> Try to create code that draws your branch pattern multiple times in a circle. Think about:
+            <ul>
+                <li>How many times should the outer loop repeat to make a complete snowflake?</li>
+                <li>How many degrees should you turn after each branch?</li>
+                <li>What is the relationship between the number of branches and the angle of each turn?</li>
+            </ul>
+        </div>
+        
+        <p>Attempt this on your own first. After you have tried, you can look at this example structure of nested iteration:</p>
+        
+        <pre>for i in range(10):
+    # Your inner loop and drawing commands go here
+    elsa.right(36)</pre>
+        
+        <div class="discovery-box">
+            <strong>Mathematical Connection:</strong> Notice that if the outer loop repeats 10 times and turns 36 degrees each time, we turn 360 degrees total, which is a complete circle. This is why the pattern repeats around the center point.
+            <br><br>
+            <strong>Think About It:</strong> What would happen if you used 8 repetitions instead of 10? What angle would you need for each turn?
+        </div>
+        
+        <p><strong>Run your code now and see what happens on the screen.</strong></p>
+    </div>
+
+    <div class="step-box">
+        <h2>Step 7: Enhance Your Snowflake Design</h2>
+        
+        <p>Make your snowflake more complex by adding variation to the inner loop. Here is an example structure that creates a more intricate branch:</p>
+        
+        <pre>for j in range(4):
+    elsa.forward(20)
+    elsa.forward(20)
+    elsa.backward(40)
+    elsa.right(90)</pre>
+        
+        <div class="discovery-box">
+            <strong>Notice:</strong> This creates 4 small branches within each main branch. Try experimenting with different numbers and angles to create your own unique pattern.
+        </div>
+        
+        <p><strong>Run your code now and see what happens on the screen.</strong></p>
+    </div>
+
+    <div class="step-box">
+        <h2>Checkpoint: Do You Have a Working Snowflake?</h2>
+        
+        <p>At this point, you should have a complete snowflake drawing on your screen. Your code should have:</p>
+        
+        <ul>
+            <li>An outer loop that repeats multiple times</li>
+            <li>An inner loop inside the outer loop that draws the branch pattern</li>
+            <li>A turn command after the inner loop completes to rotate for the next branch</li>
+        </ul>
+        
+        <p><strong>If your snowflake is not drawing correctly, compare your code to this working example:</strong></p>
+        
+        <pre>import turtle
+
+elsa = turtle.Turtle()
+elsa.speed(8)
+elsa.color("cyan")
+elsa.pensize(2)
+
+turtle.bgcolor("midnight blue")
+
+for i in range(10):
+    for j in range(3):
+        elsa.forward(30)
+        elsa.backward(30)
+        elsa.right(45)
+    elsa.right(36)
+
+turtle.done()</pre>
+        
+        <p>Make sure your code has the same structure: an outer loop with an inner loop inside it, and the proper indentation for both loops.</p>
+        
+        <p><strong>Once you have a working snowflake, you're ready to move on to the challenge.</strong></p>
+    </div>
+
+    <div class="challenge-box">
+        <h2>Challenge: Design Your Own Snowflake</h2>
+        
+        <p>Now make your own awesome snowflake that has different patterns, colors, or even randomness. Your snowflake must include:</p>
+        
+        <ol>
+            <li><strong>Nested iteration</strong> (a loop inside another loop)</li>
+            <li><strong>At least 6 branches</strong> arranged in a circular pattern</li>
+            <li><strong>At least 2 different colors</strong></li>
+            <li><strong>Mathematical precision</strong> so your angles add up correctly to complete the circle</li>
+        </ol>
+        
+        <h3>Extensions (Choose At Least One):</h3>
+        <ul>
+            <li><strong>Size Variation:</strong> Make each branch slightly different in length</li>
+            <li><strong>Random Elements:</strong> Use the <code>random</code> library to add variety (you'll need to <code>import random</code> at the top)</li>
+            <li><strong>Second Snowflake:</strong> Create a second turtle object with a different name and have it draw a different snowflake in another location (see the Advanced section below for help with this)</li>
+            <li><strong>Explore New Commands:</strong> Check out this <a href="https://cheatography.com/nataliemoore/cheat-sheets/python-turtle-module-cheatsheet/" target="_blank">Python Turtle cheat sheet</a> and try using commands you haven't used yet</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h2>Advanced: Using Multiple Turtles</h2>
+        
+        <p>You can create multiple turtle objects to draw different snowflakes at the same time. Each turtle can have its own color, position, and pattern.</p>
+        
+        <p>First, you need to move your turtle to a new location without drawing. Use these commands:</p>
+        
+        <pre>elsa.penup()        # Lift the pen so it doesn't draw
+elsa.goto(-100, 50)  # Move to coordinates (-100, 50)
+elsa.pendown()       # Put the pen down to start drawing again</pre>
+        
+        <p>To create a second turtle, simply make another turtle object with a different name:</p>
+        
+        <pre># Second turtle - different snowflake
+anna = turtle.Turtle()
+anna.color("white")
+anna.speed(8)
+anna.penup()
+anna.goto(150, 0)
+anna.pendown()
+
+# Now add your nested loops here to draw anna's snowflake</pre>
+        
+        <div class="discovery-box">
+            <strong>Experiment:</strong> Create a third turtle that draws a completely different snowflake pattern. Try positioning it at negative coordinates to place it on the left side of the screen.
+        </div>
+    </div>
+
+    <div class="challenge-box">
+        <h2>Submission Instructions</h2>
+        
+        <p>When you have completed your snowflake design, submit a PDF document that contains:</p>
+        
+        <ol>
+            <li><strong>At the top:</strong> An image (screenshot) of your snowflake output</li>
+            <li><strong>Below the image:</strong> Your complete Python code, copied and pasted</li>
+        </ol>
+        
+        <p><strong>Important:</strong> Your submission must be a PDF file, not a text file. Make sure to save or export your document as a PDF before submitting.</p>
+    </div>
+
+</body>
+</html>
