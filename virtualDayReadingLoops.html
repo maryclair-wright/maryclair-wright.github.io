@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Loop Practice - ASCTE Cyber 101</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #002868;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .email-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .question-section {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .question-section.active {
+            display: block;
+        }
+
+        .code-display {
+            background-color: #f8f8f8;
+            border: 2px solid #002868;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .question-group {
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #002868;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #6598E9;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        input[type="email"] {
+            font-family: 'IBM Plex Serif', serif;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #BF0A30;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #002868;
+        }
+
+        button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .summary-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .summary-section.active {
+            display: block;
+        }
+
+        .summary-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #6598E9;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .correct {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .incorrect {
+            color: #BF0A30;
+            font-weight: 600;
+        }
+
+        .student-answer {
+            background-color: #f8f8f8;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #6598E9;
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress {
+            background-color: #6598E9;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .hint {
+            background-color: #f0f7ff;
+            border-left: 4px solid #6598E9;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Python Loop Practice</h1>
+        <p>Master for loops and iteration in Python</p>
+    </header>
+
+    <div class="container">
+        <!-- Instructions Box -->
+        <div style="background-color: rgba(34, 139, 34, 0.15); border: 2px solid rgb(34, 139, 34); border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+            <p style="font-weight: 600; color: #002868; margin-bottom: 10px;">Important Instructions:</p>
+            <p style="margin-bottom: 10px;">Treat this like an Out of Class Practice (OOCP). You can complete this practice as many times as you want, but you only need to submit once. The goal is for you to practice reading for loops to prepare for our Mini-Quiz on Tuesday in class.</p>
+            <p style="margin-bottom: 10px;">This practice covers all the loops we learned and used before Thanksgiving break.</p>
+            <p style="font-weight: 600; color: rgb(34, 139, 34);">This is a green assignment, which means use resources to UNDERSTAND how these loops work.</p>
+        </div>
+
+        <!-- Email Collection Section -->
+        <div id="emailSection" class="email-section">
+            <h2>Welcome to Loop Practice</h2>
+            <p>Please enter your email address to begin. Your progress will be tracked and summarized at the end.</p>
+            <label for="studentEmail">Email Address:</label>
+            <input type="email" id="studentEmail" placeholder="your.email@example.com" required>
+            <button onclick="startPractice()">Begin Practice</button>
+        </div>
+
+        <!-- Question 1 -->
+        <div id="question1" class="question-section">
+            <div class="progress">Question 1 of 12</div>
+            <h2>Question 1: Basic for loop with range()</h2>
+            <div class="code-display">for i in range(3):
+    print(i)</div>
+            
+            <div class="question-group">
+                <label>What is the starting value of i?</label>
+                <input type="text" id="q1_start" placeholder="Enter the starting value">
+            </div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q1_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q1_output" placeholder="Enter the output, one value per line"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button disabled>Previous</button>
+                <button onclick="nextQuestion(1)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div id="question2" class="question-section">
+            <div class="progress">Question 2 of 12</div>
+            <h2>Question 2: for loop with range(start, stop)</h2>
+            <div class="code-display">for i in range(1, 4):
+    print(i)</div>
+            
+            <div class="question-group">
+                <label>What is the starting value of i?</label>
+                <input type="text" id="q2_start" placeholder="Enter the starting value">
+            </div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q2_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q2_output" placeholder="Enter the output, one value per line"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(2)">Previous</button>
+                <button onclick="nextQuestion(2)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div id="question3" class="question-section">
+            <div class="progress">Question 3 of 12</div>
+            <h2>Question 3: Countdown using math</h2>
+            <div class="code-display">for i in range(1, 6):
+    print((6 - i) / 1)</div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q3_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q3_output" placeholder="Enter the output, one value per line"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(3)">Previous</button>
+                <button onclick="nextQuestion(3)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div id="question4" class="question-section">
+            <div class="progress">Question 4 of 12</div>
+            <h2>Question 4: Loop with division operator</h2>
+            <div class="code-display">for num in range(2, 6):
+    result = 20 / num
+    print(result)</div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q4_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q4_output" placeholder="Enter the output, one value per line"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(4)">Previous</button>
+                <button onclick="nextQuestion(4)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div id="question5" class="question-section">
+            <div class="progress">Question 5 of 12</div>
+            <h2>Question 5: Loop with conditional (if statement)</h2>
+            <div class="code-display">for count in range(1, 5):
+    outcome = count * 3
+    if outcome > 7:
+        print(outcome)</div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q5_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>How many values will be printed?</label>
+                <input type="text" id="q5_printed" placeholder="Enter how many values are printed">
+            </div>
+            
+            <div class="question-group">
+                <label>What is the final value stored in the variable outcome?</label>
+                <input type="text" id="q5_final" placeholder="Enter the final value of outcome">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q5_output" placeholder="Enter the output, one value per line"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(5)">Previous</button>
+                <button onclick="nextQuestion(5)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div id="question6" class="question-section">
+            <div class="progress">Question 6 of 12</div>
+            <h2>Question 6: Loop with mod and if/else</h2>
+            <div class="code-display">total = 0
+for number in range(1, 5):
+    if number % 2 == 0:
+        total = total + number
+    else:
+        total = total - number
+print(total)</div>
+            
+            <div class="question-group">
+                <label>What is the value of total BEFORE the loop executes?</label>
+                <input type="text" id="q6_before" placeholder="Enter the starting value of total">
+            </div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q6_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What is the value of total AFTER the loop executes?</label>
+                <input type="text" id="q6_after" placeholder="Enter the final value of total">
+            </div>
+            
+            <div class="question-group">
+                <label>How many times will information be displayed to the user?</label>
+                <input type="text" id="q6_displayed" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(6)">Previous</button>
+                <button onclick="nextQuestion(6)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div id="question7" class="question-section">
+            <div class="progress">Question 7 of 12</div>
+            <h2>Question 7: For-each loop with string</h2>
+            <div class="code-display">text = "cyber 101"
+for i in text:
+    print(i)</div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q7_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line, include spaces if they appear)</label>
+                <textarea id="q7_output" placeholder="Enter the output, one character per line"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(7)">Previous</button>
+                <button onclick="nextQuestion(7)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div id="question8" class="question-section">
+            <div class="progress">Question 8 of 12</div>
+            <h2>Question 8: For-each with substring and conditional</h2>
+            <div class="code-display">word = "cyber 101"
+for letter in word:
+    if letter == "c" or letter == "1":
+        print(word[0:5])</div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q8_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>How many times will something be printed?</label>
+                <input type="text" id="q8_printed" placeholder="Enter how many times print executes">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q8_output" placeholder="Enter the output"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(8)">Previous</button>
+                <button onclick="nextQuestion(8)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 9 -->
+        <div id="question9" class="question-section">
+            <div class="progress">Question 9 of 12</div>
+            <h2>Question 9: For-each with .replace()</h2>
+            <div class="code-display">phrase = "cyber 101"
+for digit in phrase:
+    phrase = phrase.replace(digit, "-")
+print(phrase)</div>
+            
+            <div class="question-group">
+                <label>How many times will the loop execute?</label>
+                <input type="text" id="q9_times" placeholder="Enter the number of times">
+            </div>
+            
+            <div class="question-group">
+                <label>What is the value of phrase after the loop completes?</label>
+                <input type="text" id="q9_value" placeholder="Enter the final value of phrase">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user?</label>
+                <input type="text" id="q9_output" placeholder="Enter the output">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(9)">Previous</button>
+                <button onclick="nextQuestion(9)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 10 -->
+        <div id="question10" class="question-section">
+            <div class="progress">Question 10 of 12</div>
+            <h2>Question 10: Nested loops - matching values</h2>
+            <div class="code-display">for outer in range(1, 6):
+    for inner in range(1, 6):
+        if outer == inner:
+            print(str(outer) + str(inner))</div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each output on a separate line)</label>
+                <textarea id="q10_output" placeholder="Enter the output"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(10)">Previous</button>
+                <button onclick="nextQuestion(10)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 11 -->
+        <div id="question11" class="question-section">
+            <div class="progress">Question 11 of 12</div>
+            <h2>Question 11: Nested loops - asterisk pattern</h2>
+            <div class="code-display">for row in range(2, 7):
+    line = ""
+    for col in range(1, row):
+        line = line + "*"
+    print(line)</div>
+            
+            <div class="question-group">
+                <label>What is the final value stored in the variable row?</label>
+                <input type="text" id="q11_row" placeholder="Enter the final value of row">
+            </div>
+            
+            <div class="question-group">
+                <label>What is the final value stored in the variable col?</label>
+                <input type="text" id="q11_col" placeholder="Enter the final value of col">
+            </div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user? (Write each line of output on a separate line)</label>
+                <textarea id="q11_output" placeholder="Enter the output"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(11)">Previous</button>
+                <button onclick="nextQuestion(11)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 12 -->
+        <div id="question12" class="question-section">
+            <div class="progress">Question 12 of 12</div>
+            <h2>Question 12: Write a for loop header</h2>
+            <p style="margin-bottom: 20px;">Write the for loop header that will make a loop execute exactly 500 times. Use <strong>ans</strong> as the iterating variable.</p>
+            
+            <div class="question-group">
+                <label>Write the complete for loop header (including the colon at the end):</label>
+                <input type="text" id="q12_header" placeholder="for ans in ...">
+            </div>
+            
+            <div class="hint" style="background-color: #f0f7ff;">
+                <p style="font-weight: 600; margin-bottom: 8px;">Remember:</p>
+                <p>A for loop header in Python follows this pattern: for variable in range(...):</p>
+                <p>Think about what value range() needs to repeat exactly 500 times.</p>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(12)">Previous</button>
+                <button onclick="showSummary()">Finish Practice</button>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div id="summarySection" class="summary-section">
+            <h2 style="color: #BF0A30;">Practice Summary</h2>
+            <div id="summaryContent"></div>
+            <button onclick="downloadPDF()" style="margin-top: 20px;">Download Summary as PDF</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let studentEmail = '';
+        let startTime = null;
+        let endTime = null;
+        let answers = {};
+        let attempts = {};
+
+        // Define correct answers and hints for each question
+        const correctAnswers = {
+            question1: {
+                q1_start: '0',
+                q1_times: '3',
+                q1_output: '0\n1\n2'
+            },
+            question2: {
+                q2_start: '1',
+                q2_times: '3',
+                q2_output: '1\n2\n3'
+            },
+            question3: {
+                q3_times: '5',
+                q3_output: '5.0\n4.0\n3.0\n2.0\n1.0'
+            },
+            question4: {
+                q4_times: '4',
+                q4_output: '10.0\n6.666666666666667\n5.0\n4.0'
+            },
+            question5: {
+                q5_times: '4',
+                q5_printed: '2',
+                q5_final: '12',
+                q5_output: '9\n12'
+            },
+            question6: {
+                q6_before: '0',
+                q6_times: '4',
+                q6_after: '2',
+                q6_displayed: '1'
+            },
+            question7: {
+                q7_times: '9',
+                q7_output: 'c\ny\nb\ne\nr\n \n1\n0\n1'
+            },
+            question8: {
+                q8_times: '9',
+                q8_printed: '3',
+                q8_output: 'cyber\ncyber\ncyber'
+            },
+            question9: {
+                q9_times: '9',
+                q9_value: '---------',
+                q9_output: '---------'
+            },
+            question10: {
+                q10_output: '11\n22\n33\n44\n55'
+            },
+            question11: {
+                q11_row: '6',
+                q11_col: '5',
+                q11_output: '*\n**\n***\n****\n*****'
+            },
+            question12: {
+                q12_header: 'for ans in range(500):'
+            }
+        };
+
+        const hints = {
+            question1: {
+                general: 'Remember: range(3) starts at 0 by default and goes up to (but not including) 3.',
+                q1_start: 'When no starting value is given to range(), Python starts counting at 0.',
+                q1_times: 'Count how many numbers are between 0 and 3 (not including 3).',
+                q1_output: 'The loop will print each value of i on a separate line: 0, then 1, then 2.'
+            },
+            question2: {
+                general: 'range(1, 4) starts at 1 and goes up to (but not including) 4.',
+                q2_start: 'The first number in range(1, 4) tells Python where to start.',
+                q2_times: 'Count from 1 up to (but not including) 4.',
+                q2_output: 'Print each value of i on a separate line, starting from 1.'
+            },
+            question3: {
+                general: 'Look at the math: (6 - i) / 1. Division always produces a decimal number (float) in Python.',
+                q3_times: 'range(1, 6) creates values 1, 2, 3, 4, 5. How many is that?',
+                q3_output: 'Calculate (6-1)/1, then (6-2)/1, continuing through i=5. Remember division gives you decimals like 5.0'
+            },
+            question4: {
+                general: 'The loop uses division. Remember that 20/2 = 10.0 in Python.',
+                q4_times: 'range(2, 6) creates values starting at 2 and ending at 5.',
+                q4_output: 'Calculate 20/2, then 20/3, then 20/4, then 20/5. Each on a new line.'
+            },
+            question5: {
+                general: 'The if statement only prints when outcome > 7. Check which iterations satisfy this.',
+                q5_times: 'range(1, 5) creates how many values?',
+                q5_printed: 'When count=1, outcome=3 (not > 7). When count=2, outcome=6 (not > 7). Keep checking.',
+                q5_final: 'The variable outcome gets updated each time through the loop. What is count * 3 when count=4?',
+                q5_output: 'Only print values where count * 3 is greater than 7.'
+            },
+            question6: {
+                general: 'Track the total through each iteration. Odd numbers subtract, even numbers add.',
+                q6_before: 'Look at the first line before the loop starts.',
+                q6_times: 'range(1, 5) goes from 1 to 4.',
+                q6_after: 'Start at 0. Then: -1, then +1 (back to 0), then -3 (now -3), then +1 (final: 2).',
+                q6_displayed: 'The print statement is outside the loop, so it only executes once.'
+            },
+            question7: {
+                general: 'For-each loops go through every character in the string, including spaces.',
+                q7_times: 'Count every character in "cyber 101" including the space.',
+                q7_output: 'Each character prints on its own line. Remember the space is a character too.'
+            },
+            question8: {
+                general: 'The loop checks each character. Print happens when the character is c or 1.',
+                q8_times: 'The loop processes every character in "cyber 101".',
+                q8_printed: 'Count how many times the letter is either "c" or "1".',
+                q8_output: 'word[0:5] gives you the first 5 characters. Print this each time the condition is true.'
+            },
+            question9: {
+                general: 'Each iteration replaces the current character with a dash in the phrase.',
+                q9_times: 'The loop goes through every character in "cyber 101".',
+                q9_value: 'After replacing every unique character with "-", all 9 characters become dashes.',
+                q9_output: 'The final phrase value is what gets printed.'
+            },
+            question10: {
+                general: 'The inner loop only prints when outer equals inner.',
+                q10_output: 'When outer=1 and inner=1, print "11". When outer=2 and inner=2, print "22", etc.'
+            },
+            question11: {
+                general: 'The inner loop builds up a string by adding asterisks together, then prints the complete line.',
+                q11_row: 'The outer loop variable row goes through all values in range(2, 7). What is the last value?',
+                q11_col: 'The inner loop variable col goes through range(1, row). When row=6, what is the last value of col?',
+                q11_output: 'When row=2, the inner loop runs 1 time creating "*". When row=3, it runs 2 times creating "**".'
+            },
+            question12: {
+                general: 'You need range() to generate 500 values. What single number makes range() count 500 times?',
+                q12_header: 'range(500) will count from 0 to 499, which is exactly 500 times. Don\'t forget the colon!'
+            }
+        };
+
+        function startPractice() {
+            const email = document.getElementById('studentEmail').value;
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            studentEmail = email;
+            startTime = new Date();
+            
+            // Initialize attempts counter for each question
+            for (let i = 1; i <= 12; i++) {
+                attempts['question' + i] = 0;
+            }
+            
+            document.getElementById('emailSection').style.display = 'none';
+            document.getElementById('question1').classList.add('active');
+        }
+
+        function validateAnswers(questionNum) {
+            const questionKey = 'question' + questionNum;
+            const inputs = document.querySelectorAll(`#${questionKey} input, #${questionKey} textarea`);
+            
+            // Check if all fields are filled
+            let allFilled = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allFilled = false;
+                }
+            });
+            
+            if (!allFilled) {
+                alert('Please answer all questions before continuing.');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function checkAnswers(questionNum) {
+            const questionKey = 'question' + questionNum;
+            const studentAnswers = {};
+            const inputs = document.querySelectorAll(`#${questionKey} input, #${questionKey} textarea`);
+            
+            inputs.forEach(input => {
+                studentAnswers[input.id] = input.value.trim();
+            });
+            
+            // Check if answers are correct
+            let allCorrect = true;
+            const correctAnswerSet = correctAnswers[questionKey];
+            const incorrectFields = [];
+            
+            for (let field in correctAnswerSet) {
+                const studentAnswer = studentAnswers[field];
+                const correctAnswer = correctAnswerSet[field];
+                
+                // Normalize answers for comparison (handle different spacing, etc.)
+                const normalizedStudent = studentAnswer.replace(/\s+/g, '\n').trim();
+                const normalizedCorrect = correctAnswer.replace(/\s+/g, '\n').trim();
+                
+                if (normalizedStudent !== normalizedCorrect) {
+                    allCorrect = false;
+                    incorrectFields.push(field);
+                }
+            }
+            
+            return { allCorrect, incorrectFields };
+        }
+
+        function showHints(questionNum, incorrectFields) {
+            const questionKey = 'question' + questionNum;
+            const hintSet = hints[questionKey];
+            
+            // Remove existing hint box if present
+            const existingHint = document.querySelector(`#${questionKey} .hint-box`);
+            if (existingHint) {
+                existingHint.remove();
+            }
+            
+            // Create hint box
+            const hintBox = document.createElement('div');
+            hintBox.className = 'hint-box';
+            hintBox.style.cssText = 'background-color: #fff3cd; border-left: 4px solid #BF0A30; padding: 15px; margin: 20px 0; border-radius: 4px;';
+            
+            let hintHTML = '<p style="font-weight: 600; color: #BF0A30; margin-bottom: 10px;">Try again! Here are some hints:</p>';
+            hintHTML += `<p style="margin-bottom: 10px;">${hintSet.general}</p>`;
+            
+            incorrectFields.forEach(field => {
+                if (hintSet[field]) {
+                    hintHTML += `<p style="margin-top: 8px;">• ${hintSet[field]}</p>`;
+                }
+            });
+            
+            hintBox.innerHTML = hintHTML;
+            
+            // Insert hint box before navigation buttons
+            const navButtons = document.querySelector(`#${questionKey} .nav-buttons`);
+            navButtons.parentNode.insertBefore(hintBox, navButtons);
+        }
+
+        function nextQuestion(current) {
+            // Validate that all fields are filled
+            if (!validateAnswers(current)) {
+                return;
+            }
+            
+            saveAnswers(current);
+            
+            const questionKey = 'question' + current;
+            attempts[questionKey]++;
+            
+            // Check answers
+            const { allCorrect, incorrectFields } = checkAnswers(current);
+            
+            if (!allCorrect && attempts[questionKey] === 1) {
+                // First attempt failed - show hints
+                showHints(current, incorrectFields);
+                attempts[questionKey]++;
+                return;
+            }
+            
+            // Either correct or second attempt - move forward
+            document.getElementById('question' + current).classList.remove('active');
+            
+            if (current < 12) {
+                document.getElementById('question' + (current + 1)).classList.add('active');
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        function prevQuestion(current) {
+            document.getElementById('question' + current).classList.remove('active');
+            document.getElementById('question' + (current - 1)).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function saveAnswers(questionNum) {
+            const questionData = {};
+            const inputs = document.querySelectorAll(`#question${questionNum} input, #question${questionNum} textarea`);
+            
+            inputs.forEach(input => {
+                questionData[input.id] = input.value;
+            });
+            
+            answers[`question${questionNum}`] = questionData;
+        }
+
+        function showSummary() {
+            if (!validateAnswers(12)) {
+                return;
+            }
+            
+            saveAnswers(12);
+            endTime = new Date();
+            
+            document.getElementById('question12').classList.remove('active');
+            document.getElementById('summarySection').classList.add('active');
+            
+            generateSummary();
+            window.scrollTo(0, 0);
+        }
+
+        function generateSummary() {
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            
+            let summaryHTML = `
+                <div style="background-color: #f0f7ff; padding: 20px; margin-bottom: 30px; border-radius: 4px;">
+                    <p><strong>Student Email:</strong> ${studentEmail}</p>
+                    <p><strong>Start Time:</strong> ${startTime.toLocaleString()}</p>
+                    <p><strong>End Time:</strong> ${endTime.toLocaleString()}</p>
+                    <p><strong>Duration:</strong> ${duration} minutes</p>
+                </div>
+            `;
+
+            // Question 1
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 1: for i in range(3)</h3>
+                <div class="code-display">for i in range(3):
+    print(i)</div>
+                <p><strong>Starting value of i:</strong></p>
+                <div class="student-answer">${answers.question1.q1_start || '(not answered)'}</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question1.q1_times || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question1.q1_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 2
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 2: for i in range(1, 4)</h3>
+                <div class="code-display">for i in range(1, 4):
+    print(i)</div>
+                <p><strong>Starting value of i:</strong></p>
+                <div class="student-answer">${answers.question2.q2_start || '(not answered)'}</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question2.q2_times || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question2.q2_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 3
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 3: Countdown with math</h3>
+                <div class="code-display">for i in range(1, 6):
+    print((6 - i) / 1)</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question3.q3_times || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question3.q3_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 4
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 4: Division operator</h3>
+                <div class="code-display">for num in range(2, 6):
+    result = 20 / num
+    print(result)</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question4.q4_times || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question4.q4_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 5
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 5: Conditional with if statement</h3>
+                <div class="code-display">for count in range(1, 5):
+    outcome = count * 3
+    if outcome > 7:
+        print(outcome)</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question5.q5_times || '(not answered)'}</div>
+                <p><strong>Values printed:</strong></p>
+                <div class="student-answer">${answers.question5.q5_printed || '(not answered)'}</div>
+                <p><strong>Final value of outcome:</strong></p>
+                <div class="student-answer">${answers.question5.q5_final || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question5.q5_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 6
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 6: Mod with if/else</h3>
+                <div class="code-display">total = 0
+for number in range(1, 5):
+    if number % 2 == 0:
+        total = total + number
+    else:
+        total = total - number
+print(total)</div>
+                <p><strong>Value of total BEFORE loop:</strong></p>
+                <div class="student-answer">${answers.question6.q6_before || '(not answered)'}</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question6.q6_times || '(not answered)'}</div>
+                <p><strong>Value of total AFTER loop:</strong></p>
+                <div class="student-answer">${answers.question6.q6_after || '(not answered)'}</div>
+                <p><strong>Times information displayed:</strong></p>
+                <div class="student-answer">${answers.question6.q6_displayed || '(not answered)'}</div>
+            </div>`;
+
+            // Question 7
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 7: For-each with string</h3>
+                <div class="code-display">text = "cyber 101"
+for i in text:
+    print(i)</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question7.q7_times || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question7.q7_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 8
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 8: For-each with substring</h3>
+                <div class="code-display">word = "cyber 101"
+for letter in word:
+    if letter == "c" or letter == "1":
+        print(word[0:5])</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question8.q8_times || '(not answered)'}</div>
+                <p><strong>Times print executes:</strong></p>
+                <div class="student-answer">${answers.question8.q8_printed || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question8.q8_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 9
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 9: For-each with .replace()</h3>
+                <div class="code-display">phrase = "cyber 101"
+for digit in phrase:
+    phrase = phrase.replace(digit, "-")
+print(phrase)</div>
+                <p><strong>Times loop executes:</strong></p>
+                <div class="student-answer">${answers.question9.q9_times || '(not answered)'}</div>
+                <p><strong>Value of phrase:</strong></p>
+                <div class="student-answer">${answers.question9.q9_value || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question9.q9_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 10
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 10: Nested loops - matching values</h3>
+                <div class="code-display">for outer in range(1, 6):
+    for inner in range(1, 6):
+        if outer == inner:
+            print(str(outer) + str(inner))</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question10.q10_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 11
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 11: Nested loops - asterisk pattern</h3>
+                <div class="code-display">for row in range(2, 7):
+    line = ""
+    for col in range(1, row):
+        line = line + "*"
+    print(line)</div>
+                <p><strong>Final value of row:</strong></p>
+                <div class="student-answer">${answers.question11.q11_row || '(not answered)'}</div>
+                <p><strong>Final value of col:</strong></p>
+                <div class="student-answer">${answers.question11.q11_col || '(not answered)'}</div>
+                <p><strong>Output:</strong></p>
+                <div class="student-answer">${answers.question11.q11_output || '(not answered)'}</div>
+            </div>`;
+
+            // Question 12
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 12: Write a for loop header</h3>
+                <p><strong>Task:</strong> Write a for loop header that executes 500 times using ans as the iterating variable</p>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question12.q12_header || '(not answered)'}</div>
+            </div>`;
+
+            document.getElementById('summaryContent').innerHTML = summaryHTML;
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 15;
+            const maxLineWidth = pageWidth - (margin * 2);
+            let yPosition = 20;
+            
+            // Helper function to add new page if needed
+            function checkPageBreak(neededSpace) {
+                if (yPosition + neededSpace > pageHeight - margin) {
+                    doc.addPage();
+                    yPosition = 20;
+                    return true;
+                }
+                return false;
+            }
+            
+            // Helper function to wrap text
+            function addWrappedText(text, x, y, maxWidth, fontSize) {
+                doc.setFontSize(fontSize);
+                const lines = doc.splitTextToSize(text, maxWidth);
+                lines.forEach(line => {
+                    checkPageBreak(fontSize * 0.5);
+                    doc.text(line, x, yPosition);
+                    yPosition += fontSize * 0.5;
+                });
+            }
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(191, 10, 48); // ASCTE Red
+            doc.text('Python Loop Practice - Summary', margin, yPosition);
+            yPosition += 10;
+            
+            // Student info
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            doc.text(`Student Email: ${studentEmail}`, margin, yPosition);
+            yPosition += 6;
+            doc.text(`Start Time: ${startTime.toLocaleString()}`, margin, yPosition);
+            yPosition += 6;
+            doc.text(`End Time: ${endTime.toLocaleString()}`, margin, yPosition);
+            yPosition += 6;
+            doc.text(`Duration: ${duration} minutes`, margin, yPosition);
+            yPosition += 10;
+            
+            // Questions
+            const questions = [
+                {
+                    num: 1,
+                    title: 'Question 1: for i in range(3)',
+                    code: 'for i in range(3):\n    print(i)',
+                    answers: [
+                        { label: 'Starting value of i:', value: answers.question1.q1_start },
+                        { label: 'Times loop executes:', value: answers.question1.q1_times },
+                        { label: 'Output:', value: answers.question1.q1_output }
+                    ]
+                },
+                {
+                    num: 2,
+                    title: 'Question 2: for i in range(1, 4)',
+                    code: 'for i in range(1, 4):\n    print(i)',
+                    answers: [
+                        { label: 'Starting value of i:', value: answers.question2.q2_start },
+                        { label: 'Times loop executes:', value: answers.question2.q2_times },
+                        { label: 'Output:', value: answers.question2.q2_output }
+                    ]
+                },
+                {
+                    num: 3,
+                    title: 'Question 3: Countdown with math',
+                    code: 'for i in range(1, 6):\n    print((6 - i) / 1)',
+                    answers: [
+                        { label: 'Times loop executes:', value: answers.question3.q3_times },
+                        { label: 'Output:', value: answers.question3.q3_output }
+                    ]
+                },
+                {
+                    num: 4,
+                    title: 'Question 4: Division operator',
+                    code: 'for num in range(2, 6):\n    result = 20 / num\n    print(result)',
+                    answers: [
+                        { label: 'Times loop executes:', value: answers.question4.q4_times },
+                        { label: 'Output:', value: answers.question4.q4_output }
+                    ]
+                },
+                {
+                    num: 5,
+                    title: 'Question 5: Conditional with if statement',
+                    code: 'for count in range(1, 5):\n    outcome = count * 3\n    if outcome > 7:\n        print(outcome)',
+                    answers: [
+                        { label: 'Times loop executes:', value: answers.question5.q5_times },
+                        { label: 'Values printed:', value: answers.question5.q5_printed },
+                        { label: 'Final value of outcome:', value: answers.question5.q5_final },
+                        { label: 'Output:', value: answers.question5.q5_output }
+                    ]
+                },
+                {
+                    num: 6,
+                    title: 'Question 6: Mod with if/else',
+                    code: 'total = 0\nfor number in range(1, 5):\n    if number % 2 == 0:\n        total = total + number\n    else:\n        total = total - number\nprint(total)',
+                    answers: [
+                        { label: 'Value of total BEFORE loop:', value: answers.question6.q6_before },
+                        { label: 'Times loop executes:', value: answers.question6.q6_times },
+                        { label: 'Value of total AFTER loop:', value: answers.question6.q6_after },
+                        { label: 'Times information displayed:', value: answers.question6.q6_displayed }
+                    ]
+                },
+                {
+                    num: 7,
+                    title: 'Question 7: For-each with string',
+                    code: 'text = "cyber 101"\nfor i in text:\n    print(i)',
+                    answers: [
+                        { label: 'Times loop executes:', value: answers.question7.q7_times },
+                        { label: 'Output:', value: answers.question7.q7_output }
+                    ]
+                },
+                {
+                    num: 8,
+                    title: 'Question 8: For-each with substring',
+                    code: 'word = "cyber 101"\nfor letter in word:\n    if letter == "c" or letter == "1":\n        print(word[0:5])',
+                    answers: [
+                        { label: 'Times loop executes:', value: answers.question8.q8_times },
+                        { label: 'Times print executes:', value: answers.question8.q8_printed },
+                        { label: 'Output:', value: answers.question8.q8_output }
+                    ]
+                },
+                {
+                    num: 9,
+                    title: 'Question 9: For-each with .replace()',
+                    code: 'phrase = "cyber 101"\nfor digit in phrase:\n    phrase = phrase.replace(digit, "-")\nprint(phrase)',
+                    answers: [
+                        { label: 'Times loop executes:', value: answers.question9.q9_times },
+                        { label: 'Value of phrase:', value: answers.question9.q9_value },
+                        { label: 'Output:', value: answers.question9.q9_output }
+                    ]
+                },
+                {
+                    num: 10,
+                    title: 'Question 10: Nested loops - matching values',
+                    code: 'for outer in range(1, 6):\n    for inner in range(1, 6):\n        if outer == inner:\n            print(str(outer) + str(inner))',
+                    answers: [
+                        { label: 'Output:', value: answers.question10.q10_output }
+                    ]
+                },
+                {
+                    num: 11,
+                    title: 'Question 11: Nested loops - asterisk pattern',
+                    code: 'for row in range(2, 7):\n    line = ""\n    for col in range(1, row):\n        line = line + "*"\n    print(line)',
+                    answers: [
+                        { label: 'Final value of row:', value: answers.question11.q11_row },
+                        { label: 'Final value of col:', value: answers.question11.q11_col },
+                        { label: 'Output:', value: answers.question11.q11_output }
+                    ]
+                },
+                {
+                    num: 12,
+                    title: 'Question 12: Write a for loop header',
+                    code: 'Task: Write a for loop header that executes 500 times using ans as the iterating variable',
+                    answers: [
+                        { label: 'Your answer:', value: answers.question12.q12_header }
+                    ]
+                }
+            ];
+            
+            questions.forEach((q, index) => {
+                checkPageBreak(30);
+                
+                // Question title
+                doc.setFontSize(12);
+                doc.setTextColor(0, 40, 104); // ASCTE Navy
+                doc.text(`${q.title}`, margin, yPosition);
+                yPosition += 8;
+                
+                // Code
+                doc.setFontSize(9);
+                doc.setFont('courier');
+                doc.setTextColor(0, 0, 0);
+                const codeLines = q.code.split('\n');
+                codeLines.forEach(line => {
+                    checkPageBreak(5);
+                    doc.text(line, margin + 5, yPosition);
+                    yPosition += 4;
+                });
+                yPosition += 3;
+                
+                // Answers
+                doc.setFont('helvetica');
+                doc.setFontSize(10);
+                q.answers.forEach(ans => {
+                    checkPageBreak(10);
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(ans.label, margin, yPosition);
+                    yPosition += 5;
+                    
+                    doc.setFont('courier');
+                    doc.setFontSize(9);
+                    const answerText = ans.value || '(not answered)';
+                    const answerLines = answerText.split('\n');
+                    answerLines.forEach(line => {
+                        checkPageBreak(5);
+                        doc.text(line, margin + 5, yPosition);
+                        yPosition += 4;
+                    });
+                    yPosition += 2;
+                });
+                
+                yPosition += 5;
+            });
+            
+            // Save the PDF
+            const filename = `Loop_Practice_${studentEmail.replace('@', '_at_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
+        }
+    </script>
+</body>
+</html>
