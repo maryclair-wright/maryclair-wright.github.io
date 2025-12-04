@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soccer Field Security Camera Coverage System</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            line-height: 1.6;
+            color: #002868;
+            background-color: #ffffff;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #BF0A30;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #002868;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #6598E9;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .scenario-box {
+            background-color: #f5f5f5;
+            border-left: 5px solid #BF0A30;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .scenario-box h2 {
+            margin-top: 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+
+        pre {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-left: 5px solid #6598E9;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.4;
+        }
+
+        .level {
+            margin: 40px 0;
+            padding: 25px;
+            border: 2px solid #A5A5A4;
+            border-radius: 5px;
+        }
+
+        .level h2 {
+            margin-top: 0;
+            color: #BF0A30;
+        }
+
+        .important {
+            background-color: #fff8dc;
+            border-left: 5px solid #BF0A30;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .question {
+            background-color: #e8f4ff;
+            border-left: 5px solid #6598E9;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        strong {
+            color: #002868;
+            font-weight: 600;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Soccer Field Security Camera Coverage System</h1>
+
+    <div class="scenario-box">
+        <h2>Scenario</h2>
+        <p>Your school is installing a new artificial turf soccer field divided into an 8-section grid for maintenance and monitoring purposes. The engineering team has already decided to install a security camera at section 3 because that's where the electrical hookup is located.</p>
+        
+        <p>The camera can monitor sections within 2 spaces to the left and 2 spaces to the right of where it's mounted.</p>
+        
+        <p>You're concerned about the <strong>Availability</strong> principle of the CIA triad - if sections of the field aren't monitored by cameras, footage from those areas won't be available. If an incident occurs in an uncovered section, you won't have access to the video evidence you need.</p>
+        
+        <p>Before the school spends money on installation, you need to program a visual model of the engineering team's camera placement plan to see if it provides adequate coverage of the field sections.</p>
+    </div>
+
+    <div class="level">
+        <h2>Level 1: Draw One Field Section</h2>
+        
+        <p>Here's the code to get started. This imports the turtle library and creates your turtle named beckham:</p>
+
+        <pre>import turtle
+
+beckham = turtle.Turtle()
+beckham.speed(8)
+
+# Start position
+beckham.penup()
+beckham.goto(-240, 0)
+beckham.pendown()</pre>
+
+        <p>Now add code to draw ONE square that is 60 pixels on each side. <strong>You will need a loop that repeats 4 times (one for each side of the square).</strong></p>
+
+        <div class="important">
+            <p><strong>Turtle Movement Reminders:</strong></p>
+            <ul>
+                <li><code>beckham.forward(distance)</code> - moves the turtle forward</li>
+                <li><code>beckham.right(angle)</code> - turns the turtle right</li>
+                <li><code>beckham.left(angle)</code> - turns the turtle left</li>
+            </ul>
+        </div>
+
+        <p>Run your code. You should see one field section.</p>
+
+        <h3>Advanced Extension:</h3>
+        <p>Can you create a procedure (function) called <code>drawSquare()</code> that draws one square? This will make your code more reusable in Level 2.</p>
+    </div>
+
+    <div class="level">
+        <h2>Level 2: Make It a Grid Row</h2>
+        
+        <p>Now you need to draw 8 field sections in a row.</p>
+        
+        <p>Think about this: Your code from Level 1 draws ONE section. How do you repeat that process 8 times?</p>
+
+        <p>You will need:</p>
+        <ul>
+            <li>An outer loop that repeats 8 times</li>
+            <li>Your square-drawing code from Level 1 inside that outer loop</li>
+            <li>After drawing each square, move the turtle forward 60 pixels to the next position</li>
+        </ul>
+
+        <div class="important">
+            <p><strong>Remember:</strong> Use <code>beckham.penup()</code> when you want to move without drawing a line, and <code>beckham.pendown()</code> when you're ready to draw again.</p>
+        </div>
+
+        <p>This is nested iteration - one loop inside another loop.</p>
+
+        <p>Run your code. You should see 8 connected field sections in a row.</p>
+
+        <h3>Advanced Extension:</h3>
+        <p>If you created a <code>drawSquare()</code> procedure in Level 1, you can call that procedure 8 times instead of repeating all the drawing code. This makes your code cleaner and easier to modify.</p>
+    </div>
+
+    <div class="level">
+        <h2>Level 3: Add the Camera</h2>
+        
+        <p>The engineering team installed the camera at section 3. Use the code below to position your turtle, then add code where the comment indicates to draw the camera. Pick any <a href="https://trinket.io/docs/colors" target="_blank">color</a> you want.</p>
+
+        <pre># Draw the camera
+beckham.penup()
+beckham.goto(-30, 30)
+beckham.pendown()
+
+# Your code here to draw the camera using iteration
+# Draw a small shape (like an octagon or hexagon) to represent the camera
+# Use beckham.color("color_name") to set your color</pre>
+
+        <p>Run your code. You should see your row of sections with a camera positioned above section 3.</p>
+
+        <h3>Advanced Extension:</h3>
+        <p>Can you create a procedure called <code>drawCamera(color)</code> that takes a color as a parameter? This way you can draw cameras in different colors by calling <code>drawCamera("red")</code> or <code>drawCamera("blue")</code>.</p>
+    </div>
+
+    <div class="level">
+        <h2>Level 4: Show Camera Coverage</h2>
+        
+        <p>The camera is at section 3 and can see 2 sections to the left and 2 sections to the right.</p>
+
+        <div class="question">
+            <p><strong>Think about this:</strong> Which section numbers will be covered by the camera? Refer back to your plan, sketch, or pseudocode.</p>
+        </div>
+
+        <p>Now fill in the covered sections with a <a href="https://trinket.io/docs/colors" target="_blank">color</a> of your choice.</p>
+
+        <p>Inside your loop where you draw each section, add a conditional to check if the current section should be filled. Use <code>beckham.fillcolor("your_color")</code> and <code>beckham.begin_fill()</code> before drawing a covered section, then <code>beckham.end_fill()</code> after drawing it.</p>
+
+        <div class="question">
+            <p><strong>After running your code:</strong> How did you decide which sections to fill? Did your visualization match what you predicted?</p>
+        </div>
+
+        <h3>Advanced Extension:</h3>
+        <p>Instead of checking for specific section numbers, can you use variables and a mathematical conditional to determine coverage? Create variables <code>cameraSpace = 3</code> and <code>coverageRange = 2</code>, then write a conditional that checks if <code>space >= cameraSpace - coverageRange and space <= cameraSpace + coverageRange</code>. This makes your code more flexible - you can change the camera location or range by just changing the variable values.</p>
+    </div>
+
+    <div class="level">
+        <h2>Extensions: Choose At Least One</h2>
+        
+        <p><strong>Everyone must attempt at least one extension.</strong> You are encouraged to try more than one. For each extension you complete, add a comment directly above that code section that says which extension it is.</p>
+
+        <p>To add a comment in Python, use the # symbol. Anything after # on that line is a comment and won't run as code. For example:</p>
+
+        <pre># Extension 1: User Input for Number of Sections
+numSections = int(input("How many sections? "))</pre>
+
+        <h3>Extension 1: User Input for Number of Sections</h3>
+        <p>Instead of always drawing 8 sections, ask the user how many sections they want to draw. Use <code>input()</code> to get the number from the user, then use that number in your loop. Remember to convert the input to an integer.</p>
+
+        <h3>Extension 2: Add Multiple Rows</h3>
+        <p>Make your field visualization more realistic by adding 4 rows of sections. This will require adding another outer loop. You'll need to move your turtle to a new row position after completing each row using <code>beckham.goto()</code>.</p>
+
+        <h3>Extension 3: Second Camera with Overlap Detection</h3>
+        <p>Add a second camera at a different section that also has a coverage range. When two cameras both cover the same section, show that overlap in a different <a href="https://trinket.io/docs/colors" target="_blank">color</a> than sections covered by just one camera. You'll need to check if a section is covered by camera 1, camera 2, or both.</p>
+
+        <h3>Extension 4: Calculate Coverage Percentage</h3>
+        <p>Count how many sections are covered by the camera and calculate what percentage of the total field is monitored. Use a counter variable inside your loop, then divide by the total number of sections and multiply by 100. Display the result using <code>print()</code> or <code>beckham.write()</code>.</p>
+    </div>
+
+</body>
+</html>
