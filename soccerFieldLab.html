@@ -222,13 +222,45 @@ beckham.pendown()
             <p><strong>Think about this:</strong> Which section numbers will be covered by the camera? Refer back to your plan, sketch, or pseudocode.</p>
         </div>
 
-        <p>Now fill in the covered sections with a <a href="https://trinket.io/docs/colors" target="_blank">color</a> of your choice.</p>
+        <p>To show which sections are covered, you need to modify your code. The covered sections should be filled with a <a href="https://trinket.io/docs/colors" target="_blank">color</a>, and the uncovered sections should stay empty.</p>
 
-        <p>Inside your loop where you draw each section, add a conditional to check if the current section should be filled. Use <code>beckham.fillcolor("your_color")</code> and <code>beckham.begin_fill()</code> before drawing a covered section, then <code>beckham.end_fill()</code> after drawing it.</p>
+        <h3>Understanding Fill Commands:</h3>
+        <ul>
+            <li><code>beckham.fillcolor("your_color")</code> - sets what color will be used for filling</li>
+            <li><code>beckham.begin_fill()</code> - tells the turtle to start filling the next shape it draws</li>
+            <li><code>beckham.end_fill()</code> - tells the turtle to stop filling and complete the filled shape</li>
+        </ul>
+
+        <h3>One Way to Solve This:</h3>
+        <p>Think about your row as TWO groups of sections:</p>
+        <ul>
+            <li>Sections 1-5 are covered (need to be filled with color)</li>
+            <li>Sections 6-8 are not covered (should stay empty)</li>
+        </ul>
+
+        <p>You can draw the covered sections first using one loop with filling, then draw the uncovered sections using another loop without filling.</p>
+
+        <p><strong>Here's one possible structure (there are many ways to solve this):</strong></p>
+        <pre>beckham.fillcolor("your_color")
+
+# Draw the 5 covered sections
+for space in range(5):
+    beckham.begin_fill()
+    # your square-drawing code here (4 sides)
+    beckham.end_fill()
+    beckham.forward(60)
+
+# Draw the 3 uncovered sections  
+for space in range(3):
+    # your square-drawing code here (4 sides, no fill commands)
+    beckham.forward(60)</pre>
 
         <div class="question">
-            <p><strong>After running your code:</strong> How did you decide which sections to fill? Did your visualization match what you predicted?</p>
+            <p><strong>After running your code:</strong> How did this approach solve the problem? What are the advantages and disadvantages of using two separate loops?</p>
         </div>
+
+        <h3>Advanced Extension:</h3>
+        <p>Can you solve this by drawing all 8 sections in a single loop (instead of two separate loops for covered and uncovered sections)? You'll need to use an if statement inside the loop to decide whether to fill each section as you draw it. This approach is more flexible - what if the camera was at a different position or had a different range?</p>
     </div>
 
     <div class="level">
