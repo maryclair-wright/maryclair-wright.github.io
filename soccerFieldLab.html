@@ -122,6 +122,8 @@
 <body>
     <h1>Soccer Field Security Camera Coverage System</h1>
 
+    <p><a href="https://www.technocamps.com/wp-content/uploads/2020/11/PythonTurtle_CheatSheet_ENG.pdf" target="_blank">Python Turtle Cheat Sheet</a></p>
+
     <div class="scenario-box">
         <h2>Scenario</h2>
         <p>Your school is installing a new artificial turf soccer field divided into an 8-section grid for maintenance and monitoring purposes. The engineering team has already decided to install a security camera at section 3 because that's where the electrical hookup is located.</p>
@@ -227,9 +229,6 @@ beckham.pendown()
         <div class="question">
             <p><strong>After running your code:</strong> How did you decide which sections to fill? Did your visualization match what you predicted?</p>
         </div>
-
-        <h3>Advanced Extension:</h3>
-        <p>Instead of checking for specific section numbers, can you use variables and a mathematical conditional to determine coverage? Create variables <code>cameraSpace = 3</code> and <code>coverageRange = 2</code>, then write a conditional that checks if <code>space >= cameraSpace - coverageRange and space <= cameraSpace + coverageRange</code>. This makes your code more flexible - you can change the camera location or range by just changing the variable values.</p>
     </div>
 
     <div class="level">
@@ -245,14 +244,23 @@ numSections = int(input("How many sections? "))</pre>
         <h3>Extension 1: User Input for Number of Sections</h3>
         <p>Instead of always drawing 8 sections, ask the user how many sections they want to draw. Use <code>input()</code> to get the number from the user, then use that number in your loop. Remember to convert the input to an integer.</p>
 
-        <h3>Extension 2: Add Multiple Rows</h3>
+        <h3>Extension 2: User Input for Colors</h3>
+        <p>Ask the user to enter two <a href="https://trinket.io/docs/colors" target="_blank">color</a> names: one for covered sections and one for uncovered sections. Use <code>input()</code> to get the color words from the user, then use those colors in your <code>beckham.fillcolor()</code> commands throughout your program.</p>
+
+        <h3>Extension 3: Add Multiple Rows</h3>
         <p>Make your field visualization more realistic by adding 4 rows of sections. This will require adding another outer loop. You'll need to move your turtle to a new row position after completing each row using <code>beckham.goto()</code>.</p>
 
-        <h3>Extension 3: Second Camera with Overlap Detection</h3>
+        <h3>Extension 4: Second Camera with Overlap Detection</h3>
         <p>Add a second camera at a different section that also has a coverage range. When two cameras both cover the same section, show that overlap in a different <a href="https://trinket.io/docs/colors" target="_blank">color</a> than sections covered by just one camera. You'll need to check if a section is covered by camera 1, camera 2, or both.</p>
 
-        <h3>Extension 4: Calculate Coverage Percentage</h3>
+        <h3>Extension 5: Calculate Coverage Percentage</h3>
         <p>Count how many sections are covered by the camera and calculate what percentage of the total field is monitored. Use a counter variable inside your loop, then divide by the total number of sections and multiply by 100. Display the result using <code>print()</code> or <code>beckham.write()</code>.</p>
+
+        <h3>Extension 6: Label the Sections</h3>
+        <p>Use <code>beckham.write()</code> to add labels to each section showing its section number (0, 1, 2, 3, etc.). You'll need to position the turtle inside each section and write the number before moving to the next section.</p>
+
+        <h3>Extension 7: Use Variables and Math for Coverage</h3>
+        <p>Instead of checking for specific section numbers in Level 4, use variables and a mathematical conditional to determine coverage. Create variables <code>cameraSpace = 3</code> and <code>coverageRange = 2</code>, then write a conditional that checks if <code>space >= cameraSpace - coverageRange and space <= cameraSpace + coverageRange</code>. This makes your code more flexible - you can change the camera location or range by just changing the variable values.</p>
     </div>
 
 </body>
