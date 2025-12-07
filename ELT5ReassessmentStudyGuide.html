@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELT5 Re-assessment Mandatory Study Guide - ASCTE</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin: -40px -40px 30px -40px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #002868;
+            font-size: 24px;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .setup-section {
+            background-color: #6598E9;
+            color: white;
+            padding: 25px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .setup-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .setup-section input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #002868;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .start-button {
+            background-color: #002868;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Serif', serif;
+            transition: background-color 0.3s;
+        }
+
+        .start-button:hover {
+            background-color: #001a4d;
+        }
+
+        .question-container {
+            display: none;
+            margin-bottom: 40px;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #6598E9;
+            border-radius: 5px;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question-number {
+            color: #BF0A30;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .code-block {
+            background-color: #002868;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        .code-inline {
+            font-family: 'Courier New', monospace;
+            background-color: #A5A5A4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+            white-space: pre;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #A5A5A4;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        input[type="checkbox"] + label {
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .check-button {
+            background-color: #6598E9;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'IBM Plex Serif', serif;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .check-button:hover {
+            background-color: #4a7ac9;
+        }
+
+        .check-button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .hint {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .answer-explanation {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #A5A5A4;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #BF0A30;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .summary-section {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .summary-section.active {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 48px;
+            color: #BF0A30;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .pdf-button {
+            background-color: #BF0A30;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Serif', serif;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .pdf-button:hover {
+            background-color: #8f0824;
+        }
+
+        .next-button {
+            background-color: #002868;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'IBM Plex Serif', serif;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .next-button:hover {
+            background-color: #001a4d;
+        }
+
+        .note {
+            background-color: #6598E9;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ELT5 Re-assessment Mandatory Study Guide</h1>
+            <div class="subtitle">Cyber 101 - Conditional Statements</div>
+        </div>
+
+        <div class="note">
+            <strong>IMPORTANT: Read Carefully</strong><br><br>
+            Re-assessment is an opportunity for reflection and growth, not simply a chance to "try again." The purpose of re-assessment is to demonstrate that you have invested time in understanding the concepts you initially struggled with and have developed stronger skills through deliberate practice.<br><br>
+            This mandatory study guide is designed to help you identify gaps in your understanding and build the knowledge needed for success. Completing this guide shows that you are taking ownership of your learning and are committed to improving your skills.<br><br>
+            <strong>You must complete and submit this study guide BEFORE attempting your re-assessment. Failure to do so will result in Mrs. Wright not scoring your re-assessment.</strong> Skipping this preparation demonstrates that you are not investing in your own growth and are not ready to show improved understanding.
+        </div>
+
+        <div id="setupSection" class="setup-section">
+            <h2 style="color: white; margin-top: 0;">Student Information</h2>
+            <label for="studentEmail">Email Address:</label>
+            <input type="email" id="studentEmail" placeholder="your.email@ascte.edu" required>
+            
+            <button class="start-button" onclick="startPractice()">Begin Practice</button>
+        </div>
+
+        <div id="practiceSection" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0 / 16</div>
+            </div>
+
+            <div id="questionsContainer"></div>
+        </div>
+
+        <div id="summarySection" class="summary-section">
+            <h2>Practice Complete!</h2>
+            <div class="score-display" id="scoreDisplay"></div>
+            <p id="summaryText"></p>
+            <button class="pdf-button" onclick="generatePDF()">Download PDF Summary</button>
+            <br>
+            <button class="start-button" onclick="location.reload()" style="margin-top: 20px;">Practice Again</button>
+        </div>
+    </div>
+
+    <script>
+        let studentEmail = "";
+        let startTime = null;
+        let endTime = null;
+        let currentQuestion = 0;
+        let questionsData = [];
+        let studentAnswers = [];
+        let correctCount = 0;
+
+        const questionBank = [
+            {
+                id: 1,
+                question: "What will be the final value stored in <span class='code-inline'>result</span>?",
+                code: `x = 15
+y = 20
+result = (x < y) and (y > 10)
+print(result)`,
+                answer: "True",
+                hint: "Remember: 'and' requires both conditions to be true. Check if x < y AND if y > 10.",
+                explanation: "Since x (15) is less than y (20), the first condition is True. Since y (20) is greater than 10, the second condition is also True. True and True equals True."
+            },
+            {
+                id: 2,
+                question: "Rewrite this conditional statement to be equivalent using a single condition (no 'and' or 'or'):",
+                code: `if not(temperature > 75):
+    wearJacket = True`,
+                answer: "if temperature <= 75:",
+                hint: "The opposite of 'greater than' is 'less than or equal to'. Apply De Morgan's Law.",
+                explanation: "not(temperature > 75) is equivalent to temperature <= 75. When a number is NOT greater than 75, it must be less than or equal to 75."
+            },
+            {
+                id: 3,
+                question: "What will be displayed to the user when this code executes?",
+                code: `score = 85
+
+if score >= 90:
+    print("Excellent")
+elif score >= 80:
+    print("Good")
+elif score >= 70:
+    print("Passing")
+else:
+    print("Needs Improvement")`,
+                answer: "Good",
+                hint: "Check each condition in order from top to bottom. Stop at the first True condition.",
+                explanation: "score is 85. First condition (>= 90) is False. Second condition (>= 80) is True, so 'Good' is printed and the rest of the elif/else blocks are skipped."
+            },
+            {
+                id: 4,
+                question: "Write a conditional statement that checks if a variable <span class='code-inline'>age</span> is between 13 and 19 (inclusive) using a compound boolean expression:",
+                answer: "if age >= 13 and age <= 19:",
+                hint: "You need TWO comparisons joined together: one checking if age is at least 13, and another checking if age is at most 19.",
+                explanation: "The correct answer is: if age >= 13 and age <= 19: This checks that age is greater than or equal to 13 AND less than or equal to 19."
+            },
+            {
+                id: 5,
+                question: "What will be displayed when this code executes?",
+                code: `def checkValue(num):
+    if num > 0:
+        return "Positive"
+    elif num < 0:
+        return "Negative"
+    else:
+        return "Zero"
+
+result = checkValue(-5)
+print(result)`,
+                answer: "Negative",
+                hint: "Trace through the procedure with num = -5. Which condition will be true?",
+                explanation: "The procedure is called with -5. Since -5 > 0 is False, we check elif -5 < 0 which is True, so 'Negative' is returned and printed."
+            },
+            {
+                id: 6,
+                question: "What will be displayed when this try/except block executes?",
+                code: `try:
+    value = int("42")
+    result = value / 2
+    print("Success")
+except ValueError:
+    print("Invalid input")
+except ZeroDivisionError:
+    print("Cannot divide by zero")`,
+                answer: "Success",
+                hint: "Will any exceptions occur? int('42') converts successfully to 42, and 42 / 2 works fine.",
+                explanation: "No exceptions occur. int('42') successfully converts to 42, then 42 / 2 = 21.0 works without error, so 'Success' is printed."
+            },
+            {
+                id: 7,
+                question: "Convert this nested if/else to an equivalent if/elif/else structure:",
+                code: `if temperature > 90:
+    print("Hot")
+else:
+    if temperature > 70:
+        print("Warm")
+    else:
+        print("Cool")`,
+                answer: "if temperature > 90:\n    print(\"Hot\")\nelif temperature > 70:\n    print(\"Warm\")\nelse:\n    print(\"Cool\")",
+                hint: "The nested else-if can be flattened into an elif. The structure should have if, elif, else.",
+                explanation: "The nested structure can be simplified: if temperature > 90: print('Hot') elif temperature > 70: print('Warm') else: print('Cool')"
+            },
+            {
+                id: 8,
+                question: "What will be stored in <span class='code-inline'>message</span> after this code runs?",
+                code: `username = "admin"
+password = "pass123"
+
+if username == "admin" and password == "pass123":
+    message = "Access Granted"
+elif username == "admin":
+    message = "Wrong Password"
+else:
+    message = "Unknown User"
+
+print(message)`,
+                answer: "Access Granted",
+                hint: "Both conditions in the first if statement must be true. Check if username equals 'admin' AND password equals 'pass123'.",
+                explanation: "Both username == 'admin' and password == 'pass123' are True, so the first condition is satisfied and message is set to 'Access Granted'."
+            },
+            {
+                id: 9,
+                question: "This code uses sequential if statements. What will be displayed?",
+                code: `score = 95
+
+if score >= 90:
+    print("A")
+
+if score >= 80:
+    print("B")
+
+if score >= 70:
+    print("C")`,
+                answer: "A\nB\nC",
+                hint: "Sequential if statements (not elif) means ALL conditions are checked independently. How many are true?",
+                explanation: "Since these are sequential if statements (not elif), all three conditions are checked. 95 >= 90 (True, prints A), 95 >= 80 (True, prints B), 95 >= 70 (True, prints C)."
+            },
+            {
+                id: 10,
+                question: "What will be the output when this procedure is called?",
+                code: `def evaluateGrade(score):
+    if score >= 90:
+        return "A"
+    elif score >= 80:
+        return "B"
+    else:
+        return "C"
+    return "F"
+
+grade = evaluateGrade(88)
+print(grade)`,
+                answer: "B",
+                hint: "Remember that 'return' immediately exits the function. Which condition matches 88?",
+                explanation: "88 >= 90 is False, so we check elif 88 >= 80 which is True. 'B' is returned. The return 'F' statement is never reached because we already returned."
+            },
+            {
+                id: 11,
+                question: "Rewrite this using a compound condition with 'or':",
+                code: `if day == "Saturday":
+    weekend = True
+elif day == "Sunday":
+    weekend = True
+else:
+    weekend = False`,
+                answer: "if day == \"Saturday\" or day == \"Sunday\":\n    weekend = True\nelse:\n    weekend = False",
+                hint: "Combine the two conditions that set weekend to True using 'or'.",
+                explanation: "The correct answer is: if day == 'Saturday' or day == 'Sunday': weekend = True else: weekend = False"
+            },
+            {
+                id: 12,
+                question: "What will be printed when this code executes?",
+                code: `text = "Python"
+
+if len(text) > 5:
+    print("Long")
+elif len(text) == 6:
+    print("Medium")
+else:
+    print("Short")`,
+                answer: "Long",
+                hint: "Find the length of 'Python' first. Remember that elif is only checked if the first if is False.",
+                explanation: "len('Python') is 6. Since 6 > 5 is True, 'Long' is printed. The elif is NOT checked because the first condition was already true."
+            },
+            {
+                id: 13,
+                question: "What value will be returned by this procedure call?",
+                code: `def checkRange(value):
+    if value < 0:
+        return "Below Range"
+    elif value <= 100:
+        return "In Range"
+    else:
+        return "Above Range"
+
+result = checkRange(100)
+print(result)`,
+                answer: "In Range",
+                hint: "Check each condition with value = 100. Is 100 < 0? Is 100 <= 100?",
+                explanation: "100 < 0 is False, so we check elif 100 <= 100 which is True. 'In Range' is returned and printed."
+            },
+            {
+                id: 14,
+                question: "What will be displayed by this nested conditional?",
+                code: `age = 25
+hasLicense = True
+
+if age >= 16:
+    if hasLicense:
+        print("Can Drive")
+    else:
+        print("Need License")
+else:
+    print("Too Young")`,
+                answer: "Can Drive",
+                hint: "First check if age >= 16. If true, then check the nested condition about hasLicense.",
+                explanation: "age (25) >= 16 is True, so we enter the outer if block. Inside, hasLicense is True, so 'Can Drive' is printed."
+            },
+            {
+                id: 15,
+                question: "Write an equivalent conditional using not:",
+                code: `if score < 60:
+    print("Failed")`,
+                answer: "if not(score >= 60):\n    print(\"Failed\")",
+                hint: "The opposite of 'less than' is 'greater than or equal to'. Use 'not' to negate that condition.",
+                explanation: "score < 60 is equivalent to not(score >= 60). Using not with the opposite comparison gives us the same logic."
+            },
+            {
+                id: 16,
+                question: "Reflection: Which resources did you use to complete this study guide? Select all that apply.",
+                type: "checkbox",
+                options: [
+                    "My CIB",
+                    "AI or Google search",
+                    "A Peer Tutor during BOOST",
+                    "An after school STEM tutor",
+                    "An outside ASCTE tutor",
+                    "A parent or family member",
+                    "A fellow Cyber 101 student",
+                    "My own brain and course materials"
+                ],
+                answer: "any",
+                hint: "There's no wrong answer here - just be honest about what resources helped you learn.",
+                explanation: "Thank you for sharing which resources you used! This helps Mrs. Wright understand how students learn best."
+            }
+        ];
+
+        function startPractice() {
+            studentEmail = document.getElementById('studentEmail').value;
+            
+            if (!studentEmail || !studentEmail.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            startTime = new Date();
+            
+            // Separate the reflection question (question 16) from the rest
+            const reflectionQuestion = questionBank.find(q => q.id === 16);
+            const practiceQuestions = questionBank.filter(q => q.id !== 16);
+            
+            // Randomize practice questions but keep reflection at the end
+            const randomizedPractice = [...practiceQuestions].sort(() => Math.random() - 0.5);
+            questionsData = [...randomizedPractice, reflectionQuestion];
+            
+            // Initialize student answers
+            studentAnswers = questionsData.map(q => ({
+                questionId: q.id,
+                question: q.question,
+                code: q.code,
+                attempts: 0,
+                studentAnswer: "",
+                correct: false,
+                usedHint: false
+            }));
+
+            document.getElementById('setupSection').style.display = 'none';
+            document.getElementById('practiceSection').style.display = 'block';
+            
+            renderQuestions();
+            showQuestion(0);
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.id = `question-${index}`;
+                
+                let answerInput = '';
+                if (q.type === 'checkbox') {
+                    answerInput = '<div style="margin: 15px 0;">';
+                    q.options.forEach((option, optIndex) => {
+                        answerInput += `
+                            <div style="margin: 10px 0;">
+                                <input type="checkbox" id="check-${index}-${optIndex}" name="resource-${index}" value="${option}" style="width: auto; margin-right: 10px;">
+                                <label for="check-${index}-${optIndex}" style="cursor: pointer;">${option}</label>
+                            </div>
+                        `;
+                    });
+                    answerInput += '</div>';
+                } else {
+                    answerInput = `<textarea id="answer-${index}" placeholder="Type your answer here..." rows="4" spellcheck="false"></textarea><br>`;
+                }
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of 16</div>
+                    <div class="question-text">${q.question}</div>
+                    ${q.code ? `<div class="code-block">${escapeHtml(q.code)}</div>` : ''}
+                    ${answerInput}
+                    <button class="check-button" onclick="checkAnswer(${index})">Check Answer</button>
+                    <div id="feedback-${index}"></div>
+                    <button class="next-button" id="next-${index}" style="display: none;" onclick="nextQuestion(${index})">Next Question</button>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function showQuestion(index) {
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.getElementById(`question-${index}`).classList.add('active');
+            currentQuestion = index;
+            updateProgress();
+        }
+
+        function normalizeAnswer(answer) {
+            return answer.trim().toLowerCase()
+                .replace(/\s+/g, ' ')
+                .replace(/["']/g, '"')
+                .replace(/\n\s+/g, '\n')
+                .replace(/print\s*\(/g, 'print(')
+                .replace(/==\s+/g, ' == ')
+                .replace(/<=\s+/g, ' <= ')
+                .replace(/>=\s+/g, ' >= ')
+                .replace(/:\s*\n/g, ':\n');
+        }
+
+        function checkAnswer(index) {
+            const question = questionsData[index];
+            const feedback = document.getElementById(`feedback-${index}`);
+            let studentAnswer = '';
+            
+            // Handle checkbox questions differently
+            if (question.type === 'checkbox') {
+                const checkboxes = document.querySelectorAll(`input[name="resource-${index}"]:checked`);
+                if (checkboxes.length === 0) {
+                    feedback.innerHTML = '<div class="feedback incorrect">Please select at least one resource.</div>';
+                    return;
+                }
+                const selectedOptions = Array.from(checkboxes).map(cb => cb.value);
+                studentAnswer = selectedOptions.join('; ');
+                
+                // For checkbox questions, any answer is correct
+                studentAnswers[index].studentAnswer = studentAnswer;
+                studentAnswers[index].attempts = 1;
+                studentAnswers[index].correct = true;
+                correctCount++;
+                feedback.innerHTML = '<div class="feedback correct">Thank you for sharing! This information helps Mrs. Wright understand how students learn best.</div>';
+                document.querySelector(`#question-${index} .check-button`).disabled = true;
+                document.getElementById(`next-${index}`).style.display = 'inline-block';
+                return;
+            }
+            
+            // Handle text questions
+            studentAnswer = document.getElementById(`answer-${index}`).value;
+            
+            if (!studentAnswer.trim()) {
+                feedback.innerHTML = '<div class="feedback incorrect">Please enter an answer.</div>';
+                return;
+            }
+
+            studentAnswers[index].studentAnswer = studentAnswer;
+            studentAnswers[index].attempts++;
+
+            const normalizedStudent = normalizeAnswer(studentAnswer);
+            const normalizedCorrect = normalizeAnswer(question.answer);
+
+            if (normalizedStudent === normalizedCorrect || 
+                normalizedStudent.includes(normalizedCorrect) ||
+                (question.id === 2 && normalizedStudent.includes('temperature') && normalizedStudent.includes('<=') && normalizedStudent.includes('75')) ||
+                (question.id === 4 && normalizedStudent.includes('age') && normalizedStudent.includes('>=') && normalizedStudent.includes('13') && normalizedStudent.includes('and') && normalizedStudent.includes('<=') && normalizedStudent.includes('19')) ||
+                (question.id === 7 && normalizedStudent.includes('elif') && normalizedStudent.includes('temperature') && normalizedStudent.includes('> 70')) ||
+                (question.id === 9 && (normalizedStudent.includes('a') && normalizedStudent.includes('b') && normalizedStudent.includes('c'))) ||
+                (question.id === 11 && normalizedStudent.includes('or') && normalizedStudent.includes('saturday') && normalizedStudent.includes('sunday')) ||
+                (question.id === 15 && normalizedStudent.includes('not') && normalizedStudent.includes('>=') && normalizedStudent.includes('60'))) {
+                
+                studentAnswers[index].correct = true;
+                correctCount++;
+                feedback.innerHTML = '<div class="feedback correct">Correct! Well done!</div>';
+                document.querySelector(`#question-${index} .check-button`).disabled = true;
+                document.getElementById(`next-${index}`).style.display = 'inline-block';
+            } else if (studentAnswers[index].attempts === 1) {
+                studentAnswers[index].usedHint = true;
+                feedback.innerHTML = `<div class="feedback hint"><strong>Hint:</strong> ${question.hint}</div>`;
+            } else {
+                feedback.innerHTML = `
+                    <div class="feedback incorrect">Not quite right.</div>
+                    <div class="feedback answer-explanation">
+                        <strong>Correct Answer:</strong><br>
+                        <div class="code-inline">${escapeHtml(question.answer)}</div><br><br>
+                        <strong>Explanation:</strong> ${question.explanation}
+                    </div>
+                `;
+                document.querySelector(`#question-${index} .check-button`).disabled = true;
+                document.getElementById(`next-${index}`).style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion(index) {
+            if (index < questionsData.length - 1) {
+                showQuestion(index + 1);
+            } else {
+                finishPractice();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questionsData.length) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = `${currentQuestion + 1} / ${questionsData.length}`;
+        }
+
+        function finishPractice() {
+            endTime = new Date();
+            document.getElementById('practiceSection').style.display = 'none';
+            document.getElementById('summarySection').classList.add('active');
+            
+            const percentage = Math.round((correctCount / questionsData.length) * 100);
+            document.getElementById('scoreDisplay').textContent = `${correctCount} / ${questionsData.length} (${percentage}%)`;
+            
+            let message = "";
+            if (percentage >= 90) {
+                message = "Excellent work! You have a strong understanding of conditional statements.";
+            } else if (percentage >= 80) {
+                message = "Great job! You're demonstrating good mastery of conditionals.";
+            } else if (percentage >= 70) {
+                message = "Good effort! Review the questions you missed and try again.";
+            } else {
+                message = "Keep practicing! Review the explanations and try the practice again.";
+            }
+            
+            document.getElementById('summaryText').textContent = message;
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            
+            // Title
+            doc.setFontSize(20);
+            doc.setTextColor(191, 10, 48);
+            doc.text('ELT5 Re-assessment Study Guide', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Student: ${studentEmail}`, 20, 35);
+            doc.text(`Date: ${startTime.toLocaleDateString()}`, 20, 42);
+            doc.text(`Duration: ${duration} minutes`, 20, 49);
+            doc.text(`Score: ${correctCount} / ${questionsData.length} (${Math.round((correctCount / questionsData.length) * 100)}%)`, 20, 56);
+            
+            doc.setDrawColor(191, 10, 48);
+            doc.line(20, 60, 190, 60);
+            
+            let yPos = 70;
+            
+            studentAnswers.forEach((answer, index) => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                doc.text(`Question ${index + 1}:`, 20, yPos);
+                yPos += 7;
+                
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(9);
+                
+                const status = answer.correct ? 'Correct' : 'Incorrect';
+                const statusColor = answer.correct ? [40, 167, 69] : [220, 53, 69];
+                doc.setTextColor(...statusColor);
+                doc.text(`Status: ${status}`, 30, yPos);
+                doc.setTextColor(0, 0, 0);
+                yPos += 6;
+                
+                doc.text(`Attempts: ${answer.attempts}`, 30, yPos);
+                yPos += 6;
+                
+                if (answer.usedHint) {
+                    doc.text('Used Hint: Yes', 30, yPos);
+                    yPos += 6;
+                }
+                
+                const wrappedAnswer = doc.splitTextToSize(`Your Answer: ${answer.studentAnswer}`, 160);
+                doc.text(wrappedAnswer, 30, yPos);
+                yPos += (wrappedAnswer.length * 5) + 8;
+            });
+            
+            doc.save(`ELT5_Reassessment_Study_${studentEmail.split('@')[0]}.pdf`);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>
