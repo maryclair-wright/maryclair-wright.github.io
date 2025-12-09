@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glacier Ice Analysis - Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background-color: #002868;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .scenario {
+            background-color: #6598E9;
+            color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #002868;
+        }
+
+        .scenario p {
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        h2 {
+            color: #BF0A30;
+            font-size: 1.8em;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #BF0A30;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: #002868;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+            font-weight: 600;
+        }
+
+        .level {
+            background-color: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #002868;
+        }
+
+        .level h3 {
+            margin-top: 0;
+            color: #002868;
+        }
+
+        .level ol, .level ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .level li {
+            margin: 8px 0;
+            line-height: 1.7;
+        }
+
+        .level ul ul {
+            margin-left: 25px;
+            margin-top: 5px;
+        }
+
+        .example {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid #A5A5A4;
+        }
+
+        .example strong {
+            color: #002868;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        code, pre {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f8f8;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        pre {
+            padding: 15px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            line-height: 1.5;
+        }
+
+        .extension-box {
+            background-color: #fff;
+            border: 2px solid #6598E9;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .extension-box h4 {
+            color: #002868;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .tips {
+            background-color: #fffbf0;
+            border: 2px solid #A5A5A4;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .tips h2 {
+            color: #002868;
+            border-bottom: 2px solid #002868;
+        }
+
+        .tips ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .tips li {
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .note {
+            background-color: #BF0A30;
+            color: white;
+            padding: 15px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .extensions-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .extensions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Glacier Ice Analysis</h1>
+        <p>Practice Day - Build Your Programming Skills</p>
+    </div>
+
+    <div class="container">
+        <div class="scenario">
+            <p><strong>Scenario:</strong> You're working with an Arctic research team that collects ice thickness measurements from glaciers. Your job is to create a program that processes these measurements and provides useful information to the research team.</p>
+            <p style="margin-top: 15px;"><strong>Challenge:</strong> As you build your program, create at least one procedure to organize your code and make it reusable!</p>
+        </div>
+
+        <h2>Core Challenge</h2>
+
+        <div class="level">
+            <h3>Level 1: Single Sample Analysis (Start Here!)</h3>
+            <p><strong>Your program should:</strong></p>
+            <ol>
+                <li>Ask the user for a single ice thickness measurement (in meters)</li>
+                <li>Classify the measurement:
+                    <ul>
+                        <li>Less than 5 meters = "Critical"</li>
+                        <li>Between 5 and 15 meters (inclusive) = "At Risk"</li>
+                        <li>Greater than 15 meters = "Stable"</li>
+                    </ul>
+                </li>
+                <li>Calculate the ice volume for that measurement
+                    <ul>
+                        <li>Each sample represents a 10m × 10m area</li>
+                        <li>Volume = thickness × 10 × 10</li>
+                    </ul>
+                </li>
+                <li>Display the classification and volume</li>
+            </ol>
+
+            <div class="example">
+                <strong>Example Output:</strong>
+                <pre>Enter ice thickness in meters: 8.5
+Classification: At Risk
+Volume: 850 cubic meters</pre>
+            </div>
+
+            <div class="note">
+                Test your code with different values before moving on!
+            </div>
+        </div>
+
+        <div class="level">
+            <h3>Level 2: Count Critical Samples (Next Step!)</h3>
+            <p><strong>Your program should:</strong></p>
+            <ol>
+                <li>Ask the user how many samples they collected</li>
+                <li>Use a loop to get each measurement</li>
+                <li>Count how many samples are Critical (less than 5 meters)</li>
+                <li>Display the count</li>
+            </ol>
+
+            <div class="example">
+                <strong>Example Output:</strong>
+                <pre>How many samples did you collect? 5
+Enter measurement 1: 12.3
+Enter measurement 2: 4.2
+Enter measurement 3: 18.7
+Enter measurement 4: 6.8
+Enter measurement 5: 3.1
+
+Critical samples found: 2</pre>
+            </div>
+        </div>
+
+        <h2>Extensions (If You Finish Early)</h2>
+        <p>Choose any of these to add to your Level 2 program:</p>
+
+        <div class="extensions-grid">
+            <div class="extension-box">
+                <h4>Extension A: Count All Categories</h4>
+                <p>Count and display Critical, At Risk, AND Stable samples.</p>
+            </div>
+
+            <div class="extension-box">
+                <h4>Extension B: Total Volume</h4>
+                <p>Calculate and display the total ice volume across all samples.</p>
+            </div>
+
+            <div class="extension-box">
+                <h4>Extension C: Average Thickness</h4>
+                <p>Calculate and display the average ice thickness across all samples.</p>
+            </div>
+
+            <div class="extension-box">
+                <h4>Extension D: Percentage Critical</h4>
+                <p>Calculate what percentage of samples are Critical.<br>
+                Example: "Critical samples: 2 out of 5 (40%)"</p>
+            </div>
+
+            <div class="extension-box">
+                <h4>Extension E: Thickest and Thinnest</h4>
+                <p>Track and display which sample was the thickest and which was the thinnest.<br>
+                Example: "Thickest sample: 18.7 meters (sample 3)"</p>
+            </div>
+
+            <div class="extension-box">
+                <h4>Extension F: Safety Alert</h4>
+                <p>If more than 50% of samples are Critical, display a special warning message.</p>
+            </div>
+
+            <div class="extension-box">
+                <h4>Extension G: Store and Review</h4>
+                <p>Store all measurements in a list, then allow the user to search by sample number to see detailed information.</p>
+            </div>
+        </div>
+
+        <div class="tips">
+            <h2>Tips for Success</h2>
+            <ul>
+                <li><strong>Start small:</strong> Get Level 1 completely working before moving to Level 2</li>
+                <li><strong>Test frequently:</strong> Run your program after each new feature</li>
+                <li><strong>Use meaningful variable names:</strong> <code>iceThickness</code> is better than <code>x</code></li>
+                <li><strong>Remember camelCase:</strong> First word lowercase, capitalize each additional word</li>
+                <li><strong>Ask for help:</strong> Stuck? Ask a classmate, BOOST tutor, or me!</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
