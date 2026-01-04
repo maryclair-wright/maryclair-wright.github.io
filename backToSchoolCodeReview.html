@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Day Code Reading Practice - ASCTE</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin: -40px -40px 30px -40px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #002868;
+            font-size: 24px;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .setup-section {
+            background-color: #6598E9;
+            color: white;
+            padding: 25px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .setup-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .setup-section input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #002868;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .start-button {
+            background-color: #002868;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Serif', serif;
+            transition: background-color 0.3s;
+        }
+
+        .start-button:hover {
+            background-color: #001a4d;
+        }
+
+        .question-container {
+            display: none;
+            margin-bottom: 40px;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #6598E9;
+            border-radius: 5px;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question-number {
+            color: #BF0A30;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .code-block {
+            background-color: #002868;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        .code-inline {
+            font-family: 'Courier New', monospace;
+            background-color: #A5A5A4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+            white-space: pre;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #A5A5A4;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .check-button {
+            background-color: #6598E9;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'IBM Plex Serif', serif;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .check-button:hover {
+            background-color: #4a7ac9;
+        }
+
+        .check-button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .hint {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .answer-explanation {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #A5A5A4;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #BF0A30;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .summary-section {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .summary-section.active {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 48px;
+            color: #BF0A30;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .pdf-button {
+            background-color: #BF0A30;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Serif', serif;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .pdf-button:hover {
+            background-color: #8f0824;
+        }
+
+        .next-button {
+            background-color: #002868;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'IBM Plex Serif', serif;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .next-button:hover {
+            background-color: #001a4d;
+        }
+
+        .note {
+            background-color: #6598E9;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Virtual Day Code Reading Practice</h1>
+            <div class="subtitle">Cyber 101 - Loops, Strings, and Selection</div>
+        </div>
+
+        <div class="note">
+            <strong>Welcome to Virtual Day Practice!</strong><br><br>
+            Today's practice focuses on reading and tracing through Python code. You'll work with loops, strings, and conditional statements. Take your time to trace through each piece of code carefully.<br><br>
+            <strong>Tips for Success:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Read through the entire code before answering</li>
+                <li>Trace variables step by step</li>
+                <li>Pay attention to string indexing and loop counters</li>
+                <li>Check your work before submitting each answer</li>
+            </ul>
+        </div>
+
+        <div id="setupSection" class="setup-section">
+            <h2 style="color: white; margin-top: 0;">Student Information</h2>
+            <label for="studentEmail">Email Address:</label>
+            <input type="email" id="studentEmail" placeholder="your.email@ascte.edu" required>
+            
+            <button class="start-button" onclick="startPractice()">Begin Practice</button>
+        </div>
+
+        <div id="practiceSection" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0 / 14</div>
+            </div>
+
+            <div id="questionsContainer"></div>
+        </div>
+
+        <div id="summarySection" class="summary-section">
+            <h2>Practice Complete!</h2>
+            <div class="score-display" id="scoreDisplay"></div>
+            <p id="summaryText"></p>
+            <button class="pdf-button" onclick="generatePDF()">Download PDF Summary</button>
+            <br>
+            <button class="start-button" onclick="location.reload()" style="margin-top: 20px;">Practice Again</button>
+        </div>
+    </div>
+
+    <script>
+        let studentEmail = "";
+        let startTime = null;
+        let endTime = null;
+        let currentQuestion = 0;
+        let questionsData = [];
+        let studentAnswers = [];
+        let correctCount = 0;
+
+        function generateRandomQuestions() {
+            const questions = [];
+            
+            // Question 1: For loop through string with if/else building new string
+            const words1 = ["PYTHON", "CODING", "STRING", "CYBER"];
+            const word1 = words1[Math.floor(Math.random() * words1.length)];
+            let result1 = "";
+            for (let i = 0; i < word1.length; i++) {
+                if (i % 2 === 0) {
+                    result1 += word1[i];
+                }
+            }
+            questions.push({
+                id: 1,
+                question: "What will be displayed when this code executes?",
+                code: `word = "${word1}"
+result = ""
+
+for i in range(len(word)):
+    if i % 2 == 0:
+        result = result + word[i]
+
+print(result)`,
+                answer: result1,
+                hint: `Loop through "${word1}" by index. At even positions (0, 2, 4...), add that character to result.`,
+                explanation: `Characters at even indices (0, 2, 4...) from "${word1}": ${result1}`
+            });
+
+            // Question 2: For loop with counting
+            const text2Options = ["HELLO", "WORLD", "CYBER", "LOOPS", "INDEX"];
+            const text2 = text2Options[Math.floor(Math.random() * text2Options.length)];
+            const checkChar2 = ["L", "O", "E", "R", "C"][Math.floor(Math.random() * 5)];
+            let count2 = 0;
+            for (let i = 0; i < text2.length; i++) {
+                if (text2[i] === checkChar2) {
+                    count2++;
+                }
+            }
+            questions.push({
+                id: 2,
+                question: "What will be the final value of <span class='code-inline'>count</span>?",
+                code: `text = "${text2}"
+targetChar = "${checkChar2}"
+count = 0
+
+for i in range(len(text)):
+    if text[i] == targetChar:
+        count = count + 1
+
+print(count)`,
+                answer: count2.toString(),
+                hint: `Count how many times "${checkChar2}" appears in "${text2}". Check each position.`,
+                explanation: `"${checkChar2}" appears ${count2} time(s) in "${text2}"`
+            });
+
+            // Question 3: For loop building string with multiple conditions
+            const word3Options = ["TESTING", "PROGRAM", "STUDENT", "ITERATE"];
+            const word3 = word3Options[Math.floor(Math.random() * word3Options.length)];
+            let result3 = "";
+            for (let i = 0; i < word3.length; i++) {
+                if (word3[i] === "T" || word3[i] === "E") {
+                    result3 += "*";
+                } else {
+                    result3 += word3[i];
+                }
+            }
+            questions.push({
+                id: 3,
+                question: "What will be displayed when this code executes?",
+                code: `word = "${word3}"
+encoded = ""
+
+for i in range(len(word)):
+    if word[i] == "T" or word[i] == "E":
+        encoded = encoded + "*"
+    else:
+        encoded = encoded + word[i]
+
+print(encoded)`,
+                answer: result3,
+                hint: `Go through each character in "${word3}". Replace T or E with *. Keep other letters as is.`,
+                explanation: `Letters T and E in "${word3}" are replaced with *: ${result3}`
+            });
+
+            // Question 4: For loop with position and character check
+            const text4Options = ["CODER", "TRACE", "DEBUG", "LOOPS"];
+            const text4 = text4Options[Math.floor(Math.random() * text4Options.length)];
+            let result4 = "";
+            for (let i = 0; i < text4.length; i++) {
+                if (i < 2) {
+                    result4 += text4[i];
+                } else if (text4[i] == "E" || text4[i] == "O") {
+                    result4 += text4[i];
+                }
+            }
+            questions.push({
+                id: 4,
+                question: "What will be displayed when this code executes?",
+                code: `text = "${text4}"
+output = ""
+
+for i in range(len(text)):
+    if i < 2:
+        output = output + text[i]
+    elif text[i] == "E" or text[i] == "O":
+        output = output + text[i]
+
+print(output)`,
+                answer: result4,
+                hint: `Add characters at positions 0 and 1. After position 1, only add if the character is E or O.`,
+                explanation: `First 2 characters plus any E or O from "${text4}": ${result4}`
+            });
+
+            // Question 5: For loop with compound condition
+            const word5Options = ["STRINGS", "CYBERR", "LOOPSS", "TESTIN"];
+            const word5 = word5Options[Math.floor(Math.random() * word5Options.length)];
+            let count5 = 0;
+            for (let i = 0; i < word5.length; i++) {
+                if (i > 2 && word5[i] == "S") {
+                    count5++;
+                }
+            }
+            questions.push({
+                id: 5,
+                question: "What will be the final value of <span class='code-inline'>count</span>?",
+                code: `word = "${word5}"
+count = 0
+
+for i in range(len(word)):
+    if i > 2 and word[i] == "S":
+        count = count + 1
+
+print(count)`,
+                answer: count5.toString(),
+                hint: `Count letter S, but ONLY after position 2 (positions 3, 4, 5...). Both conditions must be true.`,
+                explanation: `Letter S appears ${count5} time(s) after position 2 in "${word5}"`
+            });
+
+            // Question 6: Nested for loops with pattern - countdown using separate counter
+            const start6 = Math.floor(Math.random() * 2) + 3;
+            let result6 = "";
+            let val6 = start6;
+            for (let i = 0; i < start6; i++) {
+                for (let j = 0; j < val6; j++) {
+                    result6 += val6.toString();
+                }
+                result6 += "\n";
+                val6 = val6 - 1;
+            }
+            questions.push({
+                id: 6,
+                question: "What will be displayed when this code executes?",
+                code: `num = ${start6}
+
+for i in range(${start6}):
+    line = ""
+    for j in range(num):
+        line = line + str(num)
+    print(line)
+    num = num - 1`,
+                answer: result6.trim(),
+                hint: "Start with num = " + start6 + ". Each iteration builds a line with num repeated num times, then num decreases by 1.",
+                explanation: `Output:\n${result6.trim()}`
+            });
+
+            // Question 7: While loop with nested for loop
+            const start7 = Math.floor(Math.random() * 3) + 2;
+            const mult7 = [2, 3, 5][Math.floor(Math.random() * 3)];
+            let result7 = "";
+            let counter7 = start7;
+            while (counter7 > 0) {
+                for (let i = 0; i < counter7; i++) {
+                    result7 += (counter7 * mult7).toString() + " ";
+                }
+                result7 = result7.trim() + "\n";
+                counter7--;
+            }
+            questions.push({
+                id: 7,
+                question: "What will be displayed when this code executes?",
+                code: `counter = ${start7}
+
+while counter > 0:
+    line = ""
+    for i in range(counter):
+        line = line + str(counter * ${mult7}) + " "
+    print(line)
+    counter = counter - 1`,
+                answer: result7.trim(),
+                hint: `Start with counter = ${start7}. Each iteration builds a line with (counter * ${mult7}) repeated counter times. Then counter decreases by 1.`,
+                explanation: `Output:\n${result7.trim()}`
+            });
+
+            // Question 8: Nested loops with sum calculation
+            const rows8 = Math.floor(Math.random() * 2) + 3;
+            const cols8 = Math.floor(Math.random() * 2) + 3;
+            let sum8 = 0;
+            for (let i = 1; i <= rows8; i++) {
+                for (let j = 1; j <= cols8; j++) {
+                    sum8 += i + j;
+                }
+            }
+            questions.push({
+                id: 8,
+                question: "What will be the final value of <span class='code-inline'>total</span>?",
+                code: `total = 0
+
+for row in range(1, ${rows8 + 1}):
+    for col in range(1, ${cols8 + 1}):
+        total = total + row + col
+
+print(total)`,
+                answer: sum8.toString(),
+                hint: `For each row value (1 to ${rows8}), add it to each col value (1 to ${cols8}) and sum everything.`,
+                explanation: `The nested loops add each row to each column value and sum all results: ${sum8}`
+            });
+
+            // Question 9: String with nested selection using 'not'
+            const words9 = ["hello", "world", "python", "coding", "string"];
+            const word9 = words9[Math.floor(Math.random() * words9.length)];
+            let result9;
+            if (word9.length > 5) {
+                if (word9[0] === word9[word9.length - 1]) {
+                    result9 = "Same";
+                } else {
+                    result9 = "Different";
+                }
+            } else {
+                if (!(word9.length < 4)) {
+                    result9 = "Medium";
+                } else {
+                    result9 = "Short";
+                }
+            }
+            questions.push({
+                id: 9,
+                question: "What will be displayed when this code executes?",
+                code: `word = "${word9}"
+
+if len(word) > 5:
+    if word[0] == word[len(word) - 1]:
+        print("Same")
+    else:
+        print("Different")
+else:
+    if not(len(word) < 4):
+        print("Medium")
+    else:
+        print("Short")`,
+                answer: result9,
+                hint: `First check if the length of "${word9}" is greater than 5. If not, check if NOT(length < 4), which means length >= 4.`,
+                explanation: `"${word9}" has length ${word9.length}. ${word9.length > 5 ? `First char: "${word9[0]}", Last char: "${word9[word9.length-1]}"` : `not(length < 4) is ${!(word9.length < 4)}`}. Result: ${result9}`
+            });
+
+            // Question 10: String slicing with nested conditionals
+            const text10Options = ["cats", "dogs", "fish", "bird", "elephant"];
+            const text10 = text10Options[Math.floor(Math.random() * text10Options.length)];
+            const mid10 = text10.length / 2;
+            const firstHalf10 = text10.substring(0, Math.floor(mid10));
+            const secondHalf10 = text10.substring(Math.floor(mid10));
+            let result10;
+            if (firstHalf10.length > secondHalf10.length) {
+                result10 = "First";
+            } else if (firstHalf10.length < secondHalf10.length) {
+                result10 = "Second";
+            } else {
+                if (firstHalf10[0] === "a" || firstHalf10[0] === "e") {
+                    result10 = "Vowel";
+                } else {
+                    result10 = "Consonant";
+                }
+            }
+            questions.push({
+                id: 10,
+                question: "What will be displayed when this code executes?",
+                code: `text = "${text10}"
+midPoint = len(text) // 2
+firstHalf = text[0:midPoint]
+secondHalf = text[midPoint:len(text)]
+
+if len(firstHalf) > len(secondHalf):
+    print("First")
+elif len(firstHalf) < len(secondHalf):
+    print("Second")
+else:
+    if firstHalf[0] == "a" or firstHalf[0] == "e":
+        print("Vowel")
+    else:
+        print("Consonant")`,
+                answer: result10,
+                hint: `Split "${text10}" at position ${Math.floor(mid10)}. Compare the lengths of the two halves. If equal, check if first character of first half is "a" or "e".`,
+                explanation: `"${text10}" splits into "${firstHalf10}" (length ${firstHalf10.length}) and "${secondHalf10}" (length ${secondHalf10.length}). Result: ${result10}`
+            });
+
+            // Question 11: String slicing with multiple nested conditions
+            const phrases11 = ["hello", "world", "cyber", "loops", "trace"];
+            const phrase11 = phrases11[Math.floor(Math.random() * phrases11.length)];
+            const mid11 = Math.floor(phrase11.length / 2);
+            let result11;
+            if (phrase11.length % 2 === 0) {
+                if (phrase11[mid11] === phrase11[mid11 - 1]) {
+                    result11 = "Match";
+                } else {
+                    result11 = "NoMatch";
+                }
+            } else {
+                if (phrase11[mid11] === "e" || phrase11[mid11] === "o") {
+                    result11 = "Vowel";
+                } else {
+                    result11 = "Consonant";
+                }
+            }
+            questions.push({
+                id: 11,
+                question: "What will be displayed when this code executes?",
+                code: `text = "${phrase11}"
+middle = len(text) // 2
+
+if len(text) % 2 == 0:
+    if text[middle] == text[middle - 1]:
+        print("Match")
+    else:
+        print("NoMatch")
+else:
+    if text[middle] == "e" or text[middle] == "o":
+        print("Vowel")
+    else:
+        print("Consonant")`,
+                answer: result11,
+                hint: `Check if length of "${phrase11}" is even or odd. If even, compare characters at middle and middle-1. If odd, check if middle character is e or o.`,
+                explanation: `"${phrase11}" has length ${phrase11.length} (${phrase11.length % 2 === 0 ? 'even' : 'odd'}). ${phrase11.length % 2 === 0 ? `Characters at positions ${mid11-1} and ${mid11}: "${phrase11[mid11-1]}" and "${phrase11[mid11]}"` : `Middle character at position ${mid11}: "${phrase11[mid11]}"`}. Result: ${result11}`
+            });
+
+            // Question 12: Loop with index-based selection and string building
+            const word12Options = ["CYBER", "LOOPS", "INDEX", "TRACE"];
+            const word12 = word12Options[Math.floor(Math.random() * word12Options.length)];
+            let result12 = "";
+            for (let i = 0; i < word12.length; i++) {
+                if (i % 2 === 0) {
+                    result12 += word12[i];
+                } else {
+                    result12 += "*";
+                }
+            }
+            questions.push({
+                id: 12,
+                question: "What will be displayed when this code executes?",
+                code: `word = "${word12}"
+output = ""
+
+for i in range(len(word)):
+    if i % 2 == 0:
+        output = output + word[i]
+    else:
+        output = output + "*"
+
+print(output)`,
+                answer: result12,
+                hint: `Go through each index in "${word12}". At even indices (0, 2, 4...), add the character. At odd indices, add *.`,
+                explanation: `At even positions, keep letters. At odd positions, use *: ${result12}`
+            });
+
+            // Question 13: Nested loop with conditional string building using indices
+            const text13Options = ["CODE", "TEST", "LOOP"];
+            const text13 = text13Options[Math.floor(Math.random() * text13Options.length)];
+            let result13 = "";
+            for (let i = 0; i < text13.length; i++) {
+                for (let j = 0; j < 2; j++) {
+                    if (j === 0) {
+                        result13 += text13[i];
+                    } else {
+                        result13 += "-";
+                    }
+                }
+            }
+            questions.push({
+                id: 13,
+                question: "What will be displayed when this code executes?",
+                code: `text = "${text13}"
+result = ""
+
+for i in range(len(text)):
+    for j in range(2):
+        if j == 0:
+            result = result + text[i]
+        else:
+            result = result + "-"
+
+print(result)`,
+                answer: result13,
+                hint: "For each character in the text, the inner loop runs twice. First time (j=0) adds the character, second time (j=1) adds a dash.",
+                explanation: `Each character in "${text13}" is followed by a dash: ${result13}`
+            });
+
+            // Question 14: Complex nested structure with string manipulation
+            const text14Options = ["ABCD", "WXYZ", "PQRS"];
+            const text14 = text14Options[Math.floor(Math.random() * text14Options.length)];
+            let result14 = "";
+            let i14 = 0;
+            while (i14 < text14.length) {
+                if (i14 % 2 === 0) {
+                    for (let j = 0; j < 2; j++) {
+                        result14 += text14[i14];
+                    }
+                } else {
+                    result14 += "+";
+                }
+                i14++;
+            }
+            questions.push({
+                id: 14,
+                question: "What will be displayed when this code executes?",
+                code: `text = "${text14}"
+output = ""
+i = 0
+
+while i < len(text):
+    if i % 2 == 0:
+        for j in range(2):
+            output = output + text[i]
+    else:
+        output = output + "+"
+    i = i + 1
+
+print(output)`,
+                answer: result14,
+                hint: `For even indices (0, 2...), add the character twice. For odd indices (1, 3...), add a plus sign.`,
+                explanation: `At even positions, characters are doubled. At odd positions, use +: ${result14}`
+            });
+
+            return questions;
+        }
+
+        function startPractice() {
+            studentEmail = document.getElementById('studentEmail').value;
+            
+            if (!studentEmail || !studentEmail.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            startTime = new Date();
+            questionsData = generateRandomQuestions();
+            
+            studentAnswers = questionsData.map(q => ({
+                questionId: q.id,
+                question: q.question,
+                code: q.code,
+                attempts: 0,
+                studentAnswer: "",
+                correct: false,
+                usedHint: false
+            }));
+
+            document.getElementById('setupSection').style.display = 'none';
+            document.getElementById('practiceSection').style.display = 'block';
+            
+            renderQuestions();
+            showQuestion(0);
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.id = `question-${index}`;
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of 14</div>
+                    <div class="question-text">${q.question}</div>
+                    ${q.code ? `<div class="code-block">${escapeHtml(q.code)}</div>` : ''}
+                    <textarea id="answer-${index}" placeholder="Type your answer here..." rows="4" spellcheck="false"></textarea><br>
+                    <button class="check-button" onclick="checkAnswer(${index})">Check Answer</button>
+                    <div id="feedback-${index}"></div>
+                    <button class="next-button" id="next-${index}" style="display: none;" onclick="nextQuestion(${index})">Next Question</button>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function showQuestion(index) {
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.getElementById(`question-${index}`).classList.add('active');
+            currentQuestion = index;
+            updateProgress();
+        }
+
+        function normalizeAnswer(answer) {
+            return answer.trim().toLowerCase()
+                .replace(/\s+/g, ' ')
+                .replace(/["']/g, '')
+                .replace(/\n\s+/g, '\n');
+        }
+
+        function checkAnswer(index) {
+            const question = questionsData[index];
+            const feedback = document.getElementById(`feedback-${index}`);
+            let studentAnswer = document.getElementById(`answer-${index}`).value;
+            
+            if (!studentAnswer.trim()) {
+                feedback.innerHTML = '<div class="feedback incorrect">Please enter an answer.</div>';
+                return;
+            }
+
+            studentAnswers[index].studentAnswer = studentAnswer;
+            studentAnswers[index].attempts++;
+
+            const normalizedStudent = normalizeAnswer(studentAnswer);
+            const normalizedCorrect = normalizeAnswer(question.answer);
+
+            if (normalizedStudent === normalizedCorrect || normalizedStudent.replace(/\s/g, '') === normalizedCorrect.replace(/\s/g, '')) {
+                studentAnswers[index].correct = true;
+                correctCount++;
+                feedback.innerHTML = '<div class="feedback correct">Correct! Well done!</div>';
+                document.querySelector(`#question-${index} .check-button`).disabled = true;
+                document.getElementById(`next-${index}`).style.display = 'inline-block';
+            } else if (studentAnswers[index].attempts === 1) {
+                studentAnswers[index].usedHint = true;
+                feedback.innerHTML = `<div class="feedback hint"><strong>Hint:</strong> ${question.hint}</div>`;
+            } else {
+                feedback.innerHTML = `
+                    <div class="feedback incorrect">Not quite right.</div>
+                    <div class="feedback answer-explanation">
+                        <strong>Correct Answer:</strong><br>
+                        <div class="code-inline">${escapeHtml(question.answer)}</div><br><br>
+                        <strong>Explanation:</strong> ${question.explanation}
+                    </div>
+                `;
+                document.querySelector(`#question-${index} .check-button`).disabled = true;
+                document.getElementById(`next-${index}`).style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion(index) {
+            if (index < questionsData.length - 1) {
+                showQuestion(index + 1);
+            } else {
+                finishPractice();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questionsData.length) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = `${currentQuestion + 1} / ${questionsData.length}`;
+        }
+
+        function finishPractice() {
+            endTime = new Date();
+            document.getElementById('practiceSection').style.display = 'none';
+            document.getElementById('summarySection').classList.add('active');
+            
+            const percentage = Math.round((correctCount / questionsData.length) * 100);
+            document.getElementById('scoreDisplay').textContent = `${correctCount} / ${questionsData.length} (${percentage}%)`;
+            
+            let message = "";
+            if (percentage >= 90) {
+                message = "Excellent work! You have strong code reading skills.";
+            } else if (percentage >= 80) {
+                message = "Great job! You're showing good understanding of loops and conditionals.";
+            } else if (percentage >= 70) {
+                message = "Good effort! Review the questions you missed for deeper understanding.";
+            } else {
+                message = "Keep practicing! Focus on tracing through code step by step.";
+            }
+            
+            document.getElementById('summaryText').textContent = message;
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            
+            doc.setFontSize(20);
+            doc.setTextColor(191, 10, 48);
+            doc.text('Virtual Day Code Reading Practice', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Student: ${studentEmail}`, 20, 35);
+            doc.text(`Date: ${startTime.toLocaleDateString()}`, 20, 42);
+            doc.text(`Duration: ${duration} minutes`, 20, 49);
+            doc.text(`Score: ${correctCount} / ${questionsData.length} (${Math.round((correctCount / questionsData.length) * 100)}%)`, 20, 56);
+            
+            doc.setDrawColor(191, 10, 48);
+            doc.line(20, 60, 190, 60);
+            
+            let yPos = 70;
+            
+            studentAnswers.forEach((answer, index) => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                doc.text(`Question ${index + 1}:`, 20, yPos);
+                yPos += 7;
+                
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(9);
+                
+                const status = answer.correct ? 'Correct' : 'Incorrect';
+                const statusColor = answer.correct ? [40, 167, 69] : [220, 53, 69];
+                doc.setTextColor(...statusColor);
+                doc.text(`Status: ${status}`, 30, yPos);
+                doc.setTextColor(0, 0, 0);
+                yPos += 6;
+                
+                doc.text(`Attempts: ${answer.attempts}`, 30, yPos);
+                yPos += 6;
+                
+                if (answer.usedHint) {
+                    doc.text('Used Hint: Yes', 30, yPos);
+                    yPos += 6;
+                }
+                
+                const wrappedAnswer = doc.splitTextToSize(`Your Answer: ${answer.studentAnswer}`, 160);
+                doc.text(wrappedAnswer, 30, yPos);
+                yPos += (wrappedAnswer.length * 5) + 8;
+            });
+            
+            doc.save(`Virtual_Day_Practice_${studentEmail.split('@')[0]}.pdf`);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>
