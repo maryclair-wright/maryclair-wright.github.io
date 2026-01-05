@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python List Operations Practice - ASCTE Cyber 101</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #002868;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .email-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .question-section {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .question-section.active {
+            display: block;
+        }
+
+        .code-display {
+            background-color: #f8f8f8;
+            border: 2px solid #002868;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .question-group {
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #002868;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #6598E9;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        input[type="email"] {
+            font-family: 'IBM Plex Serif', serif;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #BF0A30;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #002868;
+        }
+
+        button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .summary-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .summary-section.active {
+            display: block;
+        }
+
+        .summary-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #6598E9;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-answer {
+            background-color: #f8f8f8;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #6598E9;
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress {
+            background-color: #6598E9;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .hint {
+            background-color: #f0f7ff;
+            border-left: 4px solid #6598E9;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        .instruction-note {
+            background-color: #f0f7ff;
+            border-left: 4px solid #002868;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Python List Operations Practice</h1>
+        <p>Master basic list commands in Python</p>
+    </header>
+
+    <div class="container">
+        <!-- Instructions Box -->
+        <div style="background-color: rgba(34, 139, 34, 0.15); border: 2px solid rgb(34, 139, 34); border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+            <p style="font-weight: 600; color: #002868; margin-bottom: 10px;">Important Instructions:</p>
+            <p style="margin-bottom: 10px;">Treat this like an Out of Class Practice (OOCP). You can complete this practice as many times as you want, but you only need to submit once. The goal is to practice reading and writing basic list commands.</p>
+            <p style="margin-bottom: 10px;">This practice covers append, insert, pop, replace, accessing items, and finding list length.</p>
+            <p style="font-weight: 600; color: rgb(34, 139, 34);">This is a green assignment, which means use resources to UNDERSTAND how these commands work.</p>
+        </div>
+
+        <!-- Email Collection Section -->
+        <div id="emailSection" class="email-section">
+            <h2>Welcome to List Operations Practice</h2>
+            <p>Please enter your email address to begin. Your progress will be tracked and summarized at the end.</p>
+            <label for="studentEmail">Email Address:</label>
+            <input type="email" id="studentEmail" placeholder="your.email@example.com" required>
+            <button onclick="startPractice()">Begin Practice</button>
+        </div>
+
+        <!-- Question 1 -->
+        <div id="question1" class="question-section">
+            <div class="progress">Question 1 of 20</div>
+            <h2>Question 1: Reading - Basic append</h2>
+            <div class="code-display">fruitList = ["apple", "banana", "cherry"]
+fruitList.append("orange")</div>
+            
+            <div class="question-group">
+                <label>What does fruitList contain after this code executes? Write the list using proper Python syntax with square brackets and quotes.</label>
+                <input type="text" id="q1_answer" placeholder='["apple", "banana", "cherry", "orange"]'>
+            </div>
+            
+            <div class="nav-buttons">
+                <button disabled>Previous</button>
+                <button onclick="nextQuestion(1)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div id="question2" class="question-section">
+            <div class="progress">Question 2 of 20</div>
+            <h2>Question 2: Reading - Insert at index</h2>
+            <div class="code-display">scoreList = [85, 92, 78, 95]
+scoreList.insert(2, 88)</div>
+            
+            <div class="question-group">
+                <label>What does scoreList contain after this code executes?</label>
+                <input type="text" id="q2_answer" placeholder="[85, 92, 88, 78, 95]">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(2)">Previous</button>
+                <button onclick="nextQuestion(2)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div id="question3" class="question-section">
+            <div class="progress">Question 3 of 20</div>
+            <h2>Question 3: Reading - Pop with index</h2>
+            <div class="code-display">colorList = ["red", "blue", "green", "yellow"]
+colorList.pop(1)</div>
+            
+            <div class="question-group">
+                <label>What does colorList contain after this code executes?</label>
+                <input type="text" id="q3_answer" placeholder='["red", "green", "yellow"]'>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(3)">Previous</button>
+                <button onclick="nextQuestion(3)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div id="question4" class="question-section">
+            <div class="progress">Question 4 of 20</div>
+            <h2>Question 4: Reading - Replace at index</h2>
+            <div class="code-display">tempList = [72.5, 68.3, 75.0, 71.8]
+tempList[2] = 76.5</div>
+            
+            <div class="question-group">
+                <label>What does tempList contain after this code executes?</label>
+                <input type="text" id="q4_answer" placeholder="[72.5, 68.3, 76.5, 71.8]">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(4)">Previous</button>
+                <button onclick="nextQuestion(4)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div id="question5" class="question-section">
+            <div class="progress">Question 5 of 20</div>
+            <h2>Question 5: Reading - Access by index</h2>
+            <div class="code-display">cityList = ["Atlanta", "Boston", "Chicago", "Denver"]
+print(cityList[2])</div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user?</label>
+                <input type="text" id="q5_answer" placeholder="Chicago">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(5)">Previous</button>
+                <button onclick="nextQuestion(5)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div id="question6" class="question-section">
+            <div class="progress">Question 6 of 20</div>
+            <h2>Question 6: Reading - Length of list</h2>
+            <div class="code-display">priceList = [12.99, 8.50, 15.75, 22.00, 9.99]
+print(len(priceList))</div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user?</label>
+                <input type="text" id="q6_answer" placeholder="5">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(6)">Previous</button>
+                <button onclick="nextQuestion(6)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div id="question7" class="question-section">
+            <div class="progress">Question 7 of 20</div>
+            <h2>Question 7: Reading - Two operations (append and replace)</h2>
+            <div class="code-display">monthList = ["Jan", "Feb", "Mar"]
+monthList.append("Apr")
+monthList[1] = "February"</div>
+            
+            <div class="question-group">
+                <label>What does monthList contain after this code executes?</label>
+                <input type="text" id="q7_answer" placeholder='["Jan", "February", "Mar", "Apr"]'>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(7)">Previous</button>
+                <button onclick="nextQuestion(7)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div id="question8" class="question-section">
+            <div class="progress">Question 8 of 20</div>
+            <h2>Question 8: Reading - Two operations (insert and pop)</h2>
+            <div class="code-display">numberList = [10, 20, 30, 40]
+numberList.insert(1, 15)
+numberList.pop(3)</div>
+            
+            <div class="question-group">
+                <label>What does numberList contain after this code executes?</label>
+                <input type="text" id="q8_answer" placeholder="[10, 15, 20, 40]">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(8)">Previous</button>
+                <button onclick="nextQuestion(8)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 9 -->
+        <div id="question9" class="question-section">
+            <div class="progress">Question 9 of 20</div>
+            <h2>Question 9: Reading - Append then access</h2>
+            <div class="code-display">animalList = ["cat", "dog", "bird"]
+animalList.append("fish")
+print(animalList[3])</div>
+            
+            <div class="question-group">
+                <label>What will be displayed to the user?</label>
+                <input type="text" id="q9_answer" placeholder="fish">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(9)">Previous</button>
+                <button onclick="nextQuestion(9)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 10 -->
+        <div id="question10" class="question-section">
+            <div class="progress">Question 10 of 20</div>
+            <h2>Question 10: Reading - Multiple operations</h2>
+            <div class="code-display">gradeList = [88, 92, 85]
+gradeList.append(90)
+gradeList.insert(0, 95)
+gradeList.pop(2)</div>
+            
+            <div class="question-group">
+                <label>What does gradeList contain after this code executes?</label>
+                <input type="text" id="q10_answer" placeholder="[95, 88, 85, 90]">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(10)">Previous</button>
+                <button onclick="nextQuestion(10)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 11 -->
+        <div id="question11" class="question-section">
+            <div class="progress">Question 11 of 20</div>
+            <h2>Question 11: Writing - Append a value</h2>
+            <p style="margin-bottom: 15px;">You have a list called bookList that currently contains ["Python", "Java", "C++"].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to add "JavaScript" to the end of the list.</p>
+            
+            <div class="instruction-note">
+                <p style="font-weight: 600; margin-bottom: 5px;">Remember:</p>
+                <p>Use camelCase for variable names (bookList not book_list).</p>
+            </div>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q11_answer" placeholder='bookList.append("JavaScript")'>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(11)">Previous</button>
+                <button onclick="nextQuestion(11)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 12 -->
+        <div id="question12" class="question-section">
+            <div class="progress">Question 12 of 20</div>
+            <h2>Question 12: Writing - Insert at specific index</h2>
+            <p style="margin-bottom: 15px;">You have a list called stateList that currently contains ["Texas", "Florida", "Ohio"].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to insert "California" at index 1.</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q12_answer" placeholder='stateList.insert(1, "California")'>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(12)">Previous</button>
+                <button onclick="nextQuestion(12)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 13 -->
+        <div id="question13" class="question-section">
+            <div class="progress">Question 13 of 20</div>
+            <h2>Question 13: Writing - Replace at specific index</h2>
+            <p style="margin-bottom: 15px;">You have a list called scoreList that currently contains [78, 85, 92, 88].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to change the value at index 2 to 95.</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q13_answer" placeholder="scoreList[2] = 95">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(13)">Previous</button>
+                <button onclick="nextQuestion(13)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 14 -->
+        <div id="question14" class="question-section">
+            <div class="progress">Question 14 of 20</div>
+            <h2>Question 14: Writing - Remove item at specific index</h2>
+            <p style="margin-bottom: 15px;">You have a list called colorList that currently contains ["red", "blue", "green", "yellow", "purple"].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to remove the item at index 3.</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q14_answer" placeholder="colorList.pop(3)">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(14)">Previous</button>
+                <button onclick="nextQuestion(14)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 15 -->
+        <div id="question15" class="question-section">
+            <div class="progress">Question 15 of 20</div>
+            <h2>Question 15: Writing - Print item at specific index</h2>
+            <p style="margin-bottom: 15px;">You have a list called cityList that currently contains ["Atlanta", "Boston", "Chicago", "Denver", "Seattle"].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to print the item at index 4.</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q15_answer" placeholder="print(cityList[4])">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(15)">Previous</button>
+                <button onclick="nextQuestion(15)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 16 -->
+        <div id="question16" class="question-section">
+            <div class="progress">Question 16 of 20</div>
+            <h2>Question 16: Writing - Print length of list</h2>
+            <p style="margin-bottom: 15px;">You have a list called tempList that currently contains [72.5, 68.3, 75.0, 71.8, 69.2, 73.6].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to print the number of items in tempList.</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q16_answer" placeholder="print(len(tempList))">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(16)">Previous</button>
+                <button onclick="nextQuestion(16)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 17 -->
+        <div id="question17" class="question-section">
+            <div class="progress">Question 17 of 20</div>
+            <h2>Question 17: Writing - Append and print</h2>
+            <p style="margin-bottom: 15px;">You have a list called priceList that currently contains [12.99, 8.50, 15.75].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write TWO lines of code: First add 22.00 to the end of the list, then print the entire list.</p>
+            
+            <div class="instruction-note">
+                <p style="font-weight: 600; margin-bottom: 5px;">Remember:</p>
+                <p>When printing a list, you must convert it to a string: print(str(priceList))</p>
+            </div>
+            
+            <div class="question-group">
+                <label>Your code (write each line separately):</label>
+                <textarea id="q17_answer" placeholder="priceList.append(22.00)
+print(str(priceList))"></textarea>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(17)">Previous</button>
+                <button onclick="nextQuestion(17)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 18 -->
+        <div id="question18" class="question-section">
+            <div class="progress">Question 18 of 20</div>
+            <h2>Question 18: Writing - Insert at beginning</h2>
+            <p style="margin-bottom: 15px;">You have a list called numberList that currently contains [10, 20, 30, 40].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to insert 5 at the very beginning of the list (index 0).</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q18_answer" placeholder="numberList.insert(0, 5)">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(18)">Previous</button>
+                <button onclick="nextQuestion(18)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 19 -->
+        <div id="question19" class="question-section">
+            <div class="progress">Question 19 of 20</div>
+            <h2>Question 19: Writing - Pop last item</h2>
+            <p style="margin-bottom: 15px;">You have a list called fruitList that currently contains ["apple", "banana", "cherry", "orange", "grape"].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to remove the last item from the list.</p>
+            
+            <div class="instruction-note">
+                <p style="font-weight: 600; margin-bottom: 5px;">Hint:</p>
+                <p>The last item is at index 4 (remember lists start counting at 0).</p>
+            </div>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q19_answer" placeholder="fruitList.pop(4)">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(19)">Previous</button>
+                <button onclick="nextQuestion(19)">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Question 20 -->
+        <div id="question20" class="question-section">
+            <div class="progress">Question 20 of 20</div>
+            <h2>Question 20: Writing - Access and print specific index</h2>
+            <p style="margin-bottom: 15px;">You have a list called dayList that currently contains ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].</p>
+            <p style="margin-bottom: 15px; font-weight: 600;">Write a single line of code to print only the item at index 2.</p>
+            
+            <div class="question-group">
+                <label>Your code:</label>
+                <input type="text" id="q20_answer" placeholder="print(dayList[2])">
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="prevQuestion(20)">Previous</button>
+                <button onclick="showSummary()">Finish Practice</button>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div id="summarySection" class="summary-section">
+            <h2 style="color: #BF0A30;">Practice Summary</h2>
+            <div id="summaryContent"></div>
+            <button onclick="downloadPDF()" style="margin-top: 20px;">Download Summary as PDF</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let studentEmail = '';
+        let startTime = null;
+        let endTime = null;
+        let answers = {};
+
+        function startPractice() {
+            const email = document.getElementById('studentEmail').value;
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            studentEmail = email;
+            startTime = new Date();
+            
+            document.getElementById('emailSection').style.display = 'none';
+            document.getElementById('question1').classList.add('active');
+        }
+
+        function validateAnswers(questionNum) {
+            const questionKey = 'question' + questionNum;
+            const inputs = document.querySelectorAll(`#${questionKey} input:not([type="email"]), #${questionKey} textarea`);
+            
+            let allFilled = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allFilled = false;
+                }
+            });
+            
+            if (!allFilled) {
+                alert('Please answer all questions before continuing.');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function nextQuestion(current) {
+            if (!validateAnswers(current)) {
+                return;
+            }
+            
+            saveAnswers(current);
+            
+            document.getElementById('question' + current).classList.remove('active');
+            
+            if (current < 20) {
+                document.getElementById('question' + (current + 1)).classList.add('active');
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        function prevQuestion(current) {
+            document.getElementById('question' + current).classList.remove('active');
+            document.getElementById('question' + (current - 1)).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function saveAnswers(questionNum) {
+            const questionData = {};
+            const inputs = document.querySelectorAll(`#question${questionNum} input:not([type="email"]), #question${questionNum} textarea`);
+            
+            inputs.forEach(input => {
+                questionData[input.id] = input.value;
+            });
+            
+            answers[`question${questionNum}`] = questionData;
+        }
+
+        function showSummary() {
+            if (!validateAnswers(20)) {
+                return;
+            }
+            
+            saveAnswers(20);
+            endTime = new Date();
+            
+            document.getElementById('question20').classList.remove('active');
+            document.getElementById('summarySection').classList.add('active');
+            
+            generateSummary();
+            window.scrollTo(0, 0);
+        }
+
+        function generateSummary() {
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            
+            let summaryHTML = `
+                <div style="background-color: #f0f7ff; padding: 20px; margin-bottom: 30px; border-radius: 4px;">
+                    <p><strong>Student Email:</strong> ${studentEmail}</p>
+                    <p><strong>Start Time:</strong> ${startTime.toLocaleString()}</p>
+                    <p><strong>End Time:</strong> ${endTime.toLocaleString()}</p>
+                    <p><strong>Duration:</strong> ${duration} minutes</p>
+                </div>
+            `;
+
+            // Reading Questions Summary
+            summaryHTML += '<h3 style="color: #002868; margin-top: 30px;">Reading Questions (1-10)</h3>';
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 1: Basic append</h3>
+                <div class="code-display">fruitList = ["apple", "banana", "cherry"]
+fruitList.append("orange")</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question1.q1_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 2: Insert at index</h3>
+                <div class="code-display">scoreList = [85, 92, 78, 95]
+scoreList.insert(2, 88)</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question2.q2_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 3: Pop with index</h3>
+                <div class="code-display">colorList = ["red", "blue", "green", "yellow"]
+colorList.pop(1)</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question3.q3_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 4: Replace at index</h3>
+                <div class="code-display">tempList = [72.5, 68.3, 75.0, 71.8]
+tempList[2] = 76.5</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question4.q4_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 5: Access by index</h3>
+                <div class="code-display">cityList = ["Atlanta", "Boston", "Chicago", "Denver"]
+print(cityList[2])</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question5.q5_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 6: Length of list</h3>
+                <div class="code-display">priceList = [12.99, 8.50, 15.75, 22.00, 9.99]
+print(len(priceList))</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question6.q6_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 7: Two operations (append and replace)</h3>
+                <div class="code-display">monthList = ["Jan", "Feb", "Mar"]
+monthList.append("Apr")
+monthList[1] = "February"</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question7.q7_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 8: Two operations (insert and pop)</h3>
+                <div class="code-display">numberList = [10, 20, 30, 40]
+numberList.insert(1, 15)
+numberList.pop(3)</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question8.q8_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 9: Append then access</h3>
+                <div class="code-display">animalList = ["cat", "dog", "bird"]
+animalList.append("fish")
+print(animalList[3])</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question9.q9_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 10: Multiple operations</h3>
+                <div class="code-display">gradeList = [88, 92, 85]
+gradeList.append(90)
+gradeList.insert(0, 95)
+gradeList.pop(2)</div>
+                <p><strong>Your answer:</strong></p>
+                <div class="student-answer">${answers.question10.q10_answer || '(not answered)'}</div>
+            </div>`;
+
+            // Writing Questions Summary
+            summaryHTML += '<h3 style="color: #002868; margin-top: 30px;">Writing Questions (11-20)</h3>';
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 11: Append a value</h3>
+                <p>Task: Add "JavaScript" to the end of bookList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question11.q11_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 12: Insert at specific index</h3>
+                <p>Task: Insert "California" at index 1 in stateList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question12.q12_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 13: Replace at specific index</h3>
+                <p>Task: Change the value at index 2 to 95 in scoreList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question13.q13_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 14: Remove item at specific index</h3>
+                <p>Task: Remove the item at index 3 from colorList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question14.q14_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 15: Print item at specific index</h3>
+                <p>Task: Print the item at index 4 from cityList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question15.q15_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 16: Print length of list</h3>
+                <p>Task: Print the number of items in tempList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question16.q16_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 17: Append and print</h3>
+                <p>Task: Add 22.00 to priceList then print the list</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question17.q17_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 18: Insert at beginning</h3>
+                <p>Task: Insert 5 at index 0 in numberList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question18.q18_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 19: Pop last item</h3>
+                <p>Task: Remove the last item from fruitList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question19.q19_answer || '(not answered)'}</div>
+            </div>`;
+
+            summaryHTML += `<div class="summary-item">
+                <h3 style="color: #002868;">Question 20: Access and print specific index</h3>
+                <p>Task: Print the item at index 2 from dayList</p>
+                <p><strong>Your code:</strong></p>
+                <div class="student-answer">${answers.question20.q20_answer || '(not answered)'}</div>
+            </div>`;
+
+            document.getElementById('summaryContent').innerHTML = summaryHTML;
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 15;
+            let yPosition = 20;
+            
+            function checkPageBreak(neededSpace) {
+                if (yPosition + neededSpace > pageHeight - margin) {
+                    doc.addPage();
+                    yPosition = 20;
+                    return true;
+                }
+                return false;
+            }
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(191, 10, 48);
+            doc.text('Python List Operations Practice - Summary', margin, yPosition);
+            yPosition += 10;
+            
+            // Student info
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            doc.text('Student Email: ' + studentEmail, margin, yPosition);
+            yPosition += 6;
+            doc.text('Start Time: ' + startTime.toLocaleString(), margin, yPosition);
+            yPosition += 6;
+            doc.text('End Time: ' + endTime.toLocaleString(), margin, yPosition);
+            yPosition += 6;
+            doc.text('Duration: ' + duration + ' minutes', margin, yPosition);
+            yPosition += 12;
+            
+            // Reading questions header
+            doc.setFontSize(14);
+            doc.setTextColor(0, 40, 104);
+            doc.text('Reading Questions (1-10)', margin, yPosition);
+            yPosition += 10;
+            
+            // Questions data
+            const readingQuestions = [
+                { num: 1, title: 'Basic append', code: 'fruitList = ["apple", "banana", "cherry"]\nfruitList.append("orange")', answer: answers.question1.q1_answer },
+                { num: 2, title: 'Insert at index', code: 'scoreList = [85, 92, 78, 95]\nscoreList.insert(2, 88)', answer: answers.question2.q2_answer },
+                { num: 3, title: 'Pop with index', code: 'colorList = ["red", "blue", "green", "yellow"]\ncolorList.pop(1)', answer: answers.question3.q3_answer },
+                { num: 4, title: 'Replace at index', code: 'tempList = [72.5, 68.3, 75.0, 71.8]\ntempList[2] = 76.5', answer: answers.question4.q4_answer },
+                { num: 5, title: 'Access by index', code: 'cityList = ["Atlanta", "Boston", "Chicago", "Denver"]\nprint(cityList[2])', answer: answers.question5.q5_answer },
+                { num: 6, title: 'Length of list', code: 'priceList = [12.99, 8.50, 15.75, 22.00, 9.99]\nprint(len(priceList))', answer: answers.question6.q6_answer },
+                { num: 7, title: 'Two operations', code: 'monthList = ["Jan", "Feb", "Mar"]\nmonthList.append("Apr")\nmonthList[1] = "February"', answer: answers.question7.q7_answer },
+                { num: 8, title: 'Insert and pop', code: 'numberList = [10, 20, 30, 40]\nnumberList.insert(1, 15)\nnumberList.pop(3)', answer: answers.question8.q8_answer },
+                { num: 9, title: 'Append then access', code: 'animalList = ["cat", "dog", "bird"]\nanimalList.append("fish")\nprint(animalList[3])', answer: answers.question9.q9_answer },
+                { num: 10, title: 'Multiple operations', code: 'gradeList = [88, 92, 85]\ngradeList.append(90)\ngradeList.insert(0, 95)\ngradeList.pop(2)', answer: answers.question10.q10_answer }
+            ];
+            
+            readingQuestions.forEach(q => {
+                checkPageBreak(30);
+                doc.setFontSize(11);
+                doc.setTextColor(0, 40, 104);
+                doc.text('Question ' + q.num + ': ' + q.title, margin, yPosition);
+                yPosition += 6;
+                
+                doc.setFontSize(9);
+                doc.setFont('courier');
+                doc.setTextColor(0, 0, 0);
+                const codeLines = q.code.split('\n');
+                codeLines.forEach(line => {
+                    checkPageBreak(5);
+                    doc.text(line, margin + 3, yPosition);
+                    yPosition += 4;
+                });
+                yPosition += 2;
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9);
+                doc.text('Your answer:', margin, yPosition);
+                yPosition += 5;
+                
+                doc.setFont('courier');
+                doc.setFontSize(9);
+                doc.text(q.answer || '(not answered)', margin + 3, yPosition);
+                yPosition += 8;
+            });
+            
+            // Writing questions header
+            checkPageBreak(15);
+            doc.setFontSize(14);
+            doc.setTextColor(0, 40, 104);
+            doc.text('Writing Questions (11-20)', margin, yPosition);
+            yPosition += 10;
+            
+            const writingQuestions = [
+                { num: 11, task: 'Add "JavaScript" to bookList', answer: answers.question11.q11_answer },
+                { num: 12, task: 'Insert "California" at index 1 in stateList', answer: answers.question12.q12_answer },
+                { num: 13, task: 'Change index 2 to 95 in scoreList', answer: answers.question13.q13_answer },
+                { num: 14, task: 'Remove item at index 3 from colorList', answer: answers.question14.q14_answer },
+                { num: 15, task: 'Print item at index 4 from cityList', answer: answers.question15.q15_answer },
+                { num: 16, task: 'Print number of items in tempList', answer: answers.question16.q16_answer },
+                { num: 17, task: 'Add 22.00 to priceList then print', answer: answers.question17.q17_answer },
+                { num: 18, task: 'Insert 5 at index 0 in numberList', answer: answers.question18.q18_answer },
+                { num: 19, task: 'Remove last item from fruitList', answer: answers.question19.q19_answer },
+                { num: 20, task: 'Print item at index 2 from dayList', answer: answers.question20.q20_answer }
+            ];
+            
+            writingQuestions.forEach(q => {
+                checkPageBreak(20);
+                doc.setFontSize(11);
+                doc.setTextColor(0, 40, 104);
+                doc.text('Question ' + q.num + ': ' + q.task, margin, yPosition);
+                yPosition += 6;
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Your code:', margin, yPosition);
+                yPosition += 5;
+                
+                doc.setFont('courier');
+                doc.setFontSize(9);
+                const answerLines = (q.answer || '(not answered)').split('\n');
+                answerLines.forEach(line => {
+                    checkPageBreak(5);
+                    doc.text(line, margin + 3, yPosition);
+                    yPosition += 4;
+                });
+                yPosition += 6;
+            });
+            
+            const filename = 'List_Operations_Practice_' + studentEmail.replace('@', '_at_') + '_' + new Date().toISOString().split('T')[0] + '.pdf';
+            doc.save(filename);
+        }
+    </script>
+</body>
+</html>
