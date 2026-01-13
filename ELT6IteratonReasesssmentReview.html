@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELT 6 Reassessment Mandatory Study Guide</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            margin: -40px -40px 30px -40px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .warning-box {
+            background-color: #BF0A30;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            border: 3px solid #9a0826;
+        }
+
+        .intro {
+            background-color: #6598E9;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .email-section {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 5px;
+            border-left: 5px solid #002868;
+            margin-bottom: 30px;
+        }
+
+        .email-section h3 {
+            color: #002868;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            background-color: #f9f9f9;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            border-left: 5px solid #002868;
+        }
+
+        .question-number {
+            background-color: #002868;
+            color: white;
+            padding: 5px 15px;
+            display: inline-block;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            line-height: 1.8;
+            white-space: pre;
+        }
+
+        .code-block .keyword {
+            color: #66d9ef;
+        }
+
+        .code-block .string {
+            color: #e6db74;
+        }
+
+        .code-block .number {
+            color: #ae81ff;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        input[type="text"], input[type="number"], input[type="email"] {
+            padding: 10px;
+            border: 2px solid #A5A5A4;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 1em;
+            width: 250px;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #002868;
+        }
+
+        .choice-group {
+            margin: 10px 0;
+        }
+
+        .choice-label {
+            display: block;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: white;
+            border: 2px solid #A5A5A4;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .choice-label:hover {
+            background-color: #f0f0f0;
+            border-color: #002868;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .btn-submit {
+            background-color: #BF0A30;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px 5px 10px 0;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #9a0826;
+        }
+
+        .btn-reset {
+            background-color: #A5A5A4;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-reset:hover {
+            background-color: #858584;
+        }
+
+        .btn-pdf {
+            background-color: #002868;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: background-color 0.2s;
+            display: block;
+            width: 100%;
+        }
+
+        .btn-pdf:hover {
+            background-color: #003a8c;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #002868;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            display: none;
+        }
+
+        .hint {
+            background-color: #6598E9;
+            color: white;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .concept-box {
+            background-color: #002868;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .concept-box h3 {
+            margin-bottom: 10px;
+            color: #6598E9;
+        }
+
+        .completion-section {
+            background-color: #d4edda;
+            padding: 25px;
+            border-radius: 5px;
+            border-left: 5px solid #28a745;
+            margin: 30px 0;
+            display: none;
+        }
+
+        .completion-section h3 {
+            color: #155724;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                margin: -20px -20px 20px -20px;
+                padding: 20px;
+            }
+
+            .score-display {
+                position: static;
+                margin: 20px 0;
+            }
+
+            input[type="text"], input[type="number"], input[type="email"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ELT 6 Reassessment Mandatory Study Guide</h1>
+            <div class="subtitle">Cyber 101 - Iteration Concepts</div>
+        </div>
+
+        <div class="warning-box">
+            <p style="font-size: 1.1em; margin-bottom: 10px;">⚠️ IMPORTANT REQUIREMENT ⚠️</p>
+            <p>This study guide MUST be completed and submitted BEFORE you attempt your reassessment. Failure to do so will result in Mrs. Wright NOT SCORING your reassessment.</p>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">
+            Score: <span id="score">0</span>/<span id="total">0</span>
+        </div>
+
+        <div class="intro">
+            <h2>About This Study Guide</h2>
+            <p>This mandatory study guide will help you practice iteration concepts including for loops, while loops, nested loops, and reading code. Complete all questions and generate your PDF report to submit before your reassessment.</p>
+        </div>
+
+        <div class="email-section" id="emailSection">
+            <h3>Before You Begin</h3>
+            <p>Please enter your email address to track your progress and generate your completion report:</p>
+            <div class="input-group">
+                <input type="email" id="emailInput" placeholder="your.email@example.com" style="width: 350px;">
+                <button class="btn-submit" onclick="startStudyGuide()">Start Study Guide</button>
+            </div>
+            <div class="feedback" id="emailFeedback"></div>
+        </div>
+
+        <div id="questionsSection" style="display: none;">
+        
+        <div class="concept-box">
+            <h3>Key Concepts to Remember</h3>
+            <p><strong>For Loops:</strong> Use when you know how many times to repeat</p>
+            <p><strong>While Loops:</strong> Use when you repeat until a condition becomes false</p>
+            <p><strong>Nested Loops:</strong> A loop inside another loop - the inner loop completes all iterations for each iteration of the outer loop</p>
+            <p><strong>Loop Variables:</strong> Track their values carefully as they change each iteration</p>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="question" id="q1">
+            <span class="question-number">Question 1</span>
+            <p><strong>How many times will this for loop execute?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">15</span>):
+    <span class="keyword">print</span>(i)</div>
+            <div class="input-group">
+                <input type="number" id="q1-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(1, '15')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(1)">Reset</button>
+            </div>
+            <div class="feedback" id="q1-feedback"></div>
+            <div class="hint">Remember: range(n) generates numbers from 0 up to but not including n</div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question" id="q2">
+            <span class="question-number">Question 2</span>
+            <p><strong>What is the initial value of counter?</strong></p>
+            <div class="code-block">counter = <span class="number">10</span>
+<span class="keyword">for</span> x <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">5</span>):
+    counter = counter + x</div>
+            <div class="input-group">
+                <input type="number" id="q2-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(2, '10')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(2)">Reset</button>
+            </div>
+            <div class="feedback" id="q2-feedback"></div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question" id="q3">
+            <span class="question-number">Question 3</span>
+            <p><strong>What is the final value of counter after this loop completes?</strong></p>
+            <div class="code-block">counter = <span class="number">10</span>
+<span class="keyword">for</span> x <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">5</span>):
+    counter = counter + x</div>
+            <div class="input-group">
+                <input type="number" id="q3-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(3, '20')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(3)">Reset</button>
+            </div>
+            <div class="feedback" id="q3-feedback"></div>
+            <div class="hint">Trace through: counter starts at 10, then adds 0, 1, 2, 3, 4</div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="question" id="q4">
+            <span class="question-number">Question 4</span>
+            <p><strong>What is the last value of i in this loop?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">3</span>, <span class="number">12</span>):
+    <span class="keyword">print</span>(i)</div>
+            <div class="input-group">
+                <input type="number" id="q4-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(4, '11')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(4)">Reset</button>
+            </div>
+            <div class="feedback" id="q4-feedback"></div>
+            <div class="hint">range(start, stop) goes from start up to but not including stop</div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="question" id="q5">
+            <span class="question-number">Question 5</span>
+            <p><strong>How many times does this while loop execute?</strong></p>
+            <div class="code-block">value = <span class="number">20</span>
+<span class="keyword">while</span> value > <span class="number">10</span>:
+    <span class="keyword">print</span>(value)
+    value = value - <span class="number">2</span></div>
+            <div class="input-group">
+                <input type="number" id="q5-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(5, '5')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(5)">Reset</button>
+            </div>
+            <div class="feedback" id="q5-feedback"></div>
+            <div class="hint">Count: 20, 18, 16, 14, 12... when does it stop?</div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="question" id="q6">
+            <span class="question-number">Question 6</span>
+            <p><strong>What value is printed by this code?</strong></p>
+            <div class="code-block">total = <span class="number">0</span>
+<span class="keyword">for</span> num <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">1</span>, <span class="number">6</span>):
+    total = total + num
+<span class="keyword">print</span>(total)</div>
+            <div class="input-group">
+                <input type="number" id="q6-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(6, '15')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(6)">Reset</button>
+            </div>
+            <div class="feedback" id="q6-feedback"></div>
+            <div class="hint">This calculates 1 + 2 + 3 + 4 + 5</div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="question" id="q7">
+            <span class="question-number">Question 7</span>
+            <p><strong>How many total times will "Hello" be printed?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">3</span>):
+    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">4</span>):
+        <span class="keyword">print</span>(<span class="string">"Hello"</span>)</div>
+            <div class="input-group">
+                <input type="number" id="q7-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(7, '12')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(7)">Reset</button>
+            </div>
+            <div class="feedback" id="q7-feedback"></div>
+            <div class="hint">Nested loops: outer loop runs 3 times, inner loop runs 4 times for EACH outer iteration. Multiply them!</div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="question" id="q8">
+            <span class="question-number">Question 8</span>
+            <p><strong>What is the final value of result?</strong></p>
+            <div class="code-block">result = <span class="number">0</span>
+<span class="keyword">for</span> outer <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">2</span>):
+    <span class="keyword">for</span> inner <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">3</span>):
+        result = result + <span class="number">1</span>
+<span class="keyword">print</span>(result)</div>
+            <div class="input-group">
+                <input type="number" id="q8-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(8, '6')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(8)">Reset</button>
+            </div>
+            <div class="feedback" id="q8-feedback"></div>
+        </div>
+
+        <!-- Question 9 -->
+        <div class="question" id="q9">
+            <span class="question-number">Question 9</span>
+            <p><strong>Select the correct statement about this code:</strong></p>
+            <div class="code-block">count = <span class="number">5</span>
+<span class="keyword">while</span> count > <span class="number">0</span>:
+    <span class="keyword">print</span>(count)
+    count = count - <span class="number">1</span></div>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q9" value="a">
+                    This loop will never execute
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q9" value="b">
+                    This loop will execute exactly 5 times
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q9" value="c">
+                    This is an infinite loop
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q9" value="d">
+                    This loop will execute 6 times
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(9, 'b')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(9)">Reset</button>
+            <div class="feedback" id="q9-feedback"></div>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="question" id="q10">
+            <span class="question-number">Question 10</span>
+            <p><strong>Which code segment will result in an infinite loop?</strong></p>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q10" value="a">
+                    <div class="code-block">x = <span class="number">0</span>
+<span class="keyword">while</span> x < <span class="number">5</span>:
+    <span class="keyword">print</span>(x)
+    x = x + <span class="number">1</span></div>
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q10" value="b">
+                    <div class="code-block">x = <span class="number">10</span>
+<span class="keyword">while</span> x > <span class="number">0</span>:
+    <span class="keyword">print</span>(x)
+    x = x - <span class="number">1</span></div>
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q10" value="c">
+                    <div class="code-block">x = <span class="number">0</span>
+<span class="keyword">while</span> x < <span class="number">5</span>:
+    <span class="keyword">print</span>(x)</div>
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q10" value="d">
+                    <div class="code-block"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">100</span>):
+    <span class="keyword">print</span>(i)</div>
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(10, 'c')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(10)">Reset</button>
+            <div class="feedback" id="q10-feedback"></div>
+            <div class="hint">An infinite loop happens when the condition never becomes false. Look for a loop that doesn't update the control variable.</div>
+        </div>
+
+        <!-- Question 11 -->
+        <div class="question" id="q11">
+            <span class="question-number">Question 11</span>
+            <p><strong>What does this nested loop print on the first line of output?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> row <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">1</span>, <span class="number">4</span>):
+    <span class="keyword">for</span> col <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">1</span>, <span class="number">4</span>):
+        <span class="keyword">print</span>(row * col, end=<span class="string">" "</span>)
+    <span class="keyword">print</span>()</div>
+            <div class="input-group">
+                <input type="text" id="q11-answer" placeholder="e.g., 1 2 3">
+                <button class="btn-submit" onclick="checkAnswer(11, '1 2 3')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(11)">Reset</button>
+            </div>
+            <div class="feedback" id="q11-feedback"></div>
+            <div class="hint">When row = 1, col goes through 1, 2, 3. Calculate 1*1, 1*2, 1*3</div>
+        </div>
+
+        <!-- Question 12 -->
+        <div class="question" id="q12">
+            <span class="question-number">Question 12</span>
+            <p><strong>How many times does the inner loop execute in total?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> outer <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">5</span>):
+    <span class="keyword">for</span> inner <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">3</span>):
+        <span class="keyword">print</span>(<span class="string">"*"</span>)</div>
+            <div class="input-group">
+                <input type="number" id="q12-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(12, '15')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(12)">Reset</button>
+            </div>
+            <div class="feedback" id="q12-feedback"></div>
+        </div>
+
+        <!-- Question 13 -->
+        <div class="question" id="q13">
+            <span class="question-number">Question 13</span>
+            <p><strong>What is printed by this code?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">4</span>):
+    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:
+        <span class="keyword">print</span>(<span class="string">"Even"</span>)
+    <span class="keyword">else</span>:
+        <span class="keyword">print</span>(<span class="string">"Odd"</span>)</div>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q13" value="a">
+                    Even, Odd, Even, Odd
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q13" value="b">
+                    Odd, Even, Odd, Even
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q13" value="c">
+                    Even, Even, Odd, Odd
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q13" value="d">
+                    All Even
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(13, 'a')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(13)">Reset</button>
+            <div class="feedback" id="q13-feedback"></div>
+            <div class="hint">i goes through 0, 1, 2, 3. Which are even (divisible by 2)?</div>
+        </div>
+
+        <!-- Question 14 -->
+        <div class="question" id="q14">
+            <span class="question-number">Question 14</span>
+            <p><strong>What type of error occurs if a program enters an infinite loop?</strong></p>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q14" value="a">
+                    Syntax error
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q14" value="b">
+                    Runtime error
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q14" value="c">
+                    Logic error
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q14" value="d">
+                    Compilation error
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(14, 'c')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(14)">Reset</button>
+            <div class="feedback" id="q14-feedback"></div>
+            <div class="hint">The program runs but doesn't behave as intended</div>
+        </div>
+
+        <!-- Question 15 -->
+        <div class="question" id="q15">
+            <span class="question-number">Question 15</span>
+            <p><strong>In this nested loop, when does the variable j equal 2 for the second time?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">3</span>):
+    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">3</span>):
+        <span class="keyword">print</span>(i, j)</div>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q15" value="a">
+                    When i = 0 and j = 2
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q15" value="b">
+                    When i = 1 and j = 2
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q15" value="c">
+                    When i = 2 and j = 0
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q15" value="d">
+                    When i = 2 and j = 2
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(15, 'b')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(15)">Reset</button>
+            <div class="feedback" id="q15-feedback"></div>
+            <div class="hint">j reaches 2 once during each outer loop iteration. The second time is when i = 1</div>
+        </div>
+
+        <!-- Question 16 -->
+        <div class="question" id="q16">
+            <span class="question-number">Question 16</span>
+            <p><strong>What is the value of sum after this code executes?</strong></p>
+            <div class="code-block">sum = <span class="number">0</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">2</span>):
+    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">2</span>):
+        sum = sum + i + j</div>
+            <div class="input-group">
+                <input type="number" id="q16-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(16, '4')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(16)">Reset</button>
+            </div>
+            <div class="feedback" id="q16-feedback"></div>
+            <div class="hint">Trace: (i=0,j=0): 0+0+0=0; (i=0,j=1): 0+0+1=1; (i=1,j=0): 1+1+0=2; (i=1,j=1): 2+1+1=4</div>
+        </div>
+
+        <!-- Question 17 -->
+        <div class="question" id="q17">
+            <span class="question-number">Question 17</span>
+            <p><strong>Identify the programming constructs in this code segment:</strong></p>
+            <div class="code-block">total = <span class="number">0</span>
+<span class="keyword">for</span> num <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">10</span>):
+    <span class="keyword">if</span> num > <span class="number">5</span>:
+        total = total + <span class="number">1</span>
+<span class="keyword">print</span>(total)</div>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q17" value="a">
+                    num > 5 is selection, if num > 5: is a conditional expression, for is iteration
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q17" value="b">
+                    num > 5 is a conditional expression, if num > 5: is selection, for is iteration
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q17" value="c">
+                    num > 5 is iteration, if num > 5: is selection, for is a conditional expression
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q17" value="d">
+                    All of these are iteration
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(17, 'b')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(17)">Reset</button>
+            <div class="feedback" id="q17-feedback"></div>
+        </div>
+
+        <!-- Question 18 -->
+        <div class="question" id="q18">
+            <span class="question-number">Question 18</span>
+            <p><strong>Consider these two code segments. Which statement is true?</strong></p>
+            <div class="code-block"><span class="comment"># Code A</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">2</span>, <span class="number">8</span>):
+    <span class="keyword">print</span>(i)
+
+<span class="comment"># Code B</span>
+i = <span class="number">2</span>
+<span class="keyword">while</span> i < <span class="number">8</span>:
+    <span class="keyword">print</span>(i)
+    i = i + <span class="number">1</span></div>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q18" value="a">
+                    Code A prints more values than Code B
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q18" value="b">
+                    Code B prints more values than Code A
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q18" value="c">
+                    Both code segments produce the same output
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q18" value="d">
+                    Code B will run infinitely
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(18, 'c')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(18)">Reset</button>
+            <div class="feedback" id="q18-feedback"></div>
+            <div class="hint">Both print 2, 3, 4, 5, 6, 7</div>
+        </div>
+
+        <!-- Question 19 -->
+        <div class="question" id="q19">
+            <span class="question-number">Question 19</span>
+            <p><strong>How many asterisks (*) are printed by this code?</strong></p>
+            <div class="code-block"><span class="keyword">for</span> row <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">4</span>):
+    <span class="keyword">for</span> col <span class="keyword">in</span> <span class="keyword">range</span>(row + <span class="number">1</span>):
+        <span class="keyword">print</span>(<span class="string">"*"</span>, end=<span class="string">""</span>)
+    <span class="keyword">print</span>()</div>
+            <div class="input-group">
+                <input type="number" id="q19-answer" placeholder="Enter number">
+                <button class="btn-submit" onclick="checkAnswer(19, '10')">Check Answer</button>
+                <button class="btn-reset" onclick="resetQuestion(19)">Reset</button>
+            </div>
+            <div class="feedback" id="q19-feedback"></div>
+            <div class="hint">This creates a triangle pattern: row 0 prints 1 star, row 1 prints 2 stars, row 2 prints 3 stars, row 3 prints 4 stars. Total: 1+2+3+4</div>
+        </div>
+
+        <!-- Question 20 -->
+        <div class="question" id="q20">
+            <span class="question-number">Question 20</span>
+            <p><strong>What is the purpose of the line count = count + 1 in a loop?</strong></p>
+            <div class="choice-group">
+                <label class="choice-label">
+                    <input type="radio" name="q20" value="a">
+                    To reset the count variable to 1
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q20" value="b">
+                    To retrieve the current value of count and add 1, storing the result back in count
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q20" value="c">
+                    To compare count to the value 1
+                </label>
+                <label class="choice-label">
+                    <input type="radio" name="q20" value="d">
+                    To multiply count by 1
+                </label>
+            </div>
+            <button class="btn-submit" onclick="checkMultipleChoice(20, 'b')">Check Answer</button>
+            <button class="btn-reset" onclick="resetQuestion(20)">Reset</button>
+            <div class="feedback" id="q20-feedback"></div>
+        </div>
+
+        <div class="completion-section" id="completionSection">
+            <h3>All Questions Completed!</h3>
+            <p>You have answered all 20 questions. Click the button below to generate your PDF report for submission.</p>
+            <button class="btn-pdf" onclick="generatePDF()">Generate PDF Report</button>
+        </div>
+
+        <div class="concept-box" style="margin-top: 30px;">
+            <h3>Study Tips</h3>
+            <p>Practice tracing through code step by step on paper to build your understanding of how loops work. Pay special attention to:</p>
+            <p style="margin-top: 10px;">• Initial values of variables</p>
+            <p>• How loop counters change each iteration</p>
+            <p>• When loop conditions become false</p>
+            <p>• How nested loops interact with each other</p>
+        </div>
+
+        </div>
+    </div>
+
+    <script>
+        let studentEmail = '';
+        let startTime = null;
+        let endTime = null;
+        let answered = {};
+        let correct = {};
+        let studentAnswers = {};
+
+        function startStudyGuide() {
+            const emailInput = document.getElementById('emailInput');
+            const email = emailInput.value.trim();
+            const feedback = document.getElementById('emailFeedback');
+
+            if (email === '' || !email.includes('@')) {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Please enter a valid email address.';
+                return;
+            }
+
+            studentEmail = email;
+            startTime = new Date();
+            
+            document.getElementById('emailSection').style.display = 'none';
+            document.getElementById('questionsSection').style.display = 'block';
+            document.getElementById('scoreDisplay').style.display = 'block';
+        }
+
+        function checkAnswer(questionNum, correctAnswer) {
+            const input = document.getElementById(`q${questionNum}-answer`);
+            const feedback = document.getElementById(`q${questionNum}-feedback`);
+            const userAnswer = input.value.trim();
+
+            if (userAnswer === '') {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Please enter an answer.';
+                return;
+            }
+
+            answered[questionNum] = true;
+            studentAnswers[questionNum] = userAnswer;
+
+            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = 'Correct! Well done!';
+                correct[questionNum] = true;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = `Not quite. The correct answer is: ${correctAnswer}. Try tracing through the code step by step.`;
+                correct[questionNum] = false;
+            }
+
+            updateScore();
+            checkCompletion();
+        }
+
+        function checkMultipleChoice(questionNum, correctAnswer) {
+            const selected = document.querySelector(`input[name="q${questionNum}"]:checked`);
+            const feedback = document.getElementById(`q${questionNum}-feedback`);
+
+            if (!selected) {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Please select an answer.';
+                return;
+            }
+
+            answered[questionNum] = true;
+            studentAnswers[questionNum] = selected.value;
+
+            if (selected.value === correctAnswer) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = 'Correct! Excellent work!';
+                correct[questionNum] = true;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Not quite. Review the code carefully and try again.';
+                correct[questionNum] = false;
+            }
+
+            updateScore();
+            checkCompletion();
+        }
+
+        function resetQuestion(questionNum) {
+            const input = document.getElementById(`q${questionNum}-answer`);
+            if (input) {
+                input.value = '';
+            }
+
+            const radios = document.querySelectorAll(`input[name="q${questionNum}"]`);
+            radios.forEach(radio => radio.checked = false);
+
+            const feedback = document.getElementById(`q${questionNum}-feedback`);
+            feedback.className = 'feedback';
+            feedback.textContent = '';
+
+            delete answered[questionNum];
+            delete correct[questionNum];
+            delete studentAnswers[questionNum];
+
+            updateScore();
+            checkCompletion();
+        }
+
+        function updateScore() {
+            const totalAnswered = Object.keys(answered).length;
+            const totalCorrect = Object.values(correct).filter(v => v).length;
+
+            const scoreSpan = document.getElementById('score');
+            const totalSpan = document.getElementById('total');
+
+            scoreSpan.textContent = totalCorrect;
+            totalSpan.textContent = totalAnswered;
+        }
+
+        function checkCompletion() {
+            const totalQuestions = 20;
+            if (Object.keys(answered).length === totalQuestions) {
+                endTime = new Date();
+                document.getElementById('completionSection').style.display = 'block';
+                document.getElementById('completionSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFillColor(191, 10, 48);
+            doc.rect(0, 0, 210, 30, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.text('ELT 6 Reassessment Study Guide', 105, 15, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('Cyber 101 - Iteration Concepts', 105, 23, { align: 'center' });
+
+            // Student Info
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            let yPos = 40;
+            doc.text(`Student Email: ${studentEmail}`, 20, yPos);
+            yPos += 7;
+            doc.text(`Start Time: ${startTime.toLocaleString()}`, 20, yPos);
+            yPos += 7;
+            doc.text(`End Time: ${endTime.toLocaleString()}`, 20, yPos);
+            yPos += 7;
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
+            doc.text(`Duration: ${duration} minutes`, 20, yPos);
+            yPos += 10;
+
+            // Score Summary
+            const totalCorrect = Object.values(correct).filter(v => v).length;
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Score: ${totalCorrect}/20 (${Math.round(totalCorrect/20*100)}%)`, 20, yPos);
+            doc.setFont(undefined, 'normal');
+            yPos += 12;
+
+            // Questions and Answers
+            doc.setFontSize(10);
+            for (let i = 1; i <= 20; i++) {
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                doc.setFont(undefined, 'bold');
+                doc.text(`Question ${i}:`, 20, yPos);
+                doc.setFont(undefined, 'normal');
+                yPos += 6;
+
+                const status = correct[i] ? 'Correct' : 'Incorrect';
+                const statusColor = correct[i] ? [40, 167, 69] : [220, 53, 69];
+                doc.setTextColor(...statusColor);
+                doc.text(`Status: ${status}`, 25, yPos);
+                doc.setTextColor(0, 0, 0);
+                yPos += 6;
+
+                doc.text(`Your Answer: ${studentAnswers[i] || 'No answer'}`, 25, yPos);
+                yPos += 10;
+            }
+
+            // Footer
+            doc.setFontSize(9);
+            doc.setTextColor(128, 128, 128);
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.text(`ASCTE - Page ${i} of ${pageCount}`, 105, 287, { align: 'center' });
+            }
+
+            doc.save(`ELT6_Study_Guide_${studentEmail.split('@')[0]}.pdf`);
+        }
+    </script>
+</body>
+</html>
