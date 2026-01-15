@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Error Correction Testing Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #0f1419;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .email-inputs {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 12px;
+            background: #1a1f2e;
+            border: 2px solid #2a3f5f;
+            border-radius: 6px;
+            color: #e8e8e8;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .email-input::placeholder {
+            color: #555;
+        }
+
+        .module-info {
+            background: #1a1f2e;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #00ff88;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .qr-info {
+            background: #2a1f3e;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #9b59b6;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .qr-info strong {
+            color: #9b59b6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: 2px solid #2a3f5f;
+            border-radius: 6px;
+            background: #1a1f2e;
+            color: #e8e8e8;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: #2a3f5f;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.active {
+            background: #00ff88;
+            color: #0f1419;
+            border-color: #00ff88;
+        }
+
+        button.reset-btn {
+            border-color: #ff6b6b;
+        }
+
+        button.reset-btn:hover {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            color: #fff;
+        }
+
+        button.test-btn {
+            border-color: #4ecdc4;
+        }
+
+        button.test-btn:hover {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+            color: #0f1419;
+        }
+
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #1a1f2e;
+            border-radius: 8px;
+        }
+
+        #qrCanvas {
+            border: 3px solid #2a3f5f;
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+
+        #qrCanvas.locked {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .stats {
+            background: #1a1f2e;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px solid #2a3f5f;
+        }
+
+        .stats-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ff88;
+            margin: 10px 0;
+        }
+
+        .test-result {
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .test-result.success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .test-result.failure {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .failure-details {
+            background: #1a1f2e;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .failure-details h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .reflection-question {
+            margin: 15px 0;
+        }
+
+        .reflection-question label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .reflection-input {
+            width: 100%;
+            padding: 12px;
+            background: #0f1419;
+            border: 2px solid #2a3f5f;
+            border-radius: 6px;
+            color: #e8e8e8;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .reset-encouragement {
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid #4ecdc4;
+            color: #4ecdc4;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .pdf-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 16px;
+        }
+
+        .pdf-btn:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .attempts-summary {
+            background: #1a1f2e;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border: 2px solid #2a3f5f;
+        }
+
+        .attempt-item {
+            padding: 15px;
+            background: #0f1419;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #00ff88;
+        }
+
+        .attempt-item h4 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        .attempt-detail {
+            color: #aaa;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Error Correction Lab</h1>
+        <div class="subtitle">Test the limits of Reed-Solomon error correction</div>
+
+        <div class="section">
+            <div class="section-title">Student Information</div>
+            <div class="email-inputs">
+                <input type="email" class="email-input" id="email1" placeholder="Student 1 Email (required)" required>
+                <input type="email" class="email-input" id="email2" placeholder="Student 2 Email (optional)">
+                <input type="email" class="email-input" id="email3" placeholder="Student 3 Email (optional)">
+            </div>
+        </div>
+
+        <div class="qr-info" id="qrInfo">
+            <strong>Testing QR Code:</strong> <span id="qrName">Loading...</span>
+        </div>
+
+        <div class="module-info">
+            <strong>Total modules in QR code:</strong> <span id="totalModules">Calculating...</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Controls</div>
+            <div class="controls">
+                <button class="reset-btn" onclick="resetQR()">Reset</button>
+                <button id="blackBtn" class="active" onclick="setMode('black')">Black Marker</button>
+                <button id="whiteBtn" onclick="setMode('white')">White Marker</button>
+                <button class="test-btn" onclick="testQRCode()">Test QR Code</button>
+            </div>
+        </div>
+
+        <div class="qr-container">
+            <canvas id="qrCanvas" width="580" height="580"></canvas>
+        </div>
+
+        <div class="stats">
+            <div>Modules Changed</div>
+            <div class="stats-value" id="changeCounter">0</div>
+        </div>
+
+        <div id="testResultArea"></div>
+        <div id="failureArea"></div>
+        <div id="attemptsArea"></div>
+
+        <button class="pdf-btn" onclick="generatePDF()">Download Results as PDF</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // QR Code database
+        const qrCodes = {
+            'Cat Image': 'data:image/png;base64,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',
+            'ASCTE Website': 'data:image/png;base64,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yXdrm99iAwAHGwA42ADAwQYADjYAcLABgIMNABxsAOBgAwAHGwA4+MovMzPhTdu8aptXMxPezUy+W9v8JjOTF23zCW3zCW3zL9sAwMEGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMFX/rC2+YtmJj+pbV7NTF61zYuZySfMTF61zau2+de1zU+ambxqm1czk+/WNr/FBgAONgBwsAGAgw0AHGwA4GADAAcbADjYAMDBBgAONgBw8BUyM/lpbfOTZiav2uYntc2rmcmrtvmEmcmrtnkxM3nVNq9mJq9mJn/RzORV27yYmfxFGwA42ADAwQYADjYAcLABgIMNABxsAOBgAwAHGwA42ADAwVfgg9rmu81MXrXNbzIzedE2r2YmP61tXsxMXrXNq5nJq7b5bm3zF20A4GADAAcbADjYAMDBBgAONgBwsAGAgw0AHGwA4GADAAdfgf/TzOQntc1Pm5l8Qtv8RTOT7zYzedU2nzAzedE2f9EGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMEGAA42AHDwFdI2/7q2+YSZyau2+S3a5rdom1czk09om+82M3k1M3nVNrzZAMDBBgAONgBwsAGAgw0AHGwA4GADAAcbADjYAMDBV/6wmQk/q22+28zkVdv8JjOTF23zambyqm1ezUxezUxetM0ntM2rmcmrtvmXbQDgYAMABxsAONgAwMEGAA42AHCwAYCDDQAcbADgYAMAB9P/BAD+TxsAONgAwMEGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMEGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMEGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMEGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMEGAA42AHCwAYCDDQAcbADgYAMABxsAONgAwMH/AMkaNyxtw6UQAAAAAElFTkSuQmCC',
+            'Alabama Standards': 'data:image/png;base64,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',
+            'Text Message - ASCTE Cyber Range': 'data:image/png;base64,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'
+        };
+
+        let canvas = document.getElementById('qrCanvas');
+        let ctx = canvas.getContext('2d');
+        let qrImage = new Image();
+        let currentMode = 'black';
+        let changesMade = 0;
+        let isLocked = false;
+        let originalImageData = null;
+        let currentImageData = null;
+        let moduleSize = 20;
+        let attempts = [];
+        let currentQRName = '';
+        let totalModules = 0;
+
+        function loadRandomQR() {
+            const names = Object.keys(qrCodes);
+            currentQRName = names[Math.floor(Math.random() * names.length)];
+            document.getElementById('qrName').textContent = currentQRName;
+            
+            qrImage.src = qrCodes[currentQRName];
+        }
+
+        qrImage.onload = function() {
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(qrImage, 0, 0, canvas.width, canvas.height);
+            originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            // Calculate actual modules
+            totalModules = Math.floor(canvas.width / moduleSize) * Math.floor(canvas.height / moduleSize);
+            document.getElementById('totalModules').textContent = `${totalModules} (${Math.floor(canvas.width / moduleSize)} × ${Math.floor(canvas.height / moduleSize)} grid)`;
+        };
+
+        qrImage.onerror = function() {
+            console.error('Failed to load QR image');
+            alert('Error loading QR code. Please refresh the page.');
+        };
+
+        // Load first QR code
+        loadRandomQR();
+
+        canvas.addEventListener('click', function(e) {
+            if (isLocked) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const moduleX = Math.floor(x / moduleSize);
+            const moduleY = Math.floor(y / moduleSize);
+
+            const pixelX = moduleX * moduleSize;
+            const pixelY = moduleY * moduleSize;
+
+            ctx.fillStyle = currentMode === 'black' ? '#000000' : '#ffffff';
+            ctx.fillRect(pixelX, pixelY, moduleSize, moduleSize);
+
+            currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            changesMade++;
+            document.getElementById('changeCounter').textContent = changesMade;
+        });
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('blackBtn').classList.toggle('active', mode === 'black');
+            document.getElementById('whiteBtn').classList.toggle('active', mode === 'white');
+        }
+
+        function resetQR() {
+            if (originalImageData) {
+                // Load a new random QR code
+                loadRandomQR();
+                
+                changesMade = 0;
+                document.getElementById('changeCounter').textContent = '0';
+                isLocked = false;
+                canvas.classList.remove('locked');
+                document.getElementById('testResultArea').innerHTML = '';
+                document.getElementById('failureArea').innerHTML = '';
+                
+                if (attempts.length > 0) {
+                    document.getElementById('testResultArea').innerHTML = 
+                        '<div class="reset-encouragement">Try a different strategy! Ideas: Work in a different area of the QR code, or try removing modules instead of adding them.</div>';
+                }
+                
+                currentAttemptData = { answer1: '', answer2: '' };
+            }
+        }
+
+        function testQRCode() {
+            if (!currentImageData) return;
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            const resultArea = document.getElementById('testResultArea');
+
+            if (code) {
+                resultArea.innerHTML = '<div class="test-result success">✓ QR code still works!</div>';
+            } else {
+                const percentage = ((changesMade / totalModules) * 100).toFixed(1);
+                const timestamp = new Date().toLocaleString();
+
+                resultArea.innerHTML = `
+                    <div class="test-result failure">✗ Failed to decode</div>
+                    <div class="failure-details">
+                        <h3>Test Results</h3>
+                        <p>QR code failed after <strong>${changesMade}</strong> changes.</p>
+                        <p>That's <strong>${changesMade} of ${totalModules} modules (${percentage}% damage)</strong>.</p>
+                        <p>Test completed at: ${timestamp}</p>
+                    </div>
+                `;
+
+                const failureArea = document.getElementById('failureArea');
+                failureArea.innerHTML = `
+                    <div class="failure-details">
+                        <h3>Reflection Questions</h3>
+                        <div class="reflection-question">
+                            <label>Which did you change more - black modules to white, or white modules to black?</label>
+                            <textarea class="reflection-input" id="answer1" onchange="updateAnswer(1, this.value)"></textarea>
+                        </div>
+                        <div class="reflection-question">
+                            <label>Where in the QR code did you focus your changes? (Example: corners, center, edges, random)</label>
+                            <textarea class="reflection-input" id="answer2" onchange="updateAnswer(2, this.value)"></textarea>
+                        </div>
+                    </div>
+                `;
+
+                attempts.push({
+                    attemptNumber: attempts.length + 1,
+                    qrName: currentQRName,
+                    changesMade: changesMade,
+                    totalModules: totalModules,
+                    percentage: percentage,
+                    timestamp: timestamp,
+                    answer1: '',
+                    answer2: ''
+                });
+
+                updateAttemptsSummary();
+
+                isLocked = true;
+                canvas.classList.add('locked');
+            }
+        }
+
+        function updateAnswer(questionNum, value) {
+            if (attempts.length > 0) {
+                attempts[attempts.length - 1][`answer${questionNum}`] = value;
+            }
+        }
+
+        function updateAttemptsSummary() {
+            if (attempts.length === 0) return;
+
+            const attemptsArea = document.getElementById('attemptsArea');
+            let html = '<div class="attempts-summary"><div class="section-title">All Attempts</div>';
+
+            attempts.forEach(attempt => {
+                html += `
+                    <div class="attempt-item">
+                        <h4>Attempt ${attempt.attemptNumber} - ${attempt.qrName}</h4>
+                        <div class="attempt-detail">Changes: ${attempt.changesMade} of ${attempt.totalModules} modules (${attempt.percentage}%)</div>
+                        <div class="attempt-detail">Time: ${attempt.timestamp}</div>
+                        ${attempt.answer1 ? `<div class="attempt-detail">Black vs White: ${attempt.answer1}</div>` : ''}
+                        ${attempt.answer2 ? `<div class="attempt-detail">Location: ${attempt.answer2}</div>` : ''}
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            attemptsArea.innerHTML = html;
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('QR Code Error Correction Lab Results', 20, 20);
+
+            doc.setFontSize(12);
+            let yPos = 35;
+
+            const email1 = document.getElementById('email1').value;
+            const email2 = document.getElementById('email2').value;
+            const email3 = document.getElementById('email3').value;
+
+            if (email1 || email2 || email3) {
+                doc.text('Student Information:', 20, yPos);
+                yPos += 7;
+                if (email1) { doc.text(`Student 1: ${email1}`, 25, yPos); yPos += 7; }
+                if (email2) { doc.text(`Student 2: ${email2}`, 25, yPos); yPos += 7; }
+                if (email3) { doc.text(`Student 3: ${email3}`, 25, yPos); yPos += 7; }
+                yPos += 5;
+            }
+
+            if (attempts.length === 0) {
+                doc.text('No attempts recorded yet.', 20, yPos);
+            } else {
+                attempts.forEach((attempt, index) => {
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+
+                    doc.setFontSize(14);
+                    doc.text(`Attempt ${attempt.attemptNumber} - ${attempt.qrName}`, 20, yPos);
+                    yPos += 7;
+
+                    doc.setFontSize(11);
+                    doc.text(`Changes made: ${attempt.changesMade} of ${attempt.totalModules} modules`, 25, yPos);
+                    yPos += 6;
+                    doc.text(`Percentage damaged: ${attempt.percentage}%`, 25, yPos);
+                    yPos += 6;
+                    doc.text(`Timestamp: ${attempt.timestamp}`, 25, yPos);
+                    yPos += 6;
+
+                    if (attempt.answer1) {
+                        doc.text('Black vs White changes:', 25, yPos);
+                        yPos += 6;
+                        const lines1 = doc.splitTextToSize(attempt.answer1, 160);
+                        doc.text(lines1, 30, yPos);
+                        yPos += lines1.length * 6;
+                    }
+
+                    if (attempt.answer2) {
+                        doc.text('Location of changes:', 25, yPos);
+                        yPos += 6;
+                        const lines2 = doc.splitTextToSize(attempt.answer2, 160);
+                        doc.text(lines2, 30, yPos);
+                        yPos += lines2.length * 6;
+                    }
+
+                    yPos += 8;
+                });
+            }
+
+            doc.save('qr-error-correction-results.pdf');
+        }
+    </script>
+</body>
+</html>
