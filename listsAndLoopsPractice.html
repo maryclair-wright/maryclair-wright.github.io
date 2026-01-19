@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loops with Lists Practice</title>
+    <style>
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            color: #BF0A30;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #002868;
+            border-bottom: 3px solid #6598E9;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        
+        .intro {
+            background-color: #f5f5f5;
+            border-left: 5px solid #6598E9;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .difficulty-guide {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid #A5A5A4;
+        }
+        
+        .difficulty-guide ul {
+            margin: 10px 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+        
+        pre {
+            font-family: 'Courier New', monospace;
+            background-color: #002868;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .question-container {
+            display: none;
+            margin: 30px 0;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .email-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .email-section input[type="email"] {
+            padding: 10px;
+            font-size: 1em;
+            width: 300px;
+            border: 2px solid #6598E9;
+            border-radius: 5px;
+            font-family: 'IBM Plex Serif', serif;
+        }
+        
+        button {
+            background-color: #BF0A30;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'IBM Plex Serif', serif;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background-color: #8a0722;
+        }
+        
+        button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+        
+        .answer-input {
+            padding: 10px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #6598E9;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        
+        .feedback {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+        
+        .question-number {
+            color: #6598E9;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            color: #002868;
+            font-size: 1.1em;
+        }
+        
+        .results-section {
+            display: none;
+            margin: 30px 0;
+        }
+        
+        .results-section.active {
+            display: block;
+        }
+        
+        .score-display {
+            background-color: #6598E9;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.3em;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #A5A5A4;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .answer-hint {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            margin: 5px 0;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <h1>Loops with Lists Practice</h1>
+    
+    <div id="intro-section">
+        <div class="intro">
+            <p>Enter your email to begin. You will work through 19 code reading questions about loops and lists. Each question asks you to predict what happens when code executes.</p>
+            <p><strong>What you'll practice:</strong></p>
+            <ul>
+                <li>Reading code with <code>while</code> and <code>for</code> loops</li>
+                <li>Tracking changes to lists using <code>.append()</code>, <code>.insert()</code>, and <code>.pop()</code></li>
+                <li>Determining final values of variables and lists</li>
+                <li>Counting loop iterations</li>
+                <li>Understanding list indexing and the <code>len()</code> function</li>
+            </ul>
+        </div>
+        
+        <div class="email-section">
+            <p><strong>Email:</strong></p>
+            <input type="email" id="userEmail" placeholder="Enter your email">
+            <br>
+            <button onclick="startPractice()">Start</button>
+        </div>
+    </div>
+    
+    <div id="question-section" style="display: none;">
+        <div class="progress">
+            <span id="progress-text">Question 1 of 19</span>
+        </div>
+        
+        <div id="question-container"></div>
+        
+        <div style="text-align: center;">
+            <button id="submit-btn" onclick="submitAnswer()">Submit</button>
+            <button id="next-btn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        </div>
+    </div>
+    
+    <div id="results-section" class="results-section">
+        <h2>Finished</h2>
+        <div class="score-display" id="score-display"></div>
+        <div style="text-align: center;">
+            <button onclick="generatePDF()">Download Results PDF</button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>These tools were developed for teaching Cyber101 and AP Computer Science Principles at ASCTE by Mary Clair Wright and ASCTE Student Interns.</p>
+    </div>
+
+    <script>
+        let userEmail = '';
+        let startTime;
+        let currentQuestion = 0;
+        let attempts = [];
+        let questions = [];
+        
+        // Utility function to get random element from array
+        function randomChoice(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+        
+        // Utility function to get random integer between min and max (inclusive)
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        // Utility function to shuffle array
+        function shuffle(arr) {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // Question bank with progressive difficulty
+        function initializeQuestions() {
+            const allQuestions = [];
+            
+            // Questions 1-6: Basic loops - generate with random values
+            // Q1: Count items in for loop
+            const q1Values = shuffle([5, 10, 15, 20, 25]);
+            const q1List = [q1Values[0], q1Values[1], q1Values[2]];
+            allQuestions.push({
+                code: `numbers = ${JSON.stringify(q1List)}
+counter = 0
+for num in numbers:
+    counter = counter + 1
+print(counter)`,
+                question: "What is printed?",
+                answer: "3",
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q2: Append in while loop
+            const q2Limit = randomInt(3, 5);
+            allQuestions.push({
+                code: `items = []
+index = 0
+while index < ${q2Limit}:
+    items.append(index)
+    index = index + 1
+print(items)`,
+                question: "What is the final value of items?",
+                answer: JSON.stringify(Array.from({length: q2Limit}, (_, i) => i)),
+                type: "list",
+                hint: "Enter a list in Python format: [value1, value2, ...]"
+            });
+            
+            // Q3: Sum in for loop
+            const q3Values = shuffle([70, 75, 80, 85, 90, 95]);
+            const q3List = [q3Values[0], q3Values[1], q3Values[2]];
+            const q3Sum = q3List.reduce((a, b) => a + b, 0);
+            allQuestions.push({
+                code: `scores = ${JSON.stringify(q3List)}
+total = 0
+for score in scores:
+    total = total + score
+print(total)`,
+                question: "What is printed?",
+                answer: String(q3Sum),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q4: Count loop iterations
+            const q4Values = shuffle([1, 2, 3, 4, 5, 6]);
+            const q4List = [q4Values[0], q4Values[1], q4Values[2]];
+            allQuestions.push({
+                code: `data = ${JSON.stringify(q4List)}
+count = 0
+for value in data:
+    count = count + 1
+print(count)`,
+                question: "How many times does the loop body execute?",
+                answer: String(q4List.length),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q5: Multiple appends
+            const q5Start = randomChoice([["a", "b"], ["x", "y"], ["m", "n"]]);
+            const q5Add = randomChoice([["c", "d"], ["z", "w"], ["p", "q"]]);
+            const q5Result = [...q5Start, ...q5Add];
+            allQuestions.push({
+                code: `letters = ${JSON.stringify(q5Start)}
+letters.append("${q5Add[0]}")
+letters.append("${q5Add[1]}")
+print(letters)`,
+                question: "What is the final value of letters?",
+                answer: JSON.stringify(q5Result),
+                type: "list",
+                hint: 'Enter a list with strings in quotes: ["item1", "item2", ...]'
+            });
+            
+            // Q6: Pop operations with index shifting
+            const q6Start = randomChoice([[10, 20, 30, 40, 50], [5, 15, 25, 35, 45]]);
+            const q6Temp = [...q6Start];
+            q6Temp.splice(2, 1);  // Remove index 2
+            q6Temp.splice(2, 1);  // Remove new index 2 (which was index 3)
+            allQuestions.push({
+                code: `numbers = ${JSON.stringify(q6Start)}
+numbers.pop(2)
+numbers.pop(2)
+print(numbers)`,
+                question: "What is the final value of numbers?",
+                answer: JSON.stringify(q6Temp),
+                type: "list",
+                hint: "Enter a list in Python format"
+            });
+            
+            // Questions 7-12: Selection statements and math operators
+            // Q7: Conditional sum
+            const q7Values = shuffle([3, 7, 2, 8, 5, 9, 4, 6]);
+            const q7List = [q7Values[0], q7Values[1], q7Values[2], q7Values[3], q7Values[4]];
+            const q7Threshold = randomInt(4, 6);
+            const q7Sum = q7List.filter(v => v > q7Threshold).reduce((a, b) => a + b, 0);
+            allQuestions.push({
+                code: `values = ${JSON.stringify(q7List)}
+result = 0
+for val in values:
+    if val > ${q7Threshold}:
+        result = result + val
+print(result)`,
+                question: "What is the final value of result?",
+                answer: String(q7Sum),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q8: Even numbers with modulo
+            const q8Limit = randomInt(5, 6);
+            const q8Result = [];
+            for (let i = 1; i <= q8Limit; i++) {
+                if (i % 2 === 0) q8Result.push(i);
+            }
+            allQuestions.push({
+                code: `nums = []
+counter = 1
+while counter <= ${q8Limit}:
+    if counter % 2 == 0:
+        nums.append(counter)
+    counter = counter + 1
+print(nums)`,
+                question: "What is the final value of nums?",
+                answer: JSON.stringify(q8Result),
+                type: "list",
+                hint: "Enter a list in Python format"
+            });
+            
+            // Q9: Sum floats
+            const q9Values = [randomInt(100, 200) / 10, randomInt(180, 250) / 10, randomInt(140, 180) / 10];
+            const q9Sum = q9Values.reduce((a, b) => a + b, 0).toFixed(2);
+            allQuestions.push({
+                code: `prices = ${JSON.stringify(q9Values)}
+total = 0.0
+for price in prices:
+    total = total + price
+print(total)`,
+                question: "What is the final value of total?",
+                answer: String(parseFloat(q9Sum)),
+                type: "value",
+                hint: "Enter a float (decimal number)"
+            });
+            
+            // Q10: Count with condition
+            const q10Values = shuffle([2, 4, 5, 7, 9, 11, 3, 6, 8]);
+            const q10List = [q10Values[0], q10Values[1], q10Values[2], q10Values[3], q10Values[4]];
+            const q10Threshold = randomInt(5, 7);
+            const q10Count = q10List.filter(v => v < q10Threshold).length;
+            allQuestions.push({
+                code: `data = ${JSON.stringify(q10List)}
+count = 0
+for num in data:
+    if num < ${q10Threshold}:
+        count = count + 1
+print(count)`,
+                question: "What is the final value of count?",
+                answer: String(q10Count),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q11: Growing list in while loop
+            const q11Start = randomChoice([["cat", "dog"], ["red", "blue"], ["apple", "banana"]]);
+            const q11Add = randomChoice(["bird", "fish", "orange", "grape"]);
+            allQuestions.push({
+                code: `words = ${JSON.stringify(q11Start)}
+index = 0
+while index < len(words):
+    words.append("${q11Add}")
+    index = index + 1
+print(len(words))`,
+                question: "What is printed?",
+                answer: String(q11Start.length * 2),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q12: Multiply and sum
+            const q12Values = shuffle([1, 2, 3, 4, 5]);
+            const q12List = q12Values.slice(0, randomInt(3, 5));
+            const q12Multiplier = randomChoice([2, 3]);
+            const q12Result = q12List.reduce((acc, num) => acc + num * q12Multiplier, 0);
+            allQuestions.push({
+                code: `numbers = ${JSON.stringify(q12List)}
+result = 0
+for num in numbers:
+    result = result + num * ${q12Multiplier}
+print(result)`,
+                question: "What is the final value of result?",
+                answer: String(q12Result),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Questions 13-17: More complex patterns
+            // Q13: Insert and pop
+            const q13Start = randomChoice([[10, 20, 30], [5, 15, 25], [100, 200, 300]]);
+            const q13InsertPos = 1;
+            const q13InsertVal = q13Start[0] + 5;
+            const q13Temp = [...q13Start];
+            q13Temp.splice(q13InsertPos, 0, q13InsertVal);
+            q13Temp.splice(3, 1);
+            allQuestions.push({
+                code: `items = ${JSON.stringify(q13Start)}
+items.insert(${q13InsertPos}, ${q13InsertVal})
+items.pop(3)
+print(items)`,
+                question: "What is the final value of items?",
+                answer: JSON.stringify(q13Temp),
+                type: "list",
+                hint: "Enter a list in Python format"
+            });
+            
+            // Q14: Length - 1 = last index
+            const q14Values = shuffle([5, 10, 15, 20, 25, 30, 35]);
+            const q14List = q14Values.slice(0, randomInt(4, 6));
+            const q14Last = q14List[q14List.length - 1];
+            allQuestions.push({
+                code: `data = ${JSON.stringify(q14List)}
+lastIndex = len(data) - 1
+print(data[lastIndex])`,
+                question: "What is printed?",
+                answer: String(q14Last),
+                type: "value",
+                hint: "Enter a single integer"
+            });
+            
+            // Q15: Countdown append
+            const q15Start = randomInt(4, 6);
+            const q15Result = [];
+            for (let i = q15Start; i > 0; i--) {
+                q15Result.push(i);
+            }
+            allQuestions.push({
+                code: `scores = []
+value = ${q15Start}
+while value > 0:
+    scores.append(value)
+    value = value - 1
+print(scores)`,
+                question: "What is the final value of scores?",
+                answer: JSON.stringify(q15Result),
+                type: "list",
+                hint: "Enter a list in Python format"
+            });
+            
+            // Q16: Increment each element
+            const q16Values = shuffle([2, 4, 6, 8, 10]);
+            const q16List = q16Values.slice(0, randomInt(3, 4));
+            const q16Result = q16List.map(v => v + 1);
+            allQuestions.push({
+                code: `data = ${JSON.stringify(q16List)}
+position = 0
+while position < len(data):
+    data[position] = data[position] + 1
+    position = position + 1
+print(data)`,
+                question: "What is the final value of data?",
+                answer: JSON.stringify(q16Result),
+                type: "list",
+                hint: "Enter a list in Python format"
+            });
+            
+            // Q17: Insert, pop, append
+            const q17Colors = shuffle([
+                ["red", "blue", "green"],
+                ["cat", "dog", "bird"],
+                ["apple", "banana", "orange"]
+            ])[0];
+            const q17InsertColor = randomChoice(["yellow", "purple", "pink", "fish", "rabbit", "grape"]);
+            const q17AppendColor = randomChoice(["brown", "black", "white", "horse", "turtle", "mango"]);
+            const q17Temp = [...q17Colors];
+            q17Temp.splice(0, 0, q17InsertColor);
+            q17Temp.splice(3, 1);
+            q17Temp.push(q17AppendColor);
+            allQuestions.push({
+                code: `colors = ${JSON.stringify(q17Colors)}
+colors.insert(0, "${q17InsertColor}")
+colors.pop(3)
+colors.append("${q17AppendColor}")
+print(colors)`,
+                question: "What is the final value of colors?",
+                answer: JSON.stringify(q17Temp),
+                type: "list",
+                hint: "Enter a list with strings in quotes"
+            });
+            
+            // Questions 18-19: Nested loops
+            // Q18: Nested loop counting
+            const q18Outer = randomInt(2, 3);
+            const q18Inner = randomInt(2, 4);
+            const q18OuterCount = q18Outer;
+            const q18InnerCount = q18Outer * q18Inner;
+            const q18OuterList = Array.from({length: q18Outer}, (_, i) => i + 1);
+            const q18InnerList = Array.from({length: q18Inner}, (_, i) => i + 1);
+            allQuestions.push({
+                code: `outer = 0
+inner = 0
+for i in ${JSON.stringify(q18OuterList)}:
+    for j in ${JSON.stringify(q18InnerList)}:
+        inner = inner + 1
+    outer = outer + 1
+print(outer)
+print(inner)`,
+                question: "What is printed on the first line? What is printed on the second line?",
+                answer: `${q18OuterCount}\n${q18InnerCount}`,
+                type: "multiline",
+                hint: "Enter two values, one per line"
+            });
+            
+            // Q19: Nested while loops building list
+            const q19Rows = randomInt(2, 3);
+            const q19Cols = randomInt(2, 3);
+            const q19Result = [];
+            for (let row = 0; row < q19Rows; row++) {
+                for (let col = 0; col < q19Cols; col++) {
+                    q19Result.push(row * 2 + col);
+                }
+            }
+            allQuestions.push({
+                code: `grid = []
+row = 0
+while row < ${q19Rows}:
+    col = 0
+    while col < ${q19Cols}:
+        grid.append(row * 2 + col)
+        col = col + 1
+    row = row + 1
+print(grid)`,
+                question: "What is the final value of grid?",
+                answer: JSON.stringify(q19Result),
+                type: "list",
+                hint: "Enter a list in Python format"
+            });
+            
+            questions = allQuestions;
+        }
+        
+        function startPractice() {
+            userEmail = document.getElementById('userEmail').value.trim();
+            if (!userEmail || !userEmail.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            startTime = new Date();
+            initializeQuestions();
+            attempts = new Array(questions.length).fill(null).map(() => ({
+                attempts: 0,
+                correct: false,
+                userAnswers: []
+            }));
+            
+            document.getElementById('intro-section').style.display = 'none';
+            document.getElementById('question-section').style.display = 'block';
+            displayQuestion();
+        }
+        
+        function displayQuestion() {
+            const q = questions[currentQuestion];
+            const container = document.getElementById('question-container');
+            
+            let html = `
+                <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                <pre>${escapeHtml(q.code)}</pre>
+                <p><strong>${escapeHtml(q.question)}</strong></p>
+                <p class="answer-hint">${escapeHtml(q.hint)}</p>
+            `;
+            
+            if (q.type === 'multiline') {
+                html += `<textarea id="answer-input" class="answer-input" rows="4" placeholder="Enter your answer here"></textarea>`;
+            } else {
+                html += `<input type="text" id="answer-input" class="answer-input" placeholder="Enter your answer here">`;
+            }
+            
+            html += `<div id="feedback"></div>`;
+            
+            container.innerHTML = html;
+            
+            document.getElementById('progress-text').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('submit-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('answer-input').focus();
+            
+            // Allow Enter to submit
+            document.getElementById('answer-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && q.type !== 'multiline') {
+                    submitAnswer();
+                }
+            });
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function normalizeAnswer(answer) {
+            // Remove all whitespace and convert to lowercase for comparison
+            return answer.replace(/\s+/g, '').toLowerCase();
+        }
+        
+        function submitAnswer() {
+            const userAnswer = document.getElementById('answer-input').value.trim();
+            const q = questions[currentQuestion];
+            const feedback = document.getElementById('feedback');
+            
+            if (!userAnswer) {
+                alert('Please enter an answer.');
+                return;
+            }
+            
+            attempts[currentQuestion].attempts++;
+            attempts[currentQuestion].userAnswers.push(userAnswer);
+            
+            const correct = normalizeAnswer(userAnswer) === normalizeAnswer(q.answer);
+            
+            if (correct) {
+                attempts[currentQuestion].correct = true;
+                feedback.className = 'feedback correct';
+                feedback.textContent = 'Correct!';
+                document.getElementById('submit-btn').style.display = 'none';
+                document.getElementById('next-btn').style.display = 'inline-block';
+            } else if (attempts[currentQuestion].attempts < 2) {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Not quite. Try again! (1 attempt remaining)';
+                document.getElementById('answer-input').value = '';
+                document.getElementById('answer-input').focus();
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = `Incorrect. The correct answer was: ${q.answer}`;
+                document.getElementById('submit-btn').style.display = 'none';
+                document.getElementById('next-btn').style.display = 'inline-block';
+            }
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const endTime = new Date();
+            const durationMs = endTime - startTime;
+            const durationMin = Math.floor(durationMs / 60000);
+            const durationSec = Math.floor((durationMs % 60000) / 1000);
+            
+            const correctCount = attempts.filter(a => a.correct).length;
+            const firstAttemptCorrect = attempts.filter(a => a.correct && a.attempts === 1).length;
+            
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('results-section').classList.add('active');
+            
+            document.getElementById('score-display').innerHTML = `
+                <p><strong>Score: ${correctCount} / ${questions.length}</strong></p>
+                <p>Correct on first attempt: ${firstAttemptCorrect}</p>
+                <p>Time: ${durationMin} minutes ${durationSec} seconds</p>
+            `;
+        }
+        
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const endTime = new Date();
+            const durationMs = endTime - startTime;
+            const durationMin = Math.floor(durationMs / 60000);
+            const durationSec = Math.floor((durationMs % 60000) / 1000);
+            
+            const correctCount = attempts.filter(a => a.correct).length;
+            const firstAttemptCorrect = attempts.filter(a => a.correct && a.attempts === 1).length;
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(191, 10, 48); // ASCTE Red
+            doc.text('Loops with Lists Practice - Results', 105, 20, { align: 'center' });
+            
+            // Student info
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Email: ${userEmail}`, 20, 35);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 42);
+            doc.text(`Start Time: ${startTime.toLocaleTimeString()}`, 20, 49);
+            doc.text(`End Time: ${endTime.toLocaleTimeString()}`, 20, 56);
+            doc.text(`Duration: ${durationMin} minutes ${durationSec} seconds`, 20, 63);
+            
+            // Summary
+            doc.setFontSize(12);
+            doc.setTextColor(0, 40, 104); // ASCTE Navy
+            doc.text('Summary', 20, 75);
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Total Questions: ${questions.length}`, 20, 83);
+            doc.text(`Correct: ${correctCount}`, 20, 90);
+            doc.text(`Correct on First Attempt: ${firstAttemptCorrect}`, 20, 97);
+            doc.text(`Score: ${Math.round((correctCount / questions.length) * 100)}%`, 20, 104);
+            
+            // Detailed results
+            let yPos = 120;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 40, 104);
+            doc.text('Detailed Results', 20, yPos);
+            yPos += 10;
+            
+            doc.setFontSize(9);
+            doc.setTextColor(0, 0, 0);
+            
+            for (let i = 0; i < questions.length; i++) {
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                const status = attempts[i].correct ? 'CORRECT' : 'INCORRECT';
+                const statusColor = attempts[i].correct ? [40, 167, 69] : [220, 53, 69];
+                
+                doc.setTextColor(...statusColor);
+                doc.text(`Q${i + 1}: ${status} (${attempts[i].attempts} attempt${attempts[i].attempts > 1 ? 's' : ''})`, 20, yPos);
+                doc.setTextColor(0, 0, 0);
+                yPos += 6;
+                
+                if (!attempts[i].correct) {
+                    doc.text(`  Correct answer: ${questions[i].answer}`, 20, yPos);
+                    yPos += 6;
+                }
+                
+                yPos += 3;
+            }
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(165, 165, 164);
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.text('ASCTE - Cyber101 Practice Tool', 105, 285, { align: 'center' });
+            }
+            
+            doc.save(`loops_lists_practice_${userEmail.replace('@', '_')}.pdf`);
+        }
+    </script>
+</body>
+</html>
