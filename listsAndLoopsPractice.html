@@ -364,7 +364,7 @@ print(numbers)`,
                 hint: "Enter a list in Python format"
             });
             
-            // Questions 7-12: Selection statements and math operators
+            // Questions 7-10: Selection statements and math operators
             // Q7: Conditional sum
             const q7Values = shuffle([3, 7, 2, 8, 5, 9, 4, 6]);
             const q7List = [q7Values[0], q7Values[1], q7Values[2], q7Values[3], q7Values[4]];
@@ -436,7 +436,7 @@ print(count)`,
                 hint: "Enter a single integer"
             });
             
-            // Q11: Growing list in while loop
+            // Q11: Infinite loop recognition
             const q11Start = randomChoice([["cat", "dog"], ["red", "blue"], ["apple", "banana"]]);
             const q11Add = randomChoice(["bird", "fish", "orange", "grape"]);
             allQuestions.push({
@@ -446,25 +446,25 @@ while index < len(words):
     words.append("${q11Add}")
     index = index + 1
 print(len(words))`,
-                question: "What is printed?",
-                answer: String(q11Start.length * 2),
+                question: "Does this loop ever terminate? Enter yes or no.",
+                answer: "no",
                 type: "value",
-                hint: "Enter a single integer"
+                hint: "Enter yes or no"
             });
             
-            // Q12: Multiply and sum
-            const q12Values = shuffle([1, 2, 3, 4, 5]);
-            const q12List = q12Values.slice(0, randomInt(3, 5));
-            const q12Multiplier = randomChoice([2, 3]);
-            const q12Result = q12List.reduce((acc, num) => acc + num * q12Multiplier, 0);
+            // Q12: Tracing infinite loop iterations
+            const q12Start = randomChoice([["cat", "dog"], ["red", "blue"], ["apple", "banana"]]);
+            const q12Add = randomChoice(["bird", "fish", "orange", "grape"]);
+            const q12Iterations = 3;
             allQuestions.push({
-                code: `numbers = ${JSON.stringify(q12List)}
-result = 0
-for num in numbers:
-    result = result + num * ${q12Multiplier}
-print(result)`,
-                question: "What is the final value of result?",
-                answer: String(q12Result),
+                code: `words = ${JSON.stringify(q12Start)}
+index = 0
+while index < len(words):
+    words.append("${q12Add}")
+    index = index + 1
+print(len(words))`,
+                question: `This code creates an infinite loop. After the first ${q12Iterations} iterations, what is the value of len(words)?`,
+                answer: String(q12Start.length + q12Iterations),
                 type: "value",
                 hint: "Enter a single integer"
             });
