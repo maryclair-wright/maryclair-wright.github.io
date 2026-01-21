@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Operations Study Tool - ASCTE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 25px;
+            border-radius: 8px 8px 0 0;
+            margin: -30px -30px 30px -30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 20px;
+            border: 2px solid #002868;
+            background-color: white;
+            color: #002868;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-btn:hover {
+            background-color: #6598E9;
+            border-color: #6598E9;
+            color: white;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #002868;
+            color: white;
+        }
+        
+        .question-card {
+            border: 2px solid #002868;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            background-color: #002868;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .difficulty-badge {
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .difficulty-easy {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .difficulty-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty-hard {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .option:hover {
+            border-color: #6598E9;
+            background-color: #f8f9fa;
+        }
+        
+        .option.selected {
+            border-color: #002868;
+            background-color: #e3f2fd;
+        }
+        
+        .option.correct {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        
+        .option.incorrect {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        
+        .option-letter {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 25px;
+        }
+        
+        .option-code {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #BF0A30;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #9a0827;
+        }
+        
+        .btn-secondary {
+            background-color: #6598E9;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4a7bc8;
+        }
+        
+        .btn:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #002868;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        @media print {
+            .controls, .action-buttons, .navigation {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>List Operations Study Tool</h1>
+            <p>ELT7 Study Guide</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="correctCount">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalAttempted">0</div>
+                <div class="stat-label">Attempted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="percentage">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="difficulty-selector">
+                <span style="font-weight: bold;">Filter by Difficulty:</span>
+                <button class="difficulty-btn active" data-difficulty="all">All Questions</button>
+                <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+                <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%;">0 / 35</div>
+        </div>
+        
+        <div id="questionsContainer"></div>
+        
+        <div class="navigation">
+            <button class="btn btn-secondary" onclick="window.print()">Print Study Guide</button>
+            <button class="btn btn-primary" onclick="resetQuiz()">Reset All Answers</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                difficulty: 'easy',
+                question: 'Which of the following best describes the purpose of the <code>.append()</code> method in Python?',
+                options: [
+                    'It adds an element to the beginning of a list',
+                    'It adds an element to the end of a list',
+                    'It removes an element from a list',
+                    'It sorts the list in ascending order'
+                ],
+                correct: 1,
+                explanation: 'The .append() method adds a new element to the end of a list.'
+            },
+            {
+                id: 2,
+                difficulty: 'easy',
+                question: 'Consider the following code segment:<div class="code-block">fruitList = ["apple", "banana", "cherry"]\nselectedFruit = fruitList[1]</div>What is the value of <code>selectedFruit</code> after the code executes?',
+                options: [
+                    '"apple"',
+                    '"banana"',
+                    '"cherry"',
+                    'The code will cause an error'
+                ],
+                correct: 1,
+                explanation: 'Python uses 0-based indexing, so fruitList[1] accesses the second element, which is "banana".'
+            },
+            {
+                id: 3,
+                difficulty: 'easy',
+                question: 'Consider the following code segment:<div class="code-block">numberList = [10, 20, 30, 40]\nprint(len(numberList))</div>What is displayed when this code executes?',
+                options: [
+                    '3',
+                    '4',
+                    '5',
+                    '40'
+                ],
+                correct: 1,
+                explanation: 'The len() function returns the number of elements in the list, which is 4.'
+            },
+            {
+                id: 4,
+                difficulty: 'easy',
+                question: 'Which of the following best describes what the <code>.pop()</code> method does when called on a list?',
+                options: [
+                    'It adds an element to the end of the list',
+                    'It removes and returns the last element of the list',
+                    'It returns the first element without removing it',
+                    'It clears all elements from the list'
+                ],
+                correct: 1,
+                explanation: 'The .pop() method removes and returns the last element from a list by default.'
+            },
+            {
+                id: 5,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">colorList = ["red", "blue", "green"]\ncolorList.append("yellow")\nprint(colorList)</div>What is displayed when this code executes?',
+                options: [
+                    '["yellow", "red", "blue", "green"]',
+                    '["red", "blue", "green", "yellow"]',
+                    '["red", "blue", "green"]',
+                    'An error occurs'
+                ],
+                correct: 1,
+                explanation: 'The .append() method adds "yellow" to the end of the list.'
+            },
+            {
+                id: 6,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">numberList = [5, 10, 15, 20]\ntotal = 0\nfor num in numberList:\n    total = total + num\nprint(total)</div>What is displayed when this code executes?',
+                options: [
+                    '20',
+                    '35',
+                    '50',
+                    '5101520'
+                ],
+                correct: 2,
+                explanation: 'The loop adds each element: 5 + 10 + 15 + 20 = 50.'
+            },
+            {
+                id: 7,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">animalList = ["cat", "dog", "bird"]\nanimalList.insert(1, "fish")\nprint(animalList)</div>What is displayed when this code executes?',
+                options: [
+                    '["fish", "cat", "dog", "bird"]',
+                    '["cat", "fish", "dog", "bird"]',
+                    '["cat", "dog", "fish", "bird"]',
+                    '["cat", "dog", "bird", "fish"]'
+                ],
+                correct: 1,
+                explanation: 'The .insert(1, "fish") method inserts "fish" at index 1, shifting "dog" and "bird" to the right.'
+            },
+            {
+                id: 8,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">scoreList = [85, 92, 78, 95]\nremovedScore = scoreList.pop()\nprint(removedScore)</div>What is displayed when this code executes?',
+                options: [
+                    '85',
+                    '78',
+                    '92',
+                    '95'
+                ],
+                correct: 3,
+                explanation: 'The .pop() method removes and returns the last element, which is 95.'
+            },
+            {
+                id: 9,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">wordList = ["computer", "science", "principles"]\nmyWord = wordList[1]\nmyChar = myWord[3]</div>What is the value of <code>myChar</code>?',
+                options: [
+                    '"c"',
+                    '"e"',
+                    '"i"',
+                    '"n"'
+                ],
+                correct: 1,
+                explanation: 'wordList[1] is "science", and "science"[3] is "e" (0-based indexing: s=0, c=1, i=2, e=3).'
+            },
+            {
+                id: 10,
+                difficulty: 'medium',
+                question: 'Which of the following code segments will create a list containing the numbers 2, 4, 6, 8, 10?',
+                options: [
+                    '<div class="option-code">numList = []\nfor i in range(5):\n    numList.append(i * 2)</div>',
+                    '<div class="option-code">numList = []\nfor i in range(1, 6):\n    numList.append(i * 2)</div>',
+                    '<div class="option-code">numList = []\nfor i in range(2, 11):\n    numList.append(i)</div>',
+                    '<div class="option-code">numList = []\nfor i in range(10):\n    numList.append(i + 2)</div>'
+                ],
+                correct: 1,
+                explanation: 'Option B iterates i from 1 to 5 and multiplies each by 2, creating [2, 4, 6, 8, 10].'
+            },
+            {
+                id: 11,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">dataList = [10, 20, 30]\ndataList.insert(0, 5)\ndataList.append(40)\ndataList.pop()\nprint(dataList)</div>What is displayed when this code executes?',
+                options: [
+                    '[10, 20, 30]',
+                    '[5, 10, 20, 30]',
+                    '[5, 10, 20, 30, 40]',
+                    '[10, 20, 30, 40]'
+                ],
+                correct: 1,
+                explanation: 'insert(0, 5) adds 5 at the beginning, append(40) adds 40 at the end, then pop() removes 40. Final result: [5, 10, 20, 30].'
+            },
+            {
+                id: 12,
+                difficulty: 'hard',
+                question: 'A programmer wants to count how many elements in a list are greater than 50. Consider the following code:<div class="code-block">valueList = [45, 62, 38, 71, 55, 49]\ncount = 0\nfor value in valueList:\n    if value > 50:\n        count = count + 1\nprint(count)</div>What is displayed?',
+                options: [
+                    '2',
+                    '3',
+                    '4',
+                    '6'
+                ],
+                correct: 1,
+                explanation: 'Three values are greater than 50: 62, 71, and 55.'
+            },
+            {
+                id: 13,
+                difficulty: 'hard',
+                question: 'Consider the following code segment intended to move the last element to the beginning of a list:<div class="code-block">itemList = ["fork", "spoon", "knife"]\nlastItem = itemList.pop()\nitemList.insert(0, lastItem)\nprint(itemList)</div>What is displayed?',
+                options: [
+                    '["fork", "spoon", "knife"]',
+                    '["knife", "fork", "spoon"]',
+                    '["spoon", "knife", "fork"]',
+                    'An error occurs'
+                ],
+                correct: 1,
+                explanation: 'pop() removes "knife" and returns it. insert(0, "knife") places it at the beginning.'
+            },
+            {
+                id: 14,
+                difficulty: 'hard',
+                question: 'Which of the following code segments correctly removes all occurrences of the value 0 from a list?',
+                options: [
+                    '<div class="option-code">for item in numList:\n    if item == 0:\n        numList.remove(item)</div>',
+                    '<div class="option-code">for i in range(len(numList)):\n    if numList[i] == 0:\n        numList.pop(i)</div>',
+                    '<div class="option-code">while 0 in numList:\n    numList.remove(0)</div>',
+                    '<div class="option-code">numList.pop(0)</div>'
+                ],
+                correct: 2,
+                explanation: 'Option C uses a while loop to repeatedly remove 0 until none remain. Options A and B can skip elements or cause index errors when modifying during iteration.'
+            },
+            {
+                id: 15,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">letterList = ["a", "b", "c", "d"]\nletterList.pop(1)\nletterList.insert(2, "x")\nprint(letterList)</div>What is displayed?',
+                options: [
+                    '["a", "c", "x", "d"]',
+                    '["a", "c", "d", "x"]',
+                    '["a", "x", "c", "d"]',
+                    '["x", "a", "c", "d"]'
+                ],
+                correct: 0,
+                explanation: 'pop(1) removes "b" → ["a", "c", "d"]. insert(2, "x") places "x" at index 2 → ["a", "c", "x", "d"].'
+            },
+            {
+                id: 16,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">numList = [3, 7, 2, 9, 5]\nif 7 in numList:\n    print("Found")\nelse:\n    print("Not found")</div>What is displayed?',
+                options: [
+                    '"Found"',
+                    '"Not found"',
+                    '7',
+                    'An error occurs'
+                ],
+                correct: 0,
+                explanation: 'The "in" operator checks if 7 exists in the list. Since it does, "Found" is displayed.'
+            },
+            {
+                id: 17,
+                difficulty: 'hard',
+                question: 'A programmer writes the following code to find the maximum value in a list:<div class="code-block">numberList = [15, 42, 8, 23, 37]\nmaxValue = 0\nfor num in numberList:\n    if num > maxValue:\n        maxValue = num\nprint(maxValue)</div>What is a problem with this algorithm?',
+                options: [
+                    'It works correctly for all positive numbers',
+                    'It will fail if all numbers in the list are negative',
+                    'It will fail if the list is empty',
+                    'Both B and C are correct'
+                ],
+                correct: 3,
+                explanation: 'Setting maxValue to 0 will fail for lists with all negative numbers (0 would be larger). It also fails on empty lists since maxValue stays 0.'
+            },
+            {
+                id: 18,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">original = ["cat", "dog", "bird"]\ncopy = original\ncopy.append("fish")\nprint(len(original))</div>What is displayed?',
+                options: [
+                    '3',
+                    '4',
+                    '0',
+                    'An error occurs'
+                ],
+                correct: 1,
+                explanation: 'The assignment copy = original creates a reference to the same list, not a copy. Appending to copy also modifies original, making its length 4.'
+            },
+            {
+                id: 19,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">gradeList = [88, 92, 76, 85]\ngradeList[2] = 95\nprint(gradeList[2])</div>What is displayed?',
+                options: [
+                    '76',
+                    '85',
+                    '92',
+                    '95'
+                ],
+                correct: 3,
+                explanation: 'The assignment gradeList[2] = 95 changes the value at index 2 from 76 to 95.'
+            },
+            {
+                id: 20,
+                difficulty: 'easy',
+                question: 'Which of the following is a benefit of using a list as a data abstraction in a program?',
+                options: [
+                    'Lists automatically sort data in alphabetical order',
+                    'Lists allow multiple related values to be stored with a single variable name',
+                    'Lists can only contain numeric data types',
+                    'Lists prevent the program from accessing elements'
+                ],
+                correct: 1,
+                explanation: 'Lists allow programmers to group related data together under one variable name, making code more organized and easier to manage.'
+            },
+            {
+                id: 21,
+                difficulty: 'hard',
+                question: 'A programmer wants to double all values in a list. Consider the following code segment:<div class="code-block">numberList = [2, 4, 6, 8]\nfor num in numberList:\n    num = num * 2\nprint(numberList)</div>What is displayed when this code executes?',
+                options: [
+                    '[2, 4, 6, 8]',
+                    '[4, 8, 12, 16]',
+                    '[4, 4, 4, 4]',
+                    'An error occurs'
+                ],
+                correct: 0,
+                explanation: 'The for-each loop creates a copy of each value. Modifying "num" does not change the original list. To modify list elements, you must use index-based access like: for i in range(len(numberList)): numberList[i] = numberList[i] * 2'
+            },
+            {
+                id: 22,
+                difficulty: 'hard',
+                question: 'Which of the following code segments will successfully double all values in a list?',
+                options: [
+                    '<div class="option-code">for value in myList:\n    value = value * 2</div>',
+                    '<div class="option-code">for i in range(len(myList)):\n    myList[i] = myList[i] * 2</div>',
+                    '<div class="option-code">for value in myList:\n    myList[value] = value * 2</div>',
+                    '<div class="option-code">for i in myList:\n    myList[i] = i * 2</div>'
+                ],
+                correct: 1,
+                explanation: 'Option B correctly uses index-based traversal to modify the actual list elements. Option A only modifies a copy. Options C and D would cause errors due to incorrect indexing.'
+            },
+            {
+                id: 23,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">scoreList = [85, 90, 78]\nfor i in range(len(scoreList)):\n    scoreList[i] = scoreList[i] + 5\nprint(scoreList)</div>What is displayed when this code executes?',
+                options: [
+                    '[85, 90, 78]',
+                    '[90, 95, 83]',
+                    '[85, 85, 85]',
+                    '[5, 5, 5]'
+                ],
+                correct: 1,
+                explanation: 'Using index-based traversal with range(len(scoreList)) allows us to modify the actual values in the list. Each score is increased by 5.'
+            },
+            {
+                id: 24,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">dataList = []\nwhile len(dataList) < 3:\n    userInput = input("Enter a value: ")\n    dataList.append(userInput)</div>What will happen when this code executes?',
+                options: [
+                    'The loop will run exactly 3 times and stop',
+                    'The loop will create an infinite loop',
+                    'The loop will cause an index out of bounds error',
+                    'The loop will not run at all'
+                ],
+                correct: 0,
+                explanation: 'This code works correctly. The loop continues while the list length is less than 3. Each append increases the length by 1, so after 3 iterations, len(dataList) equals 3 and the loop stops.'
+            },
+            {
+                id: 25,
+                difficulty: 'hard',
+                question: 'Consider the following code segment intended to stop when the list has 5 elements:<div class="code-block">numberList = []\nwhile len(numberList) < 5:\n    numberList.append(10)\n    numberList.append(20)</div>What is the problem with this code?',
+                options: [
+                    'The code works correctly and stops after 5 elements',
+                    'The code creates a list with 6 elements instead of 5',
+                    'The code creates an infinite loop',
+                    'The code causes an index out of bounds error'
+                ],
+                correct: 1,
+                explanation: 'Each iteration adds 2 elements. After 2 iterations: [10, 20, 10, 20] (length 4). The third iteration adds 2 more elements, making the length 6, which exceeds 5. The loop then stops, but the list has 6 elements, not 5.'
+            },
+            {
+                id: 26,
+                difficulty: 'medium',
+                question: 'Consider the following code segment:<div class="code-block">cityList = ["Boston", "Austin", "Denver"]\nprint(cityList[3])</div>What happens when this code executes?',
+                options: [
+                    '"Denver" is displayed',
+                    '"Boston" is displayed',
+                    'Nothing is displayed',
+                    'An index out of bounds error occurs'
+                ],
+                correct: 3,
+                explanation: 'The list has indices 0, 1, and 2. Attempting to access index 3 causes an IndexError because that index does not exist in the list.'
+            },
+            {
+                id: 27,
+                difficulty: 'medium',
+                question: 'A programmer writes the following code:<div class="code-block">itemList = ["pen", "paper", "eraser"]\nfor i in range(len(itemList) + 1):\n    print(itemList[i])</div>What is the problem with this code?',
+                options: [
+                    'The code works correctly',
+                    'The code will not print the last element',
+                    'The code will cause an index out of bounds error',
+                    'The code will print each item twice'
+                ],
+                correct: 2,
+                explanation: 'range(len(itemList) + 1) produces 0, 1, 2, 3. The list only has indices 0, 1, 2. When i equals 3, itemList[3] causes an IndexError. The correct code should use range(len(itemList)).'
+            },
+            {
+                id: 28,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">valueList = []\ni = 0\nwhile i < 5:\n    valueList.append(i)\nprint(valueList)</div>What will happen when this code executes?',
+                options: [
+                    'The code displays [0, 1, 2, 3, 4]',
+                    'The code displays [1, 2, 3, 4, 5]',
+                    'The code creates an infinite loop',
+                    'The code causes an index error'
+                ],
+                correct: 2,
+                explanation: 'The variable i is never incremented inside the loop, so i remains 0 forever. The condition i < 5 is always true, creating an infinite loop that continuously appends 0 to the list.'
+            },
+            {
+                id: 29,
+                difficulty: 'medium',
+                question: 'Which of the following best describes when an index out of bounds error occurs?',
+                options: [
+                    'When you try to access an element at an index that does not exist in the list',
+                    'When you append too many elements to a list',
+                    'When you use a for-each loop on a list',
+                    'When you modify a list while iterating through it'
+                ],
+                correct: 0,
+                explanation: 'An index out of bounds error (IndexError in Python) occurs when you try to access a list index that does not exist, such as accessing index 5 in a list with only 3 elements.'
+            },
+            {
+                id: 30,
+                difficulty: 'hard',
+                question: 'A programmer wants to replace all negative values in a list with 0. Consider two approaches:<div class="code-block">Approach A:\nfor num in numList:\n    if num < 0:\n        num = 0\n\nApproach B:\nfor i in range(len(numList)):\n    if numList[i] < 0:\n        numList[i] = 0</div>Which approach will successfully modify the list?',
+                options: [
+                    'Only Approach A will work',
+                    'Only Approach B will work',
+                    'Both approaches will work',
+                    'Neither approach will work'
+                ],
+                correct: 1,
+                explanation: 'Approach B correctly modifies the list using index-based access. Approach A uses a for-each loop that creates copies of values, so modifying "num" does not change the original list.'
+            },
+            {
+                id: 31,
+                difficulty: 'medium',
+                question: 'Consider the following code segment that searches for a student in one list and displays their score from another list:<div class="code-block">studentList = ["Alice", "Bob", "Carol", "David"]\nscoreList = [85, 92, 78, 88]\ntarget = "Carol"\nfor i in range(len(studentList)):\n    if studentList[i] == target:\n        print(scoreList[i])</div>What is displayed when this code executes?',
+                options: [
+                    '78',
+                    '92',
+                    '85',
+                    'Carol'
+                ],
+                correct: 0,
+                explanation: 'The code searches for "Carol" in studentList. Carol is at index 2, so it displays scoreList[2], which is 78.'
+            },
+            {
+                id: 32,
+                difficulty: 'hard',
+                question: 'A programmer wants to create a third list that contains the sum of corresponding elements from two lists. Consider the following code:<div class="code-block">list1 = [10, 20, 30]\nlist2 = [5, 15, 25]\nsumList = []\nfor i in range(len(list1)):\n    sumList.append(list1[i] + list2[i])\nprint(sumList)</div>What is displayed?',
+                options: [
+                    '[10, 20, 30, 5, 15, 25]',
+                    '[15, 35, 55]',
+                    '[50, 50, 50]',
+                    'An error occurs'
+                ],
+                correct: 1,
+                explanation: 'The code adds corresponding elements: 10+5=15, 20+15=35, 30+25=55, creating [15, 35, 55].'
+            },
+            {
+                id: 33,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">studentList = ["Dan", "Eva", "Frank"]\ngradeList = [88, 95]\nfor i in range(len(studentList)):\n    print(studentList[i] + ": " + str(gradeList[i]))</div>What will happen when this code executes?',
+                options: [
+                    'It displays all three students with their grades',
+                    'It displays only Dan and Eva with their grades',
+                    'It causes an index out of bounds error',
+                    'It displays all students with grade 0 for Frank'
+                ],
+                correct: 2,
+                explanation: 'The studentList has 3 elements but gradeList only has 2. When i reaches 2, gradeList[2] does not exist, causing an IndexError. When working with parallel lists, they must have the same length.'
+            },
+            {
+                id: 34,
+                difficulty: 'medium',
+                question: 'A programmer wants to find a product in a list and increase its price in another list. Consider the following code:<div class="code-block">productList = ["apple", "banana", "cherry"]\npriceList = [1.50, 0.75, 2.00]\ntarget = "banana"\nfor i in range(len(productList)):\n    if productList[i] == target:\n        priceList[i] = priceList[i] + 0.25\nprint(priceList)</div>What is displayed?',
+                options: [
+                    '[1.50, 0.75, 2.00]',
+                    '[1.50, 1.00, 2.00]',
+                    '[1.75, 1.00, 2.25]',
+                    '[1.75, 0.75, 2.00]'
+                ],
+                correct: 1,
+                explanation: 'The code finds "banana" at index 1 and increases priceList[1] from 0.75 to 1.00. The other prices remain unchanged.'
+            },
+            {
+                id: 35,
+                difficulty: 'hard',
+                question: 'Consider the following code segment:<div class="code-block">prices = [10.50, 20.00, 15.75]\nquantities = [2, 1, 3]\ntotal = 0\nfor i in range(len(prices)):\n    total = total + (prices[i] * quantities[i])\nprint(total)</div>What is displayed?',
+                options: [
+                    '46.25',
+                    '68.25',
+                    '88.25',
+                    '6'
+                ],
+                correct: 2,
+                explanation: 'The code calculates: (10.50 × 2) + (20.00 × 1) + (15.75 × 3) = 21.00 + 20.00 + 47.25 = 88.25.'
+            }
+        ];
+
+        let userAnswers = {};
+        let correctCount = 0;
+        let totalAttempted = 0;
+        let currentFilter = 'all';
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            const filteredQuestions = currentFilter === 'all' 
+                ? questions 
+                : questions.filter(q => q.difficulty === currentFilter);
+            
+            filteredQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card';
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <span class="question-number">Question ${q.id}</span>
+                        <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty.toUpperCase()}</span>
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options" id="options-${q.id}">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" data-question="${q.id}" data-option="${i}">
+                                <span class="option-letter">${String.fromCharCode(65 + i)})</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${q.id}">
+                        <div id="feedback-text-${q.id}"></div>
+                        <div class="explanation">${q.explanation}</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="check-${q.id}" onclick="checkAnswer(${q.id})" disabled>Check Answer</button>
+                        <button class="btn btn-secondary" id="next-${q.id}" onclick="scrollToNext(${q.id})" style="display: none;">Next Question</button>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+            
+            // Add click handlers to options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', function() {
+                    const questionId = parseInt(this.dataset.question);
+                    const optionIndex = parseInt(this.dataset.option);
+                    selectOption(questionId, optionIndex);
+                });
+            });
+        }
+
+        function selectOption(questionId, optionIndex) {
+            // Remove previous selections for this question
+            document.querySelectorAll(`[data-question="${questionId}"]`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Select current option
+            document.querySelector(`[data-question="${questionId}"][data-option="${optionIndex}"]`).classList.add('selected');
+            
+            // Enable check button
+            document.getElementById(`check-${questionId}`).disabled = false;
+            
+            // Store answer
+            userAnswers[questionId] = optionIndex;
+        }
+
+        function checkAnswer(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const userAnswer = userAnswers[questionId];
+            const isCorrect = userAnswer === question.correct;
+            
+            // Mark if not already attempted
+            if (document.getElementById(`feedback-${questionId}`).classList.contains('show') === false) {
+                totalAttempted++;
+                if (isCorrect) {
+                    correctCount++;
+                }
+            }
+            
+            // Show feedback
+            const feedbackDiv = document.getElementById(`feedback-${questionId}`);
+            const feedbackText = document.getElementById(`feedback-text-${questionId}`);
+            
+            feedbackDiv.classList.add('show');
+            feedbackDiv.classList.remove('correct', 'incorrect');
+            feedbackDiv.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            feedbackText.innerHTML = isCorrect 
+                ? '<strong>✓ Correct!</strong>' 
+                : `<strong>✗ Incorrect.</strong> The correct answer is ${String.fromCharCode(65 + question.correct)}.`;
+            
+            // Highlight options
+            document.querySelectorAll(`[data-question="${questionId}"]`).forEach(opt => {
+                const optIndex = parseInt(opt.dataset.option);
+                if (optIndex === question.correct) {
+                    opt.classList.add('correct');
+                } else if (optIndex === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Disable check button, show next button
+            document.getElementById(`check-${questionId}`).style.display = 'none';
+            document.getElementById(`next-${questionId}`).style.display = 'inline-block';
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('totalAttempted').textContent = totalAttempted;
+            
+            const percentage = totalAttempted > 0 ? Math.round((correctCount / totalAttempted) * 100) : 0;
+            document.getElementById('percentage').textContent = percentage + '%';
+            
+            const progressFill = document.getElementById('progressFill');
+            const progressPercent = (totalAttempted / 35) * 100;
+            progressFill.style.width = progressPercent + '%';
+            progressFill.textContent = `${totalAttempted} / 35`;
+        }
+
+        function scrollToNext(currentId) {
+            const nextId = currentId + 1;
+            if (nextId <= 35) {
+                const nextQuestion = document.querySelector(`[data-question="${nextId}"]`);
+                if (nextQuestion) {
+                    nextQuestion.closest('.question-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                alert(`Great job! You've completed all questions. Your score: ${correctCount}/${totalAttempted} (${Math.round((correctCount/totalAttempted)*100)}%)`);
+            }
+        }
+
+        function resetQuiz() {
+            if (confirm('Are you sure you want to reset all answers? This cannot be undone.')) {
+                userAnswers = {};
+                correctCount = 0;
+                totalAttempted = 0;
+                updateStats();
+                renderQuestions();
+            }
+        }
+
+        // Difficulty filter buttons
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.difficulty;
+                renderQuestions();
+            });
+        });
+
+        // Initialize
+        renderQuestions();
+    </script>
+</head>
+</html>
