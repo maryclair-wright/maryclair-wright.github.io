@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Create PT - Badge Scan Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            line-height: 1.6;
+            color: #002868;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #BF0A30;
+            color: white;
+            padding: 30px;
+            margin: -40px -40px 40px -40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            font-weight: 400;
+            opacity: 0.95;
+        }
+
+        h2 {
+            color: #002868;
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            border-bottom: 3px solid #BF0A30;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #BF0A30;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .scenario-box {
+            background-color: #6598E9;
+            color: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #002868;
+        }
+
+        .data-format {
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #6598E9;
+            font-family: 'Courier New', monospace;
+        }
+
+        .requirements-box {
+            background-color: #f9f9f9;
+            border: 2px solid #002868;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .requirements-box ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        .requirements-box li {
+            margin-bottom: 10px;
+        }
+
+        .extensions-box {
+            background-color: #fff9e6;
+            border: 2px solid #BF0A30;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .extensions-box ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        .extensions-box li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #BF0A30;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+        }
+
+        .note {
+            background-color: #A5A5A4;
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .important {
+            background-color: #BF0A30;
+            color: white;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        strong {
+            color: #BF0A30;
+            font-weight: 600;
+        }
+
+        .timeline {
+            background-color: #002868;
+            color: white;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .checkbox-list {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        .checkbox-list li:before {
+            content: "□ ";
+            color: #BF0A30;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mock Create PT</h1>
+            <div class="subtitle">Badge Scan Security Analysis</div>
+        </div>
+
+        <div class="scenario-box">
+            <h3 style="color: white; margin-top: 0;">Scenario: Physical Security Monitoring</h3>
+            <p>ASCTE uses badge scanning to monitor building access across campus. Your task is to analyze badge scan records to identify patterns and support security investigations. The security team needs tools to quickly filter and analyze scan data by role type.</p>
+        </div>
+
+        <div class="note">
+            <strong>Official Create PT Instructions:</strong> <a href="https://apcentral.collegeboard.org/media/pdf/ap-csp-student-task-directions.pdf" target="_blank" style="color: white; text-decoration: underline;">AP CSP Student Task Directions</a>
+        </div>
+
+        <h2>Understanding the Data</h2>
+        <p>Each badge scan is recorded as a string containing three pieces of information separated by commas:</p>
+        
+        <div class="data-format">
+            "F12345,08:30,Academic"<br>
+            "S54321,14:15,Residential"<br>
+            "G99887,09:00,Sentinel"
+        </div>
+
+        <h3>Data Components</h3>
+        <ul>
+            <li><strong>Badge ID:</strong> First character indicates role (F=Faculty, S=Student, G=Guest), followed by 5-digit number</li>
+            <li><strong>Time:</strong> 24-hour format (HH:MM)</li>
+            <li><strong>Building:</strong> Academic, Residential, or Sentinel</li>
+        </ul>
+
+        <div class="note">
+            <strong>Example:</strong> "F12345,08:30,Academic" means Faculty member with badge F12345 scanned into the Academic building at 8:30 AM
+        </div>
+
+        <h2>Your Task</h2>
+        <p>Write a Python program that analyzes badge scan data. Your program will be provided with a pre-loaded list of scan records.</p>
+
+        <div class="requirements-box">
+            <h3 style="color: #002868; margin-top: 0;">Base Requirements</h3>
+            <p>Your program must include ALL of the following:</p>
+            <ul class="checkbox-list">
+                <li>Prompt the user to input a role letter (F, S, or G)</li>
+                <li>Create a procedure that takes the role letter as a parameter</li>
+                <li>Inside your procedure, use iteration to examine each scan record</li>
+                <li>Use selection to identify scans matching the role</li>
+                <li>Display all matching scan records</li>
+                <li>Count and display the total number of scans for that role</li>
+            </ul>
+        </div>
+
+        <h2>Sample Data</h2>
+        <p>Copy this list into your program to get started:</p>
+        
+        <div class="code-block">
+badgeScans = [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"F12345,08:30,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"S54321,09:15,Residential",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"F12345,12:00,Sentinel",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"G99887,10:30,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"S67890,14:45,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"F23456,08:00,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"S54321,18:30,Residential",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"G11223,11:00,Sentinel",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"F12345,16:30,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"S77665,13:15,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"G99887,15:45,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"F34567,07:30,Sentinel",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"S54321,08:00,Academic",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"F23456,17:00,Residential",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"G44556,12:30,Sentinel"<br>
+]
+        </div>
+
+        <h2>Example Output</h2>
+        <p>Your output should look something like this (but can vary based on your design):</p>
+        
+        <div class="code-block">
+Enter role to analyze (F/S/G): S<br>
+<br>
+Scans for Students:<br>
+S54321,09:15,Residential<br>
+S67890,14:45,Academic<br>
+S54321,18:30,Residential<br>
+S77665,13:15,Academic<br>
+S54321,08:00,Academic<br>
+<br>
+Total scans: 5
+        </div>
+
+        <div class="extensions-box">
+            <h3 style="color: #BF0A30; margin-top: 0;">Extensions</h3>
+            <p>Complete <strong>at least ONE</strong> of the following:</p>
+            <ul>
+                <li><strong>Write to File:</strong> Save your analysis results to an output text file</li>
+                <li><strong>Multiple Parameters:</strong> Modify your procedure to accept both role AND building as parameters, filtering by both criteria</li>
+                <li><strong>Second Procedure:</strong> Create an additional procedure that performs different analysis (time-based filtering, specific badge lookup, building summary, etc.)</li>
+                <li><strong>Statistical Summary:</strong> Count and display how many scans occurred in each building for the selected role</li>
+                <li><strong>Time-Based Analysis:</strong> Add functionality to flag scans that occurred before or after specific times</li>
+                <li><strong>Error Handling:</strong> Validate user input and provide helpful error messages for invalid entries</li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>
