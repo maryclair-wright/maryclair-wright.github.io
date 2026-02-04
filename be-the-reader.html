@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP CSP FRQ Scoring - Group Submission</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Serif', serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-top: 8px solid #BF0A30;
+        }
+        
+        h1 {
+            color: #002868;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        h2 {
+            color: #002868;
+            font-size: 20px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #6598E9;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: #BF0A30;
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            color: #A5A5A4;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            color: #002868;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #A5A5A4;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 14px;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        select {
+            cursor: pointer;
+            background-color: white;
+        }
+        
+        .email-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .email-input {
+            margin-bottom: 0;
+        }
+        
+        .scoring-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #6598E9;
+        }
+        
+        .criteria-list {
+            background-color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .criteria-list ul {
+            margin-left: 20px;
+            color: #333;
+        }
+        
+        .criteria-list li {
+            margin: 5px 0;
+        }
+        
+        .score-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .score-input label {
+            margin: 0;
+            min-width: 120px;
+        }
+        
+        .score-input select {
+            width: 100px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        button {
+            background-color: #BF0A30;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'IBM Plex Serif', serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            background-color: #9a0826;
+        }
+        
+        button:disabled {
+            background-color: #A5A5A4;
+            cursor: not-allowed;
+        }
+        
+        .required {
+            color: #BF0A30;
+        }
+        
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        #successMessage {
+            display: none;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        #errorMessage {
+            display: none;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .timestamp {
+            color: #A5A5A4;
+            font-size: 12px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #002868;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #BF0A30;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Be the Reader</h1>
+        <p class="subtitle">AP CSP FRQ Scoring - ASCTE Cyber 101</p>
+        <p style="margin-bottom: 20px;">
+            <a href="https://apcentral.collegeboard.org/courses/ap-computer-science-principles/exam" 
+               target="_blank" 
+               style="color: #6598E9; text-decoration: none; font-weight: 600;">
+               AP Exam Scoring Details →
+            </a>
+        </p>
+        
+        <div id="successMessage">
+            Submission recorded successfully! Your responses have been saved.
+        </div>
+        
+        <div id="errorMessage">
+            There was an error submitting your form. Please try again or contact your teacher.
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Submitting your scores...</p>
+        </div>
+        
+        <form id="scoringForm">
+            <h2>Group Members</h2>
+            
+            <div class="form-group">
+                <label for="teamNumber">Team Number <span class="required">*</span></label>
+                <select id="teamNumber" name="teamNumber" required>
+                    <option value="">Select your team...</option>
+                    <option value="12">Team 12</option>
+                    <option value="13">Team 13</option>
+                    <option value="14">Team 14</option>
+                    <option value="15">Team 15</option>
+                    <option value="16">Team 16</option>
+                </select>
+            </div>
+            
+            <p class="helper-text" style="margin-bottom: 15px;">Enter email addresses for all group members (at least 2 required)</p>
+            
+            <div class="email-grid">
+                <div class="form-group email-input">
+                    <label for="email1">Member 1 Email <span class="required">*</span></label>
+                    <input type="email" id="email1" name="email1" required>
+                </div>
+                
+                <div class="form-group email-input">
+                    <label for="email2">Member 2 Email <span class="required">*</span></label>
+                    <input type="email" id="email2" name="email2" required>
+                </div>
+                
+                <div class="form-group email-input">
+                    <label for="email3">Member 3 Email</label>
+                    <input type="email" id="email3" name="email3">
+                </div>
+                
+                <div class="form-group email-input">
+                    <label for="email4">Member 4 Email</label>
+                    <input type="email" id="email4" name="email4">
+                </div>
+            </div>
+            
+            <h2>Program Requirements</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">The program code includes all required components</p>
+            <p style="margin-bottom: 15px;">
+                <a href="https://claude.ai/public/artifacts/b32e6516-3b1f-4f51-bb45-683f659a76f1" 
+                   target="_blank" 
+                   style="color: #6598E9; text-decoration: none; font-weight: 600; font-size: 14px;">
+                   View Complete Program Code →
+                </a>
+            </p>
+            
+            <div class="scoring-section">
+                <div class="criteria-list">
+                    <strong>Required Components:</strong>
+                    <ul>
+                        <li>A student-developed procedure</li>
+                        <li>The procedure must have a parameter</li>
+                        <li>A call to the student-developed procedure</li>
+                        <li>A list (or other collection type)</li>
+                        <li>A use of the list</li>
+                        <li>Selection</li>
+                        <li>Iteration</li>
+                    </ul>
+                </div>
+                
+                <div class="score-input">
+                    <label for="programReqScore">Score <span class="required">*</span><br><span style="font-weight: normal; font-size: 12px; color: #666;">(5% of AP Exam)</span></label>
+                    <select id="programReqScore" name="programReqScore" required>
+                        <option value="">Select...</option>
+                        <option value="0">0 - Not Met</option>
+                        <option value="1">1 - Met</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="programReqJustification">Justification <span class="required">*</span></label>
+                    <textarea id="programReqJustification" name="programReqJustification" required
+                              placeholder="Briefly explain why your group gave this score..."></textarea>
+                </div>
+            </div>
+            
+            <h2>Written Response 1: Program Design, Function, and Purpose</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Input and functionality description</p>
+            
+            <div class="scoring-section">
+                <div class="criteria-list">
+                    <strong>Required Elements:</strong>
+                    <ul>
+                        <li>Describes at least one valid input to the program</li>
+                        <li>Describes what the program does with the input</li>
+                    </ul>
+                </div>
+                
+                <div class="score-input">
+                    <label for="wr1Score">Score <span class="required">*</span><br><span style="font-weight: normal; font-size: 12px; color: #666;">(5% of AP Exam)</span></label>
+                    <select id="wr1Score" name="wr1Score" required>
+                        <option value="">Select...</option>
+                        <option value="0">0 - Not Met</option>
+                        <option value="1">1 - Met</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wr1Justification">Justification <span class="required">*</span></label>
+                    <textarea id="wr1Justification" name="wr1Justification" required
+                              placeholder="Briefly explain why your group gave this score..."></textarea>
+                </div>
+            </div>
+            
+            <h2>Written Response 2(a): Algorithm Development</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Iteration statement explanation</p>
+            
+            <div class="scoring-section">
+                <div class="criteria-list">
+                    <strong>Required Element:</strong>
+                    <ul>
+                        <li>Describes what is being accomplished by the code in the body of the iteration statement</li>
+                    </ul>
+                </div>
+                
+                <div class="score-input">
+                    <label for="wr2aScore">Score <span class="required">*</span><br><span style="font-weight: normal; font-size: 12px; color: #666;">(5% of AP Exam)</span></label>
+                    <select id="wr2aScore" name="wr2aScore" required>
+                        <option value="">Select...</option>
+                        <option value="0">0 - Not Met</option>
+                        <option value="1">1 - Met</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wr2aJustification">Justification <span class="required">*</span></label>
+                    <textarea id="wr2aJustification" name="wr2aJustification" required
+                              placeholder="Briefly explain why your group gave this score..."></textarea>
+                </div>
+            </div>
+            
+            <h2>Written Response 2(b): Errors and Testing</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Procedure calls and expected behavior</p>
+            
+            <div class="scoring-section">
+                <div class="criteria-list">
+                    <strong>Required Elements:</strong>
+                    <ul>
+                        <li>Includes two calls to the procedure, each causing a different code segment to execute</li>
+                        <li>Describes the expected behavior of each call</li>
+                        <li>OR explains why it is not possible for two calls to cause different code segments to execute</li>
+                    </ul>
+                </div>
+                
+                <div class="score-input">
+                    <label for="wr2bScore">Score <span class="required">*</span><br><span style="font-weight: normal; font-size: 12px; color: #666;">(5% of AP Exam)</span></label>
+                    <select id="wr2bScore" name="wr2bScore" required>
+                        <option value="">Select...</option>
+                        <option value="0">0 - Not Met</option>
+                        <option value="1">1 - Met</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wr2bJustification">Justification <span class="required">*</span></label>
+                    <textarea id="wr2bJustification" name="wr2bJustification" required
+                              placeholder="Briefly explain why your group gave this score..."></textarea>
+                </div>
+            </div>
+            
+            <h2>Written Response 2(c): Data and Procedural Abstraction</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Algorithm using checkValidity</p>
+            
+            <div class="scoring-section">
+                <div class="criteria-list">
+                    <strong>Required Element:</strong>
+                    <ul>
+                        <li>Explains in detailed steps an algorithm that uses checkValidity to check whether all elements in the list are considered valid</li>
+                    </ul>
+                </div>
+                
+                <div class="score-input">
+                    <label for="wr2cScore">Score <span class="required">*</span><br><span style="font-weight: normal; font-size: 12px; color: #666;">(5% of AP Exam)</span></label>
+                    <select id="wr2cScore" name="wr2cScore" required>
+                        <option value="">Select...</option>
+                        <option value="0">0 - Not Met</option>
+                        <option value="1">1 - Met</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wr2cJustification">Justification <span class="required">*</span></label>
+                    <textarea id="wr2cJustification" name="wr2cJustification" required
+                              placeholder="Briefly explain why your group gave this score..."></textarea>
+                </div>
+            </div>
+            
+            <h3>Total Score</h3>
+            <p style="font-size: 18px; color: #002868; margin: 15px 0;">
+                <strong>Overall: <span id="totalScore">0</span> / 5 points</strong>
+            </p>
+            <p style="font-size: 14px; color: #BF0A30; margin: 10px 0 0 0; font-weight: 600;">
+                These 5 points = 25% of the total AP CSP Exam score
+            </p>
+            
+            <button type="submit" id="submitBtn">Submit Group Scores</button>
+        </form>
+        
+        <p class="timestamp" id="timestamp"></p>
+    </div>
+
+    <script>
+        // Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAIUU4q1onpTSsl0pnOUBgW2wZKX39BiKO2oiBIXDnq7RA8oSQ45Go3Qoh7puXEnFw/exec';
+        
+        // Update total score as selections are made
+        const scoreSelects = document.querySelectorAll('select[id$="Score"]');
+        const totalScoreSpan = document.getElementById('totalScore');
+        
+        scoreSelects.forEach(select => {
+            select.addEventListener('change', updateTotalScore);
+        });
+        
+        function updateTotalScore() {
+            let total = 0;
+            scoreSelects.forEach(select => {
+                if (select.value) {
+                    total += parseInt(select.value);
+                }
+            });
+            totalScoreSpan.textContent = total;
+        }
+        
+        // Display current timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            const timestamp = now.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('timestamp').textContent = 'Generated: ' + timestamp;
+        }
+        
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        
+        // Form submission
+        document.getElementById('scoringForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Check if script URL is configured
+            if (SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+                alert('Please configure the Google Apps Script URL in the HTML file. See setup instructions.');
+                return;
+            }
+            
+            // Show loading, hide messages
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('submitBtn').disabled = true;
+            
+            const timestamp = new Date().toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            // Collect all emails
+            const emails = [];
+            for (let i = 1; i <= 4; i++) {
+                const email = document.getElementById('email' + i).value;
+                if (email) emails.push(email);
+            }
+            
+            // Collect form data
+            const formData = {
+                timestamp: timestamp,
+                teamNumber: document.getElementById('teamNumber').value,
+                emails: emails.join(', '),
+                programReqScore: document.getElementById('programReqScore').value,
+                programReqJustification: document.getElementById('programReqJustification').value,
+                wr1Score: document.getElementById('wr1Score').value,
+                wr1Justification: document.getElementById('wr1Justification').value,
+                wr2aScore: document.getElementById('wr2aScore').value,
+                wr2aJustification: document.getElementById('wr2aJustification').value,
+                wr2bScore: document.getElementById('wr2bScore').value,
+                wr2bJustification: document.getElementById('wr2bJustification').value,
+                wr2cScore: document.getElementById('wr2cScore').value,
+                wr2cJustification: document.getElementById('wr2cJustification').value,
+                totalScore: document.getElementById('totalScore').textContent
+            };
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                // With no-cors mode, we can't read the response, but if no error was thrown, assume success
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('scoringForm').reset();
+                updateTotalScore();
+                window.scrollTo(0, 0);
+                document.getElementById('submitBtn').disabled = false;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('submitBtn').disabled = false;
+                window.scrollTo(0, 0);
+            }
+        });
+    </script>
+</body>
+</html>
