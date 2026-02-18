@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Key Exchange — ASCTE Cyber 101</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #BF0A30;
+    --navy: #002868;
+    --lightblue: #6598E9;
+    --grey: #A5A5A4;
+    --lightgrey: #f2f2f2;
+    --white: #ffffff;
+    --eve-color: #2d2d2d;
+  }
+
+  body {
+    font-family: 'IBM Plex Serif', serif;
+    background: var(--lightgrey);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 5px solid var(--red);
+  }
+  header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  header span {
+    font-size: 0.85rem;
+    color: var(--lightblue);
+  }
+  .headerLink {
+    font-size: 0.82rem;
+    color: var(--lightblue);
+    text-decoration: none;
+    border-bottom: 1px solid var(--lightblue);
+    font-family: 'IBM Plex Serif', serif;
+    white-space: nowrap;
+  }
+  .headerLink:hover { color: var(--white); border-color: var(--white); }
+
+  /* STAGE */
+  #stage {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  /* STEP INDICATOR */
+  #stepIndicator {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .stepDot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--grey);
+    transition: background 0.3s;
+  }
+  .stepDot.active { background: var(--red); }
+  .stepDot.done { background: var(--navy); }
+
+  /* NETWORK DIAGRAM LAYOUT */
+  #network {
+    display: grid;
+    grid-template-columns: 1fr 220px 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Connection lines container */
+  #connectionLines {
+    grid-column: 1 / 4;
+    grid-row: 1 / 3;
+    position: relative;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* PUBLIC COLOR ROW */
+  #publicRow {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* ALICE + BOB */
+  #alicePanel {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    z-index: 5;
+  }
+  #bobPanel {
+    grid-column: 3;
+    grid-row: 2 / 4;
+    z-index: 5;
+  }
+
+  /* PANEL CARDS */
+  .panel {
+    background: var(--white);
+    border: 2px solid var(--navy);
+    border-radius: 4px;
+    padding: 16px;
+    margin: 8px;
+  }
+  .panel h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .panel .role {
+    font-size: 0.75rem;
+    color: var(--grey);
+    margin-bottom: 10px;
+  }
+  /* Alice and Bob step content flows horizontally */
+  #alicePanel .panel,
+  #bobPanel .panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .panelSteps {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .panelStep {
+    flex: 1;
+    min-width: 180px;
+    border-left: 2px solid var(--lightgrey);
+    padding-left: 12px;
+  }
+  .panelStep:first-child {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* EVE special styling */
+  #evePanel {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    z-index: 10;
+    padding-bottom: 0;
+  }
+  #evePanel .panel {
+    border-color: #cc0000;
+    background: #f0f0f0;
+    color: var(--navy);
+    margin: 8px;
+  }
+  .eveHorizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .eveLeft {
+    flex-shrink: 0;
+    min-width: 100px;
+  }
+  .eveLeft h2 { color: #cc0000; margin-bottom: 2px; }
+  .eveLeft .role { margin-bottom: 0; }
+  .eveMid {
+    flex: 1;
+    border-left: 2px solid rgba(204,0,0,0.2);
+    padding-left: 20px;
+  }
+  .eveRight {
+    flex: 1;
+    border-left: 2px solid rgba(204,0,0,0.2);
+    padding-left: 20px;
+  }
+  #evePanel .panel h2 { color: #cc0000; }
+  #evePanel .panel .role { color: var(--grey); }
+
+  /* COLOR PALETTE */
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+  .swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 2px solid rgba(0,0,0,0.12);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch.selected { border-color: var(--navy); transform: scale(1.08); }
+  .swatch.selected-eve { border-color: #ff4444; }
+
+  /* COLOR DISPLAY BOXES */
+  .colorRow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .colorBox {
+    width: 48px; height: 48px;
+    border-radius: 3px;
+    border: 2px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    transition: background-color 0.4s;
+  }
+  .colorBox.large {
+    width: 64px; height: 64px;
+  }
+  .colorLabel {
+    font-size: 0.72rem;
+    color: var(--grey);
+    line-height: 1.3;
+  }
+  #evePanel .colorLabel { color: var(--grey); }
+
+  /* PUBLIC COLOR DISPLAY */
+  #publicDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 2px solid var(--navy);
+    border-radius: 4px;
+    padding: 16px 32px;
+    position: relative;
+    z-index: 6;
+  }
+  #publicDisplay h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  #publicColorBox {
+    width: 72px; height: 72px;
+    border-radius: 4px;
+    border: 2px solid rgba(0,0,0,0.15);
+    transition: background-color 0.5s;
+  }
+
+  /* SHARED SECRET REVEAL */
+  #revealRow {
+    grid-column: 1 / 4;
+    grid-row: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 20px 8px;
+    margin-top: 8px;
+  }
+  .secretBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .secretBox .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--navy);
+  }
+  .secretColor {
+    width: 80px; height: 80px;
+    border-radius: 4px;
+    border: 3px solid var(--navy);
+    transition: background-color 0.5s;
+  }
+  #matchBadge {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  #matchBadge .matchText {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  #eveMismatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    display: none;
+  }
+  #eveMismatch .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #ff4444;
+  }
+  .eveSecretColor {
+    width: 80px; height: 80px;
+    border-radius: 4px;
+    border: 3px solid #ff4444;
+    transition: background-color 0.5s;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 3px;
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .btn:hover { background: var(--lightblue); }
+  .btn:active { transform: scale(0.97); }
+  .btn.red { background: var(--red); }
+  .btn.red:hover { background: #a00825; }
+  .btn:disabled { background: var(--grey); cursor: not-allowed; }
+
+  /* INSTRUCTION BOX */
+  #instruction {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 4px;
+    padding: 14px 24px;
+    margin-bottom: 20px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+  #instruction strong { color: var(--lightblue); }
+
+  /* ANIMATION CANVAS */
+  #animCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* TRANSMISSION LINE */
+  .txLine {
+    position: absolute;
+    height: 3px;
+    background: var(--lightblue);
+    top: 50%;
+    left: 0; right: 0;
+    z-index: 2;
+  }
+
+  /* EVE connector */
+  .eveConnector {
+    width: 3px;
+    background: #ff4444;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  /* Hidden sections */
+  .hidden { display: none !important; }
+
+  /* Reset link */
+  #resetBtn {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--grey);
+    margin: 12px 0;
+    opacity: 0.3;
+  }
+
+  .intercepted {
+    font-size: 0.7rem;
+    color: #cc0000;
+    margin-bottom: 4px;
+  }
+
+  /* Step labels on panels */
+  .stepLabel {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  /* Match result area */
+  #resultArea {
+    grid-column: 1 / 4;
+    grid-row: 4;
+    padding: 10px 8px 0;
+    z-index: 10;
+  }
+  .resultCard {
+    background: var(--white);
+    border: 2px solid var(--navy);
+    border-radius: 4px;
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    align-items: center;
+    gap: 0 16px;
+  }
+  .resultCard h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 6px;
+    white-space: nowrap;
+  }
+  .resultSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+  }
+  .resultSection.eve {
+    border-left: 2px solid rgba(204,0,0,0.2);
+    padding-left: 16px;
+  }
+  .resultLabel {
+    font-size: 0.72rem;
+    color: var(--grey);
+    white-space: nowrap;
+  }
+  .eveNote {
+    font-size: 0.68rem;
+    color: #cc0000;
+    text-align: center;
+    line-height: 1.4;
+    max-width: 160px;
+    margin-top: 2px;
+  }
+  .matchStatus {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .matchStatus.match { color: #007a2f; }
+  .matchStatus.nomatch { color: var(--red); }
+
+  /* RGB code display */
+  .rgbCode {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--navy);
+    margin-top: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  /* DECRYPTION SECTION */
+  .decryptCard {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-top: 16px;
+  }
+  .decryptCard .stepLabel {
+    background: var(--red);
+  }
+  .decryptIntro {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #ccd6f0;
+    margin-bottom: 18px;
+  }
+  .decryptIntro strong { color: var(--white); }
+  .decryptCiphertext {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .cipherLabel {
+    font-size: 0.72rem;
+    color: var(--lightblue);
+    display: block;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .cipherText {
+    font-size: 0.9rem;
+    color: var(--white);
+    word-break: break-all;
+    letter-spacing: 0.08em;
+  }
+  .decryptInputRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .rgbInputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rgbInputGroup label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lightblue);
+  }
+  .rgbInputGroup input {
+    width: 72px;
+    padding: 8px 10px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 3px;
+    background: rgba(255,255,255,0.08);
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .rgbInputGroup input:focus {
+    outline: none;
+    border-color: var(--lightblue);
+  }
+  #decryptResult {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 3px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  #decryptResult.success {
+    background: rgba(0, 180, 80, 0.15);
+    border: 2px solid #00b450;
+    color: #7fffc4;
+  }
+  #decryptResult.failure {
+    background: rgba(200, 0, 0, 0.15);
+    border: 2px solid #cc0000;
+    color: #ff9999;
+  }
+  #decryptResult .decryptedMessage {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--white);
+    margin-top: 6px;
+  }
+
+  .eveStrategyRow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .eveStratBtn {
+    font-size: 0.78rem;
+    padding: 7px 14px;
+    margin-top: 0;
+  }
+
+  /* Packet animation */
+  @keyframes packetMove {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="animCanvas"></canvas>
+
+<header>
+  <h1>ASCTE — Cyber 101: Public Key Exchange</h1>
+  <a href="https://www.khanacademy.org/computing/computer-science/cryptography/modern-crypt/v/diffie-hellman-key-exchange-part-1" target="_blank" class="headerLink">History of Diffie-Hellman</a>
+</header>
+
+<div id="stage">
+  <!-- Step dots -->
+  <div id="stepIndicator">
+    <div class="stepDot" id="dot0"></div>
+    <div class="stepDot" id="dot1"></div>
+    <div class="stepDot" id="dot2"></div>
+    <div class="stepDot" id="dot3"></div>
+    <div class="stepDot" id="dot4"></div>
+    <div class="stepDot" id="dot5"></div>
+    <div class="stepDot" id="dot6"></div>
+  </div>
+
+  <!-- Instruction -->
+  <div id="instruction">Choose a <strong>Public Color</strong> that everyone — including Eve — will see.</div>
+
+  <!-- Network -->
+  <div id="network">
+
+    <!-- EVE TOP CENTER -->
+    <div id="evePanel">
+      <div class="panel eveHorizontal">
+        <div class="eveLeft">
+          <h2>Eve</h2>
+          <p class="role">Eavesdropper — watching the channel</p>
+        </div>
+        <div class="eveMid">
+          <p class="intercepted">Everything Eve can see:</p>
+          <div class="colorRow" id="eveInterceptedColors">
+            <div>
+              <div class="colorBox" id="evePublicBox" style="background:#ccc"></div>
+              <div class="colorLabel">Public color</div>
+            </div>
+            <div id="eveAliceSwatch" class="hidden">
+              <div class="colorBox" id="eveAliceBox" style="background:#ccc"></div>
+              <div class="colorLabel">Alice's mixture</div>
+            </div>
+            <div id="eveBobSwatch" class="hidden">
+              <div class="colorBox" id="eveBobBox" style="background:#ccc"></div>
+              <div class="colorLabel">Bob's mixture</div>
+            </div>
+          </div>
+        </div>
+        <div class="eveRight hidden" id="eveMixPrompt">
+          <p class="intercepted">Eve has intercepted everything on the channel. Which should she mix?</p>
+          <div class="eveStrategyRow">
+            <button class="btn eveStratBtn" id="eveMixTwoBtn">Mix Alice's + Bob's Mixtures</button>
+            <button class="btn eveStratBtn" id="eveMixThreeBtn">Mix All Three (+ Public)</button>
+          </div>
+        </div>
+        <div class="eveRight hidden" id="eveCombineSection">
+          <p class="intercepted" id="eveStrategyLabel"></p>
+          <div class="colorRow" style="align-items:center; gap:8px;">
+            <div id="eveMixIngredients" class="colorRow" style="margin-bottom:0; gap:6px;"></div>
+            <div style="font-size:1.2rem; color:var(--grey); align-self:center;">=</div>
+            <div>
+              <div class="colorBox large" id="eveCombineBox" style="background:#ccc"></div>
+              <div class="colorLabel">Eve's result</div>
+            </div>
+          </div>
+          <p class="intercepted" style="margin-top:4px; font-size:0.65rem;">Close is not good enough — encryption requires an exact key.</p>
+          <button class="btn eveStratBtn" id="eveTryOtherBtn" style="margin-top:8px; background:#888;">Try the other strategy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUBLIC COLOR CENTER -->
+    <div id="publicRow">
+      <div id="publicDisplay">
+        <h3>Public Color</h3>
+        <div id="publicColorBox" style="background:#ccc;"></div>
+        <p style="font-size:0.72rem; color:var(--grey);">Visible to everyone</p>
+        <!-- Palette for step 0 -->
+        <div id="publicPaletteWrap">
+          <div class="palette" id="publicPalette"></div>
+          <button class="btn" id="confirmPublic" disabled>Confirm Public Color</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALICE LEFT -->
+    <div id="alicePanel">
+      <div class="panel">
+        <h2>Alice</h2>
+        <p class="role">Sender</p>
+        <div class="panelSteps">
+          <div class="panelStep hidden" id="aliceStep1">
+            <div class="stepLabel">Step 1 — Pick Secret</div>
+            <p style="font-size:0.8rem; margin-bottom:10px;">Pick your <strong>secret color</strong>. Do not show Bob.</p>
+            <div class="palette" id="alicePalette"></div>
+            <button class="btn" id="confirmAlice" disabled>Lock in My Secret</button>
+          </div>
+          <div class="panelStep hidden" id="aliceStepMix">
+            <div class="stepLabel">Step 2 — Mix</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox" id="alicePublicBox" style="background:#ccc"></div>
+                <div class="colorLabel">Public</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">+</div>
+              <div>
+                <div class="colorBox" id="aliceSecretBox" style="background:#ccc"></div>
+                <div class="colorLabel">Your Secret</div>
+              </div>
+            </div>
+            <button class="btn" id="mixAlice">Mix Colors</button>
+          </div>
+          <div class="panelStep hidden" id="aliceStep2">
+            <div class="stepLabel">Step 3 — Send to Bob</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox" id="alicePublicBox2" style="background:#ccc"></div>
+                <div class="colorLabel">Public</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">+</div>
+              <div>
+                <div class="colorBox" id="aliceSecretBox2" style="background:#ccc"></div>
+                <div class="colorLabel">Secret</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">=</div>
+              <div>
+                <div class="colorBox large" id="aliceMixBox" style="background:#ccc"></div>
+                <div class="colorLabel">Sent to Bob</div>
+              </div>
+            </div>
+            <button class="btn red" id="sendAlice">Send to Bob</button>
+          </div>
+          <div class="panelStep hidden" id="aliceStep3receive">
+            <div class="stepLabel">Step 6 — Bob's Mixture Arrived</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox large" id="aliceBobMixBox" style="background:#ccc"></div>
+                <div class="colorLabel">From Bob</div>
+              </div>
+            </div>
+            <button class="btn" id="mixAliceFinal">Mix with My Secret</button>
+          </div>
+          <div class="panelStep hidden" id="aliceStep3">
+            <div class="stepLabel">Step 7 — Shared Secret</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox" id="aliceBobMixBox2" style="background:#ccc"></div>
+                <div class="colorLabel">From Bob</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">+</div>
+              <div>
+                <div class="colorBox" id="aliceSecret2Box" style="background:#ccc"></div>
+                <div class="colorLabel">My Secret</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">=</div>
+              <div>
+                <div class="colorBox large" id="aliceFinalBox" style="background:#ccc"></div>
+                <div class="colorLabel">Shared Secret</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOB RIGHT -->
+    <div id="bobPanel">
+      <div class="panel">
+        <h2>Bob</h2>
+        <p class="role">Receiver</p>
+        <div class="panelSteps">
+          <div class="panelStep hidden" id="bobStep1">
+            <div class="stepLabel">Step 4 — Pick Secret</div>
+            <p style="font-size:0.8rem; margin-bottom:10px;">Pick your <strong>secret color</strong>. Do not show Alice.</p>
+            <div class="palette" id="bobPalette"></div>
+            <button class="btn" id="confirmBob" disabled>Lock in My Secret</button>
+          </div>
+          <div class="panelStep hidden" id="bobStepMix">
+            <div class="stepLabel">Step 5 — Mix</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox" id="bobPublicBox" style="background:#ccc"></div>
+                <div class="colorLabel">Public</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">+</div>
+              <div>
+                <div class="colorBox" id="bobSecretBox" style="background:#ccc"></div>
+                <div class="colorLabel">Your Secret</div>
+              </div>
+            </div>
+            <button class="btn" id="mixBob">Mix Colors</button>
+          </div>
+          <div class="panelStep hidden" id="bobStep2">
+            <div class="stepLabel">Step 6 — Send to Alice</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox" id="bobPublicBox2" style="background:#ccc"></div>
+                <div class="colorLabel">Public</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">+</div>
+              <div>
+                <div class="colorBox" id="bobSecretBox2" style="background:#ccc"></div>
+                <div class="colorLabel">Secret</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">=</div>
+              <div>
+                <div class="colorBox large" id="bobMixBox" style="background:#ccc"></div>
+                <div class="colorLabel">Sent to Alice</div>
+              </div>
+            </div>
+            <button class="btn red" id="sendBob">Send to Alice</button>
+          </div>
+          <div class="panelStep hidden" id="bobStep3receive">
+            <div class="stepLabel">Step 7 — Alice's Mixture Arrived</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox large" id="bobAliceReceivedBox" style="background:#ccc"></div>
+                <div class="colorLabel">From Alice</div>
+              </div>
+            </div>
+            <button class="btn" id="mixBobFinal">Mix with My Secret</button>
+          </div>
+          <div class="panelStep hidden" id="bobStep3">
+            <div class="stepLabel">Step 8 — Shared Secret</div>
+            <div class="colorRow">
+              <div>
+                <div class="colorBox" id="bobAliceMixBox" style="background:#ccc"></div>
+                <div class="colorLabel">From Alice</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">+</div>
+              <div>
+                <div class="colorBox" id="bobSecret2Box" style="background:#ccc"></div>
+                <div class="colorLabel">My Secret</div>
+              </div>
+              <div style="font-size:1.2rem; color:var(--grey); align-self:center;">=</div>
+              <div>
+                <div class="colorBox large" id="bobFinalBox" style="background:#ccc"></div>
+                <div class="colorLabel">Shared Secret</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT ROW -->
+    <div id="resultArea" class="hidden">
+      <div class="resultCard">
+        <div class="resultSection">
+          <h3>Alice's Shared Secret</h3>
+          <div class="colorBox large" id="resultAlice" style="background:#ccc"></div>
+          <div class="resultLabel">Derived by Alice</div>
+          <div class="rgbCode" id="rgbAlice"></div>
+        </div>
+        <div class="resultSection">
+          <div class="matchStatus" id="matchStatus"></div>
+        </div>
+        <div class="resultSection">
+          <h3>Bob's Shared Secret</h3>
+          <div class="colorBox large" id="resultBob" style="background:#ccc"></div>
+          <div class="resultLabel">Derived by Bob</div>
+          <div class="rgbCode" id="rgbBob"></div>
+        </div>
+        <div class="resultSection eve" id="eveResultSection">
+          <h3 style="color:#cc0000;">Eve's Attempt</h3>
+          <div class="colorBox large" id="resultEve" style="background:#ccc"></div>
+          <div class="resultLabel" style="color:#cc0000;">Not the same key</div>
+          <div class="rgbCode" id="rgbEve" style="color:#cc0000;"></div>
+          <div class="eveNote">Even if close, encryption requires an exact match.</div>
+        </div>
+      </div>
+
+      <!-- DECRYPTION STEP -->
+      <div id="decryptArea">
+        <div class="decryptCard">
+          <div class="stepLabel" style="margin-bottom:12px;">Final Step — Decrypt the Message</div>
+          <p class="decryptIntro">The color you derived is your <strong>shared secret key</strong>. The color itself is not the message — it is the key needed to unlock the message. Enter the exact RGB values of your shared secret below to decrypt it. Then try Eve's RGB values and see what happens.</p>
+          <div class="decryptCiphertext">
+            <span class="cipherLabel">Encrypted message:</span>
+            <span class="cipherText" id="cipherDisplay"></span>
+          </div>
+          <div class="decryptInputRow">
+            <div class="rgbInputGroup">
+              <label>R</label>
+              <input type="number" id="inputR" min="0" max="255" placeholder="0–255">
+            </div>
+            <div class="rgbInputGroup">
+              <label>G</label>
+              <input type="number" id="inputG" min="0" max="255" placeholder="0–255">
+            </div>
+            <div class="rgbInputGroup">
+              <label>B</label>
+              <input type="number" id="inputB" min="0" max="255" placeholder="0–255">
+            </div>
+            <button class="btn" id="decryptBtn">Decrypt</button>
+          </div>
+          <div id="decryptResult" class="hidden"></div>
+        </div>
+      </div>
+
+      <div id="resetBtn">
+        <button class="btn" onclick="resetAll()" style="margin-top:16px;">Start Over</button>
+      </div>
+    </div>
+
+  </div><!-- end #network -->
+</div><!-- end #stage -->
+
+<script>
+// ─── PALETTE ───────────────────────────────────────────────────────────────
+const COLORS = [
+  { name: "Crimson",    rgb: [220, 40,  70]  },
+  { name: "Tangerine",  rgb: [255, 140, 30]  },
+  { name: "Sunshine",   rgb: [255, 220, 30]  },
+  { name: "Lime",       rgb: [160, 220, 50]  },
+  { name: "Forest",     rgb: [34,  140, 70]  },
+  { name: "Teal",       rgb: [0,   190, 175] },
+  { name: "Sky",        rgb: [90,  195, 255] },
+  { name: "Ocean",      rgb: [30,  100, 210] },
+  { name: "Indigo",     rgb: [90,  30,  160] },
+  { name: "Violet",     rgb: [190, 80,  240] },
+  { name: "Hot Pink",   rgb: [255, 80,  180] },
+  { name: "White",      rgb: [255, 255, 255] },
+  { name: "Peach",      rgb: [255, 200, 160] },
+  { name: "Silver",     rgb: [200, 205, 210] },
+  { name: "Lavender",   rgb: [200, 180, 255] },
+  { name: "Midnight",   rgb: [25,  25,  80]  },
+];
+
+function rgbStr(rgb) { return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; }
+function mixColors(a, b) {
+  return [
+    Math.round((a[0] + b[0]) / 2),
+    Math.round((a[1] + b[1]) / 2),
+    Math.round((a[2] + b[2]) / 2)
+  ];
+}
+function colorsClose(a, b, threshold = 12) {
+  return Math.abs(a[0]-b[0]) + Math.abs(a[1]-b[1]) + Math.abs(a[2]-b[2]) < threshold;
+}
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let publicColor = null;
+let publicColorIndex = null;
+let aliceSecret = null;
+let aliceSecretIndex = null;
+let bobSecret = null;
+let aliceMix = null;
+let bobMix = null;
+let aliceFinal = null;
+let bobFinal = null;
+let step = 0;
+
+// ─── BUILD PALETTES ─────────────────────────────────────────────────────────
+function buildPalette(containerId, onSelect, confirmBtnId, excludeIndices = []) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  COLORS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'swatch';
+    sw.style.background = rgbStr(c.rgb);
+    sw.title = c.name;
+    if (excludeIndices.includes(i)) {
+      sw.style.opacity = '0.2';
+      sw.style.cursor = 'not-allowed';
+      sw.title = 'Already in use';
+    } else {
+      sw.addEventListener('click', () => {
+        container.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+        sw.classList.add('selected');
+        if (confirmBtnId) document.getElementById(confirmBtnId).disabled = false;
+        onSelect(i);
+      });
+    }
+    container.appendChild(sw);
+  });
+}
+
+// ─── STEP DOTS ──────────────────────────────────────────────────────────────
+function updateDots() {
+  for (let i = 0; i < 7; i++) {
+    const d = document.getElementById('dot' + i);
+    d.className = 'stepDot';
+    if (i < step) d.classList.add('done');
+    else if (i === step) d.classList.add('active');
+  }
+}
+
+// ─── INSTRUCTIONS ───────────────────────────────────────────────────────────
+const instructions = [
+  'Choose a <strong>Public Color</strong> that everyone — including Eve — will see.',
+  '<strong>Alice</strong>: Choose your secret color. Bob should look away. For best results, pick a color very different from the public color.',
+  '<strong>Alice</strong>: Mix your secret with the public color, then send it to Bob.',
+  '<strong>Bob</strong>: Alice sent you her mixture. Now choose your own secret color — pick one different from the public color and Alice\'s. Alice should look away.',
+  '<strong>Bob</strong>: Mix your secret with the public color, then send it to Alice.',
+  '<strong>Alice</strong>: Bob\'s mixture has arrived. Mix it with your secret to derive the shared secret.',
+  'Both Alice and Bob have arrived at the <strong>same shared secret</strong>. Now watch Eve try to recreate it with everything she has.',
+];
+function setInstruction(i) {
+  document.getElementById('instruction').innerHTML = instructions[i];
+}
+
+// ─── CANVAS ANIMATION ────────────────────────────────────────────────────────
+const canvas = document.getElementById('animCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+function getCenter(el) {
+  if (!el) return { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width/2, y: r.top + r.height/2 };
+}
+
+function animatePacket(fromEl, toEl, eveEl, color, onComplete) {
+  const from = getCenter(fromEl);
+  const to = getCenter(toEl);
+  const eve = getCenter(eveEl);
+  const mid = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
+
+  let t = 0;
+  const duration = 220;
+  const eveStart = 100;
+  let evePacket = null;
+  let eveT = 0;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const progress = t / duration;
+    const px = lerp(from.x, to.x, progress);
+    const py = lerp(from.y, to.y, progress);
+    const sz = 22;
+
+    // Main packet — square
+    ctx.fillStyle = rgbStr(color);
+    ctx.fillRect(px - sz/2, py - sz/2, sz, sz);
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(px - sz/2, py - sz/2, sz, sz);
+
+    // Eve packet branch
+    if (t >= eveStart) {
+      if (!evePacket) evePacket = { x: mid.x, y: mid.y };
+      eveT = Math.min((t - eveStart) / 80, 1);
+      const ex = lerp(mid.x, eve.x, eveT);
+      const ey = lerp(mid.y, eve.y, eveT);
+      const esz = 16;
+      ctx.fillStyle = rgbStr(color);
+      ctx.fillRect(ex - esz/2, ey - esz/2, esz, esz);
+      ctx.strokeStyle = '#ff4444';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(ex - esz/2, ey - esz/2, esz, esz);
+
+      // Line from mid to eve packet
+      ctx.beginPath();
+      ctx.moveTo(mid.x, mid.y);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = 'rgba(255,68,68,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4,4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    t++;
+    if (t <= duration) {
+      requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      onComplete();
+    }
+  }
+  requestAnimationFrame(draw);
+}
+
+// ─── SEQUENTIAL FLOW ─────────────────────────────────────────────────────────
+// Step 0: pick public color
+// Step 1: Alice picks secret → Step 2: Alice sends → animation → Eve gets copy, Bob receives
+// Step 3: Bob picks secret → Step 4: Bob sends → animation → Eve gets copy, Alice receives
+// Step 5: reveal shared secrets + Eve failure
+
+function init() {
+  step = 0;
+  updateDots();
+  setInstruction(0);
+
+  let tempPublic = null;
+  buildPalette('publicPalette', (i) => {
+    tempPublic = i;
+    document.getElementById('publicColorBox').style.background = rgbStr(COLORS[i].rgb);
+    document.getElementById('evePublicBox').style.background = rgbStr(COLORS[i].rgb);
+  }, 'confirmPublic', []);
+
+  document.getElementById('confirmPublic').addEventListener('click', () => {
+    if (tempPublic === null) return;
+    publicColorIndex = tempPublic;
+    publicColor = COLORS[tempPublic].rgb;
+    document.getElementById('publicPaletteWrap').classList.add('hidden');
+    step = 1;
+    updateDots();
+    setInstruction(1);
+    doAlicePickSecret();
+  });
+}
+
+// ── ALICE picks secret ────────────────────────────────────────────────────────
+function doAlicePickSecret() {
+  document.getElementById('aliceStep1').classList.remove('hidden');
+  let tempAlice = null;
+  buildPalette('alicePalette', (i) => { tempAlice = i; }, 'confirmAlice', [publicColorIndex]);
+
+  document.getElementById('confirmAlice').addEventListener('click', () => {
+    if (tempAlice === null) return;
+    aliceSecretIndex = tempAlice;
+    aliceSecret = COLORS[tempAlice].rgb;
+
+    document.getElementById('aliceStep1').classList.add('hidden');
+    document.getElementById('aliceStepMix').classList.remove('hidden');
+    document.getElementById('alicePublicBox').style.background = rgbStr(publicColor);
+    document.getElementById('aliceSecretBox').style.background = rgbStr(aliceSecret);
+
+    step = 2;
+    updateDots();
+    setInstruction(2);
+
+    document.getElementById('mixAlice').addEventListener('click', () => {
+      aliceMix = mixColors(publicColor, aliceSecret);
+      document.getElementById('aliceStepMix').classList.add('hidden');
+      document.getElementById('aliceStep2').classList.remove('hidden');
+      document.getElementById('alicePublicBox2').style.background = rgbStr(publicColor);
+      document.getElementById('aliceSecretBox2').style.background = rgbStr(aliceSecret);
+      document.getElementById('aliceMixBox').style.background = rgbStr(aliceMix);
+      doAliceSend();
+    });
+  });
+}
+
+// ── ALICE sends to Bob ────────────────────────────────────────────────────────
+function doAliceSend() {
+  const btn = document.getElementById('sendAlice');
+  const freshBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(freshBtn, btn);
+
+  document.getElementById('sendAlice').addEventListener('click', () => {
+    document.getElementById('sendAlice').disabled = true;
+    const snapAliceMix = aliceMix.slice();
+
+    animatePacket(
+      document.getElementById('aliceMixBox'),
+      document.getElementById('bobPanel'),
+      document.getElementById('evePanel'),
+      snapAliceMix,
+      () => {
+        // Eve intercepts
+        document.getElementById('eveAliceSwatch').classList.remove('hidden');
+        document.getElementById('eveAliceBox').style.background = rgbStr(snapAliceMix);
+
+        // Keep Alice's mix display visible — just remove the send button
+        document.getElementById('sendAlice').style.display = 'none';
+        step = 3;
+        updateDots();
+        setInstruction(3);
+        doBobPickSecret(snapAliceMix);
+      }
+    );
+  });
+}
+
+// ── BOB picks secret ──────────────────────────────────────────────────────────
+function doBobPickSecret(receivedFromAlice) {
+  document.getElementById('bobStep1').classList.remove('hidden');
+  let tempBob = null;
+  buildPalette('bobPalette', (i) => { tempBob = i; }, 'confirmBob', [publicColorIndex, aliceSecretIndex]);
+
+  document.getElementById('confirmBob').addEventListener('click', () => {
+    if (tempBob === null) return;
+    bobSecret = COLORS[tempBob].rgb;
+
+    document.getElementById('bobStep1').classList.add('hidden');
+    document.getElementById('bobStepMix').classList.remove('hidden');
+    document.getElementById('bobPublicBox').style.background = rgbStr(publicColor);
+    document.getElementById('bobSecretBox').style.background = rgbStr(bobSecret);
+
+    step = 4;
+    updateDots();
+    setInstruction(4);
+
+    document.getElementById('mixBob').addEventListener('click', () => {
+      bobMix = mixColors(publicColor, bobSecret);
+      document.getElementById('bobStepMix').classList.add('hidden');
+      document.getElementById('bobStep2').classList.remove('hidden');
+      document.getElementById('bobPublicBox2').style.background = rgbStr(publicColor);
+      document.getElementById('bobSecretBox2').style.background = rgbStr(bobSecret);
+      document.getElementById('bobMixBox').style.background = rgbStr(bobMix);
+
+      // Shared secret: mix all three together equally — order independent
+      // Use the average of all three colors so Alice and Bob always match
+      const sharedSecret = [
+        Math.round((publicColor[0] + aliceSecret[0] + bobSecret[0]) / 3),
+        Math.round((publicColor[1] + aliceSecret[1] + bobSecret[1]) / 3),
+        Math.round((publicColor[2] + aliceSecret[2] + bobSecret[2]) / 3)
+      ];
+      aliceFinal = sharedSecret.slice();
+      bobFinal = sharedSecret.slice();
+
+      doBobSend(receivedFromAlice);
+    });
+  });
+}
+
+// ── BOB sends to Alice ────────────────────────────────────────────────────────
+function doBobSend(receivedFromAlice) {
+  const btn = document.getElementById('sendBob');
+  const freshBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(freshBtn, btn);
+
+  document.getElementById('sendBob').addEventListener('click', () => {
+    document.getElementById('sendBob').disabled = true;
+    const snapBobMix = bobMix.slice();
+
+    animatePacket(
+      document.getElementById('bobMixBox'),
+      document.getElementById('alicePanel'),
+      document.getElementById('evePanel'),
+      snapBobMix,
+      () => {
+        // Eve intercepts
+        document.getElementById('eveBobSwatch').classList.remove('hidden');
+        document.getElementById('eveBobBox').style.background = rgbStr(snapBobMix);
+
+        // Keep Bob's send step visible — just hide the button
+        document.getElementById('sendBob').style.display = 'none';
+        document.getElementById('aliceStep3receive').classList.remove('hidden');
+        document.getElementById('aliceBobMixBox').style.background = rgbStr(snapBobMix);
+
+        // Bob receives Alice's mixture — show his receive panel too
+        document.getElementById('bobStep3receive').classList.remove('hidden');
+        document.getElementById('bobAliceReceivedBox').style.background = rgbStr(receivedFromAlice);
+
+        // Wire Bob's mix button
+        document.getElementById('mixBobFinal').addEventListener('click', () => {
+          document.getElementById('bobStep3receive').classList.add('hidden');
+          document.getElementById('bobStep3').classList.remove('hidden');
+          document.getElementById('bobAliceMixBox').style.background = rgbStr(receivedFromAlice);
+          document.getElementById('bobSecret2Box').style.background = rgbStr(bobSecret);
+          document.getElementById('bobFinalBox').style.background = rgbStr(bobFinal);
+        });
+
+        // Wire up Alice's mix button
+        document.getElementById('mixAliceFinal').addEventListener('click', () => {
+          document.getElementById('aliceStep3receive').classList.add('hidden');
+          document.getElementById('aliceStep3').classList.remove('hidden');
+          document.getElementById('aliceBobMixBox2').style.background = rgbStr(snapBobMix);
+          document.getElementById('aliceSecret2Box').style.background = rgbStr(aliceSecret);
+          document.getElementById('aliceFinalBox').style.background = rgbStr(aliceFinal);
+
+          // Show Eve's prompt
+          document.getElementById('eveMixPrompt').classList.remove('hidden');
+
+          function showEveResult(usePublic) {
+            document.getElementById('eveMixPrompt').classList.add('hidden');
+            document.getElementById('eveCombineSection').classList.remove('hidden');
+
+            // Build ingredients display
+            const ingredientsDiv = document.getElementById('eveMixIngredients');
+            ingredientsDiv.innerHTML = '';
+            const items = usePublic
+              ? [{ color: publicColor, label: 'Public' }, { color: aliceMix, label: "Alice's mix" }, { color: snapBobMix, label: "Bob's mix" }]
+              : [{ color: aliceMix, label: "Alice's mix" }, { color: snapBobMix, label: "Bob's mix" }];
+
+            items.forEach((item, idx) => {
+              if (idx > 0) {
+                const plus = document.createElement('div');
+                plus.style.cssText = 'font-size:1rem; color:var(--grey); align-self:center;';
+                plus.textContent = '+';
+                ingredientsDiv.appendChild(plus);
+              }
+              const wrap = document.createElement('div');
+              const box = document.createElement('div');
+              box.className = 'colorBox';
+              box.style.background = rgbStr(item.color);
+              const lbl = document.createElement('div');
+              lbl.className = 'colorLabel';
+              lbl.textContent = item.label;
+              wrap.appendChild(box);
+              wrap.appendChild(lbl);
+              ingredientsDiv.appendChild(wrap);
+            });
+
+            // Compute Eve's result
+            let eveRaw;
+            if (usePublic) {
+              // Average all three
+              eveRaw = [
+                Math.round((publicColor[0] + aliceMix[0] + snapBobMix[0]) / 3),
+                Math.round((publicColor[1] + aliceMix[1] + snapBobMix[1]) / 3),
+                Math.round((publicColor[2] + aliceMix[2] + snapBobMix[2]) / 3)
+              ];
+            } else {
+              eveRaw = mixColors(aliceMix, snapBobMix);
+            }
+            const eveAttempt = eveDistort(eveRaw, aliceFinal);
+            eveColor = eveAttempt.slice();
+
+            document.getElementById('eveStrategyLabel').textContent = usePublic
+              ? 'Mixing public + Alice\'s mixture + Bob\'s mixture:'
+              : 'Mixing Alice\'s mixture + Bob\'s mixture:';
+            document.getElementById('eveCombineBox').style.background = rgbStr(eveAttempt);
+
+            // Try other button
+            const otherBtn = document.getElementById('eveTryOtherBtn');
+            const freshOther = otherBtn.cloneNode(true);
+            otherBtn.parentNode.replaceChild(freshOther, otherBtn);
+            document.getElementById('eveTryOtherBtn').addEventListener('click', () => {
+              document.getElementById('eveCombineSection').classList.add('hidden');
+              document.getElementById('eveMixPrompt').classList.remove('hidden');
+            });
+
+            setTimeout(showResult, 400);
+          }
+
+          // Clone buttons to remove stale listeners
+          const twoBtn = document.getElementById('eveMixTwoBtn');
+          const threeBtn = document.getElementById('eveMixThreeBtn');
+          const freshTwo = twoBtn.cloneNode(true);
+          const freshThree = threeBtn.cloneNode(true);
+          twoBtn.parentNode.replaceChild(freshTwo, twoBtn);
+          threeBtn.parentNode.replaceChild(freshThree, threeBtn);
+
+          document.getElementById('eveMixTwoBtn').addEventListener('click', () => showEveResult(false));
+          document.getElementById('eveMixThreeBtn').addEventListener('click', () => showEveResult(true));
+
+          step = 5;
+          updateDots();
+          setInstruction(5);
+        });
+      }
+    );
+  });
+}
+
+// ─── SECRET MESSAGES ─────────────────────────────────────────────────────────
+const SECRET_MESSAGES = [
+  "Meet at the clock tower at midnight.",
+  "The launch code is DELTA-7-FOXTROT.",
+  "Transfer the files to the secure drive.",
+  "Operation Sunrise begins at 0600.",
+  "The package has been delivered safely.",
+  "Abort mission — the channel is compromised.",
+  "New rendezvous: Sector 9, Building C.",
+  "Asset confirmed. Proceed with extraction.",
+];
+
+function encryptMessage(msg, rgb) {
+  // Key is the three RGB bytes cycling: r, g, b, r, g, b...
+  let result = '';
+  for (let i = 0; i < msg.length; i++) {
+    const keyByte = rgb[i % 3];
+    result += (msg.charCodeAt(i) ^ keyByte).toString(16).padStart(2, '0').toUpperCase();
+  }
+  return result;
+}
+
+function decryptMessage(cipher, rgb) {
+  let result = '';
+  for (let i = 0; i < cipher.length; i += 2) {
+    const code = parseInt(cipher.slice(i, i + 2), 16);
+    const keyByte = rgb[(i / 2) % 3];
+    result += String.fromCharCode(code ^ keyByte);
+  }
+  return result;
+}
+
+// Shift Eve's result away from the real secret so it's visually distinct
+function eveDistort(eveRaw, realSecret) {
+  // Return the mathematically honest result — no distortion
+  return eveRaw.slice();
+}
+
+let currentCipher = '';
+let currentMessage = '';
+let eveColor = null;
+
+function showResult() {
+  currentMessage = SECRET_MESSAGES[Math.floor(Math.random() * SECRET_MESSAGES.length)];
+  currentCipher = encryptMessage(currentMessage, aliceFinal);
+
+  document.getElementById('resultArea').classList.remove('hidden');
+  document.getElementById('resultAlice').style.background = rgbStr(aliceFinal);
+  document.getElementById('resultBob').style.background = rgbStr(bobFinal);
+  document.getElementById('resultEve').style.background = eveColor ? rgbStr(eveColor) : '#ccc';
+
+  document.getElementById('rgbAlice').textContent = `RGB(${aliceFinal[0]}, ${aliceFinal[1]}, ${aliceFinal[2]})`;
+  document.getElementById('rgbBob').textContent   = `RGB(${bobFinal[0]}, ${bobFinal[1]}, ${bobFinal[2]})`;
+  if (eveColor) {
+    document.getElementById('rgbEve').textContent = `RGB(${eveColor[0]}, ${eveColor[1]}, ${eveColor[2]})`;
+  }
+  document.getElementById('resultBob').style.background = rgbStr(bobFinal);
+  document.getElementById('resultEve').style.background = eveColor ? rgbStr(eveColor) : '#ccc';
+
+  const status = document.getElementById('matchStatus');
+  status.textContent = 'Shared secret matches.';
+  status.className = 'matchStatus match';
+
+  // Show cipher text
+  document.getElementById('cipherDisplay').textContent = currentCipher;
+
+  // Wire up decrypt button
+  document.getElementById('decryptBtn').addEventListener('click', () => {
+    const r = parseInt(document.getElementById('inputR').value);
+    const g = parseInt(document.getElementById('inputG').value);
+    const b = parseInt(document.getElementById('inputB').value);
+
+    if (isNaN(r) || isNaN(g) || isNaN(b)) return;
+
+    const attempt = [r, g, b];
+    const decrypted = decryptMessage(currentCipher, attempt);
+    const resultDiv = document.getElementById('decryptResult');
+    resultDiv.classList.remove('hidden', 'success', 'failure');
+
+    const isCorrect = (r === aliceFinal[0] && g === aliceFinal[1] && b === aliceFinal[2]);
+
+    if (isCorrect) {
+      resultDiv.classList.add('success');
+      resultDiv.innerHTML = `Key accepted. Message decrypted successfully.<div class="decryptedMessage">"${decrypted}"</div>`;
+    } else {
+      resultDiv.classList.add('failure');
+      resultDiv.innerHTML = `Wrong key. Decryption failed — the output is gibberish.<div class="decryptedMessage" style="color:#ff9999; font-family:'IBM Plex Mono',monospace; font-size:0.82rem;">"${decrypted.substring(0, 40)}..."</div>`;
+    }
+  });
+}
+
+function resetAll() {
+  publicColor = null; aliceSecret = null; bobSecret = null;
+  aliceMix = null; bobMix = null; aliceFinal = null; bobFinal = null;
+  // Reload
+  location.reload();
+}
+
+// ─── START ───────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
