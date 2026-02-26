@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACCEL Phishing Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #0f1526;
+      --border: #1e2d4a;
+      --accent: #00d4ff;
+      --accent2: #ff3e6c;
+      --accent3: #39ff14;
+      --text: #c8d8f0;
+      --muted: #5a7090;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Barlow', sans-serif;
+    }
+
+```
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.07) 2px,
+    rgba(0,0,0,0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Grid background */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logo-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.logo-name {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.logo-name span {
+  color: var(--accent);
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent3);
+  border: 1px solid var(--accent3);
+  padding: 4px 12px;
+  letter-spacing: 2px;
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(57,255,20,0.3); }
+  50% { box-shadow: 0 0 8px 2px rgba(57,255,20,0.2); }
+}
+
+.hero {
+  padding: 64px 48px 48px;
+  max-width: 900px;
+}
+
+.hero-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent2);
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--accent2);
+}
+
+h1 {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+h1 .highlight {
+  color: var(--accent);
+  position: relative;
+}
+
+.hero-desc {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 580px;
+  margin-bottom: 40px;
+}
+
+.stat-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
+}
+
+.stat-num {
+  font-family: var(--mono);
+  font-size: 24px;
+  color: var(--accent);
+  display: block;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Main content */
+.content {
+  padding: 0 48px 80px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  max-width: 1100px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 32px;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.card.primary::before { background: var(--accent); }
+.card.danger::before { background: var(--accent2); }
+.card.success::before { background: var(--accent3); }
+
+.card-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+h2 {
+  font-weight: 800;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+
+p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+p:last-child { margin-bottom: 0; }
+
+.rule-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.rule-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.rule-list li .icon {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 20px;
+  margin-top: 2px;
+}
+
+.rule-list.no li .icon { color: var(--accent2); }
+
+/* Scoring sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+
+.score-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.score-desc {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.score-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent3);
+  white-space: nowrap;
+  border: 1px solid rgba(57,255,20,0.3);
+  padding: 2px 8px;
+}
+
+.score-val.bonus { color: var(--accent); border-color: rgba(0,212,255,0.3); }
+.score-val.special { color: var(--accent2); border-color: rgba(255,62,108,0.3); }
+
+/* Timeline */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.timeline-item:last-child { border-bottom: none; }
+
+.time-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  padding-top: 2px;
+}
+
+.time-desc {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.footer-text span { color: var(--accent); }
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--accent);
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+/* Glitch effect on title */
+@keyframes glitch {
+  0%, 90%, 100% { transform: translate(0); }
+  92% { transform: translate(-2px, 1px); }
+  94% { transform: translate(2px, -1px); }
+  96% { transform: translate(-1px, 0); }
+}
+
+h1 { animation: glitch 6s infinite; }
+
+@media (max-width: 768px) {
+  header, .hero, .content, footer { padding-left: 24px; padding-right: 24px; }
+  .content { grid-template-columns: 1fr; }
+}
+```
+
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+
+  <header>
+    <div class="logo-block">
+      <span class="logo-tag">Alabama School of Cyber Technology & Engineering</span>
+      <span class="logo-name">AC<span>C</span>EL</span>
+    </div>
+    <div class="badge">LIVE EXERCISE</div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-label">Social Engineering Lab</div>
+    <h1>Phishing<br><span class="highlight">Challenge</span><span class="cursor"></span></h1>
+    <p class="hero-desc">
+      You have learned how phishing works. Now it is your turn to try it. Write a fake email, send it to your assigned adult, and see if you can get them to write back.
+    </p>
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Adult per student</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">AM</span>
+        <span class="stat-label">Send your email</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">PM</span>
+        <span class="stat-label">Check your results</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+```
+<div class="main-col" style="display:flex;flex-direction:column;gap:24px;">
+
+  <!-- Mission -->
+  <div class="card primary">
+    <div class="card-label">Mission Brief</div>
+    <h2>What You Are Doing</h2>
+    <p>Write a fake email to your assigned adult on campus. Your job is to make it convincing enough that they actually write back. The more realistic it feels, the better your shot at winning.</p>
+    <p>Think about what makes people click or respond: a sense of urgency, something exciting, a question they feel like they have to answer. Use what you know.</p>
+  </div>
+
+  <!-- Rules in -->
+  <div class="card primary">
+    <div class="card-label">Requirements</div>
+    <h2>Your email needs to have</h2>
+    <ul class="rule-list">
+      <li><span class="icon">[+]</span> A believable reason for sending it -- something that makes sense</li>
+      <li><span class="icon">[+]</span> Something that makes the person want to write back</li>
+      <li><span class="icon">[+]</span> A subject line that makes them want to open it</li>
+      <li><span class="icon">[+]</span> Language that is appropriate for school</li>
+    </ul>
+  </div>
+
+  <!-- Rules out -->
+  <div class="card danger">
+    <div class="card-label">Hard Limits</div>
+    <h2>Your email cannot</h2>
+    <ul class="rule-list no">
+      <li><span class="icon">[x]</span> Ask for passwords, personal info, or anything private</li>
+      <li><span class="icon">[x]</span> Include anything inappropriate, mean, or embarrassing</li>
+      <li><span class="icon">[x]</span> Be sent to anyone other than your assigned adult</li>
+      <li><span class="icon">[x]</span> Use private things you know about the person to trick or embarrass them</li>
+    </ul>
+  </div>
+
+  <!-- Phishing Techniques -->
+  <div class="card primary">
+    <div class="card-label">Toolkit</div>
+    <h2>Tricks Phishers Use</h2>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">These are ideas to try, not a checklist. Pick the ones that fit your email and use them naturally. Need a sketchy link to drop in? <a href="https://www.youtube.com/watch?v=oHg5SJYRHA0" target="_blank" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13px;border-bottom:1px solid rgba(0,212,255,0.3);">this one</a> has never let anyone down.</p>
+    <ul class="rule-list">
+      <li><span class="icon">[!]</span> <div><strong style="color:#fff;">Make it feel urgent</strong> -- Act like something bad will happen if they do not respond fast. "Your account will be deleted tonight." People stop thinking carefully when they feel panicked.</div></li>
+      <li><span class="icon">[!]</span> <div><strong style="color:#fff;">Use a weird or generic greeting</strong> -- Real phishing emails often say things like "Dear Valued Customer" or get the name slightly wrong. It is a small thing most people ignore.</div></li>
+      <li><span class="icon">[!]</span> <div><strong style="color:#fff;">Promise something too good</strong> -- Tell them they won something, or that they have been selected for something special. Make it sound exciting but just believable enough.</div></li>
+      <li><span class="icon">[!]</span> <div><strong style="color:#fff;">Mention a random attachment</strong> -- Reference a file they did not ask for and would not expect. "See the attached form." "Your document is ready." Most people will be curious.</div></li>
+      <li><span class="icon">[!]</span> <div><strong style="color:#fff;">Throw in a typo on purpose</strong> -- A small spelling mistake can make an email look more human and less suspicious. Just do not overdo it.</div></li>
+      <li><span class="icon">[!]</span> <div><strong style="color:#fff;">Add a weird link or image</strong> -- Drop in a link or picture that does not quite fit -- a URL that looks almost right, or an image that has nothing to do with what you are talking about.</div></li>
+    </ul>
+  </div>
+
+  <!-- Timeline -->
+  <div class="card primary">
+    <div class="card-label">Timeline</div>
+    <h2>Today's Schedule</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="time-label">MORNING</span>
+        <span class="time-desc">Write and send your email to your assigned adult</span>
+      </div>
+      <div class="timeline-item">
+        <span class="time-label">MIDDAY</span>
+        <span class="time-desc">No more emails -- the window is closed</span>
+      </div>
+      <div class="timeline-item">
+        <span class="time-label">AFTERNOON</span>
+        <span class="time-desc">See how you did. Share results with the class and talk about what worked and what did not</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+  <div class="card success">
+    <div class="card-label">Scoring</div>
+    <h2>Point Structure</h2>
+    <div class="score-item">
+      <span class="score-desc">You wrote a solid phishing email with good tricks in it</span>
+      <span class="score-val">BASE</span>
+    </div>
+    <div class="score-item">
+      <span class="score-desc">Your adult actually writes back</span>
+      <span class="score-val bonus">+BONUS</span>
+    </div>
+    <div class="score-item">
+      <span class="score-desc">They answer a question or give you information in their reply</span>
+      <span class="score-val bonus">+BONUS</span>
+    </div>
+    <div class="score-item">
+      <span class="score-desc">You hid a Rick Roll in the email and they did not notice</span>
+      <span class="score-val special">+EXTRA</span>
+    </div>
+  </div>
+
+  <div class="card primary">
+    <div class="card-label">Remember</div>
+    <h2>Keep It Clean</h2>
+    <p style="font-size:14px;color:var(--muted);">The adults on campus know a phishing exercise is happening today. They agreed to take part. They just do not know who is sending it or when.</p>
+    <p style="font-size:14px;color:var(--muted);">This is a safe, supervised activity. The point is to show off your skills -- not to embarrass or upset anyone.</p>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <footer>
+    <span class="footer-text">ASCTE &mdash; <span>ACCEL Program</span> &mdash; Cyber 101</span>
+    <span class="footer-text">AUTHORIZED EXERCISE ONLY</span>
+  </footer>
+
+</body>
+</html>
