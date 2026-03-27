@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCTE AI Curriculum - March 2026 Pilot Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #002868;
+    --navy-mid: #002060;
+    --navy-dark: #001540;
+    --red: #BF0A30;
+    --red-light: #d41e42;
+    --light-blue: #6598E9;
+    --grey: #A5A5A4;
+    --white: #ffffff;
+    --text-muted: #9ab0d4;
+    --border: rgba(101,152,233,0.22);
+    --input-bg: rgba(255,255,255,0.07);
+    --input-border: rgba(255,255,255,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--navy-dark);
+    color: var(--white);
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 15% 0%, rgba(191,10,48,0.14) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 100%, rgba(101,152,233,0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  .header { margin-bottom: 52px; }
+
+  .header-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light-blue);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 2px;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 300;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--light-blue);
+  }
+
+  .header-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 520px;
+  }
+
+  .header-divider {
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), transparent);
+    margin: 24px 0 0;
+  }
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .question-block {
+    background: rgba(0,40,104,0.55);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    transition: border-color 0.2s;
+  }
+
+  .question-block:focus-within {
+    border-color: rgba(101,152,233,0.55);
+  }
+
+  .question-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light-blue);
+    margin-bottom: 10px;
+  }
+
+  .question-label {
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .question-hint {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .field-input:focus {
+    border-color: var(--light-blue);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .field-input::placeholder { color: rgba(154,176,212,0.6); }
+
+  /* Number input — narrower */
+  .field-input-narrow {
+    width: 140px;
+  }
+
+  /* Scale */
+  .scale-wrap {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .scale-option { display: none; }
+
+  .scale-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: var(--input-bg);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-muted);
+    user-select: none;
+    position: relative;
+  }
+
+  .scale-label .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy-dark);
+    border: 1px solid rgba(101,152,233,0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.45;
+    white-space: nowrap;
+    width: max-content;
+    max-width: 220px;
+    white-space: normal;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .scale-label .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(101,152,233,0.4);
+  }
+
+  .scale-label:hover .tooltip { display: block; }
+
+  .scale-label:hover {
+    border-color: var(--light-blue);
+    color: var(--light-blue);
+    background: rgba(101,152,233,0.1);
+  }
+
+  .scale-option:checked + .scale-label {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  .scale-option:checked + .scale-label .tooltip {
+    background: var(--navy-dark);
+    border-color: rgba(191,10,48,0.5);
+  }
+
+  .scale-anchors {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    width: 100%;
+  }
+
+  .field-textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.65;
+  }
+
+  .field-textarea:focus {
+    border-color: var(--light-blue);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .field-textarea::placeholder { color: rgba(154,176,212,0.6); }
+
+  .question-sub-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--light-blue);
+    margin: 22px 0 12px;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: var(--input-bg);
+    transition: border-color 0.15s;
+  }
+
+  .checkbox-item:hover { border-color: rgba(101,152,233,0.4); }
+  .checkbox-item input[type="checkbox"] { display: none; }
+
+  .checkbox-box {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .checkbox-item input:checked ~ .checkbox-box {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  .checkbox-item input:checked ~ .checkbox-box::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 9px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  .checkbox-content { display: flex; flex-direction: column; gap: 2px; }
+  .checkbox-text { font-family: 'IBM Plex Serif', serif; font-size: 14px; font-weight: 400; color: var(--white); }
+  .checkbox-desc { font-family: 'IBM Plex Serif', serif; font-size: 12px; font-style: italic; color: var(--text-muted); line-height: 1.45; }
+
+  .checkbox-item input:checked ~ .checkbox-content .checkbox-text { color: var(--light-blue); }
+
+  .other-input { display: none; margin-top: 10px; }
+  .other-input.visible { display: block; }
+
+  .llm-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .llm-option input[type="radio"] { display: none; }
+
+  .llm-btn {
+    display: inline-block;
+    padding: 10px 26px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: var(--input-bg);
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .llm-btn:hover {
+    border-color: var(--light-blue);
+    color: var(--light-blue);
+    background: rgba(101,152,233,0.08);
+  }
+
+  .llm-option input:checked + .llm-btn {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+  }
+
+  .submit-wrap { padding-top: 4px; }
+
+  .submit-btn {
+    background: var(--red);
+    color: var(--white);
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 40px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .submit-btn:hover { background: var(--red-light); transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .submit-note {
+    margin-top: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .submit-banner {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translate(-50%, -10px);
+    background: rgba(191, 10, 48, 0.95);
+    color: var(--white);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .submit-banner.visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .success-msg {
+    display: none;
+    background: rgba(0,40,104,0.7);
+    border: 1px solid rgba(101,152,233,0.4);
+    border-radius: 12px;
+    padding: 48px 32px;
+    text-align: center;
+  }
+
+  .success-msg.visible { display: block; }
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--red);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 24px;
+    color: white;
+  }
+
+  .success-msg h2 {
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .success-msg p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .error-msg {
+    display: none;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: rgba(191,10,48,0.15);
+    border: 1px solid rgba(191,10,48,0.4);
+    border-radius: 8px;
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 13px;
+    color: #f08080;
+    line-height: 1.5;
+  }
+
+  .error-msg.visible { display: block; }
+
+  @media (max-width: 500px) {
+    .page-wrap { padding: 40px 16px 60px; }
+    .question-block { padding: 22px 18px; }
+    .scale-label { width: 52px; height: 52px; font-size: 18px; }
+    .field-input-narrow { width: 100%; }
+  }
+
+  .pdf-btn {
+    background: transparent;
+    color: var(--light-blue);
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 14px;
+    font-weight: 400;
+    border: 1px solid rgba(101,152,233,0.4);
+    border-radius: 6px;
+    padding: 11px 22px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+    margin-top: 28px;
+  }
+  .pdf-btn:hover {
+    background: rgba(101,152,233,0.1);
+    border-color: var(--light-blue);
+  }
+</style>
+</head>
+<body>
+
+<div class="submit-banner" id="submitBanner" role="status" aria-live="polite">Feedback Submitted</div>
+
+<div class="page-wrap">
+
+  <header class="header">
+    <div class="header-eyebrow">Alabama School of Cyber Technology &amp; Engineering &mdash; March 2026 Pilot</div>
+    <h1>AI Curriculum<br><em>Pilot Feedback</em></h1>
+    <p class="header-sub">Your input shapes the next version of this curriculum. This takes about 5 minutes. There are no right answers.</p>
+    <div class="header-divider"></div>
+  </header>
+
+  <div id="formWrap">
+    <div class="form-section">
+
+      <!-- Email -->
+      <div class="question-block">
+        <div class="question-number">Your Information</div>
+        <label class="question-label" for="email">Email Address</label>
+        <p class="question-hint">Used only to follow up if we have questions about your responses.</p>
+        <input class="field-input" type="email" id="email" placeholder="you@school.edu" required>
+      </div>
+
+      <!-- Student Count -->
+      <div class="question-block">
+        <div class="question-number">Your Class</div>
+        <label class="question-label" for="studentCount">How many students are currently enrolled in your section of this course?</label>
+        <p class="question-hint">Enter the total number of students in the section where you piloted this curriculum.</p>
+        <input class="field-input field-input-narrow" type="number" id="studentCount" min="1" max="999" placeholder="e.g. 24">
+      </div>
+
+      <!-- Q1: Engagement -->
+      <div class="question-block">
+        <div class="question-number">Question 1 of 6</div>
+        <div class="question-label">On a scale of 1–5, how engaged are your students during AI lessons?</div>
+        <p class="question-hint">Hover over each number to see what it looks like. Choose the number that best describes what you typically observe.</p>
+        <div class="scale-wrap">
+          <input type="radio" name="engagement" id="eng1" value="1" class="scale-option">
+          <label for="eng1" class="scale-label">1<span class="tooltip">Students are passive or disengaged — minimal participation even when prompted.</span></label>
+
+          <input type="radio" name="engagement" id="eng2" value="2" class="scale-option">
+          <label for="eng2" class="scale-label">2<span class="tooltip">Occasional participation, but most students are off-task or disinterested.</span></label>
+
+          <input type="radio" name="engagement" id="eng3" value="3" class="scale-option">
+          <label for="eng3" class="scale-label">3<span class="tooltip">Mixed engagement — about half the class is actively participating.</span></label>
+
+          <input type="radio" name="engagement" id="eng4" value="4" class="scale-option">
+          <label for="eng4" class="scale-label">4<span class="tooltip">Most students are engaged and participating willingly.</span></label>
+
+          <input type="radio" name="engagement" id="eng5" value="5" class="scale-option">
+          <label for="eng5" class="scale-label">5<span class="tooltip">Students are asking questions beyond the lesson, making connections, and driving discussion.</span></label>
+
+          <div class="scale-anchors">
+            <span>Passive / disengaged</span>
+            <span>Driving discussion</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2: Remove a lesson -->
+      <div class="question-block">
+        <div class="question-number">Question 2 of 6</div>
+        <div class="question-label">If you could remove one lesson from the curriculum, which would it be?</div>
+        <p class="question-hint">Not because it was hard to teach — but because it didn't seem to work for students or didn't fit the flow of the course. Leave blank if nothing comes to mind.</p>
+        <textarea class="field-textarea" id="removeLesson" placeholder="Lesson name or number, and a brief note on why it didn't land..."></textarea>
+      </div>
+
+      <!-- Q3: PD + Support -->
+      <div class="question-block">
+        <div class="question-number">Question 3 of 6</div>
+        <div class="question-label">What additional training or professional development would help you feel more confident teaching this course?</div>
+        <p class="question-hint">Tell us in your own words, then check any types of support that would help.</p>
+        <textarea class="field-textarea" id="pdOpen" placeholder="What would make the biggest difference for you..."></textarea>
+
+        <div class="question-sub-label">What type of support would be most helpful?</div>
+        <div class="checkbox-group">
+
+          <label class="checkbox-item">
+            <input type="checkbox" name="support" value="In-person PD with other teachers">
+            <div class="checkbox-box"></div>
+            <div class="checkbox-content">
+              <span class="checkbox-text">In-person PD with other teachers</span>
+              <span class="checkbox-desc">Collaborative sessions where you can work through lessons alongside other educators teaching this same curriculum</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item">
+            <input type="checkbox" name="support" value="Digital lesson walkthroughs">
+            <div class="checkbox-box"></div>
+            <div class="checkbox-content">
+              <span class="checkbox-text">Digital lesson walkthroughs</span>
+              <span class="checkbox-desc">Recorded or written guides you can reference on your own time before or during a lesson</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item">
+            <input type="checkbox" name="support" value="Live Q&A sessions">
+            <div class="checkbox-box"></div>
+            <div class="checkbox-content">
+              <span class="checkbox-text">Live Q&amp;A sessions</span>
+              <span class="checkbox-desc">Real-time access to the curriculum team to ask questions as they come up</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item">
+            <input type="checkbox" name="support" value="Classroom management strategies for AI tools">
+            <div class="checkbox-box"></div>
+            <div class="checkbox-content">
+              <span class="checkbox-text">Classroom management for AI tools</span>
+              <span class="checkbox-desc">Strategies for keeping students on task and using AI tools productively in a class setting</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item">
+            <input type="checkbox" name="support" value="Other" id="otherCheck">
+            <div class="checkbox-box"></div>
+            <div class="checkbox-content">
+              <span class="checkbox-text">Other</span>
+            </div>
+          </label>
+
+        </div>
+        <div class="other-input" id="otherInputWrap">
+          <input class="field-input" type="text" id="otherText" placeholder="Please describe...">
+        </div>
+      </div>
+
+      <!-- Q4: Success story -->
+      <div class="question-block">
+        <div class="question-number">Question 4 of 6</div>
+        <div class="question-label">Describe a specific lesson or activity that really worked.</div>
+        <p class="question-hint">What happened, and why do you think it connected with students?</p>
+        <textarea class="field-textarea" id="successStory" placeholder="The lesson, what students did, and what made it click..."></textarea>
+      </div>
+
+      <!-- Q5: Topics to add -->
+      <div class="question-block">
+        <div class="question-number">Question 5 of 6</div>
+        <div class="question-label">Are there topics you feel should be added to the curriculum?</div>
+        <p class="question-hint">Anything that came up in class, that students asked about, or that feels missing from the current scope.</p>
+        <textarea class="field-textarea" id="topicsAdd" placeholder="Topics, ideas, or anything that felt absent..."></textarea>
+      </div>
+
+      <!-- Q6: LLM integration -->
+      <div class="question-block">
+        <div class="question-number">Question 6 of 6</div>
+        <div class="question-label">We are considering modifying existing activities to build in more structured student use of AI language models as a learning tool.</div>
+        <p class="question-hint">We are considering modifying existing activities so students interact more with lesson guidance through LLMs, with scoring tied to both the quality of their prompting and the results they produce. What is your reaction to that direction?</p>
+
+        <div class="question-sub-label">Do you support this approach?</div>
+        <div class="llm-options" id="llmOptions">
+          <label class="llm-option">
+            <input type="radio" name="llmSupport" value="Yes">
+            <span class="llm-btn">Yes</span>
+          </label>
+          <label class="llm-option">
+            <input type="radio" name="llmSupport" value="No">
+            <span class="llm-btn">No</span>
+          </label>
+          <label class="llm-option">
+            <input type="radio" name="llmSupport" value="Not sure">
+            <span class="llm-btn">Not sure</span>
+          </label>
+        </div>
+
+        <div class="question-sub-label" style="margin-top:22px;">Tell us more</div>
+        <textarea class="field-textarea" id="llmOpen" placeholder="Any concerns, conditions, or reasons behind your answer..."></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-wrap">
+        <button class="submit-btn" id="submitBtn" type="button" onclick="submitForm(event)">
+          Submit Feedback
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </button>
+        <p class="submit-note">Date and time of submission are recorded automatically.</p>
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="submit-note" id="submitStatus" style="display:none"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="success-msg" id="successMsg">
+    <div class="success-icon">&#10003;</div>
+    <h2>Thank you for your feedback.</h2>
+    <p>Your responses have been recorded. The ASCTE curriculum team will review all pilot feedback before the next revision cycle.</p>
+    <button class="pdf-btn" onclick="downloadPDF()">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
+      Download a copy of your responses
+    </button>
+
+    <a class="pdf-btn" href="index.html" style="text-decoration:none; justify-content:center; margin-left:12px;">
+      Back to Home
+    </a>
+  </div>
+
+</div>
+
+<script>
+  // ---- PASTE YOUR APPS SCRIPT URL HERE ----
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwa9s_oY2nx10zkVPt7jjPtYBKkfOmp50wi0P5LmM4rZ5SzddUgKPB3ZLKF0DqffO1X4g/exec';
+  // -----------------------------------------
+
+  document.getElementById('otherCheck').addEventListener('change', function() {
+    const wrap = document.getElementById('otherInputWrap');
+    wrap.classList.toggle('visible', this.checked);
+    if (!this.checked) document.getElementById('otherText').value = '';
+  });
+
+  async function submitForm(evt) {
+    if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
+
+    const btn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const statusMsg = document.getElementById('submitStatus');
+    errorMsg.classList.remove('visible');
+    if (statusMsg) {
+      statusMsg.style.display = 'block';
+      statusMsg.textContent = 'Submitting...';
+    }
+
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      showError('Form is not configured yet: missing Google Apps Script URL. Please paste the deployed Apps Script Web App URL into APPS_SCRIPT_URL.');
+      if (statusMsg) statusMsg.style.display = 'none';
+      return;
+    }
+
+    const email = document.getElementById('email').value.trim();
+    const studentCount = document.getElementById('studentCount').value.trim();
+    const engagementRadio = document.querySelector('input[name="engagement"]:checked');
+    const engagement = engagementRadio ? engagementRadio.value : '';
+    const removeLesson = document.getElementById('removeLesson').value.trim();
+    const pdOpen = document.getElementById('pdOpen').value.trim();
+
+    const supportChecked = Array.from(document.querySelectorAll('input[name="support"]:checked'))
+      .map(cb => cb.value === 'Other'
+        ? ('Other: ' + (document.getElementById('otherText').value.trim() || '(no detail)'))
+        : cb.value);
+    const supportTypes = supportChecked.join('; ');
+
+    const successStory = document.getElementById('successStory').value.trim();
+    const topicsAdd = document.getElementById('topicsAdd').value.trim();
+    const llmSupport = (document.querySelector('input[name="llmSupport"]:checked') || {}).value || '';
+    const llmOpen = document.getElementById('llmOpen').value.trim();
+
+    if (!email) { showError('Please enter your email address.'); if (statusMsg) statusMsg.style.display = 'none'; return; }
+    if (!engagement) { showError('Please select a student engagement rating (1–5).'); if (statusMsg) statusMsg.style.display = 'none'; return; }
+
+    const timestamp = new Date().toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+
+    const payload = { timestamp, email, studentCount, engagement, removeLesson, pdOpen, supportTypes, successStory, topicsAdd, llmSupport, llmOpen };
+
+    submittedData = { ...payload };
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      console.log('[feedbackform] Submitting to Apps Script:', APPS_SCRIPT_URL);
+
+      const bodyText = JSON.stringify(payload);
+
+      let dispatched = false;
+      try {
+        if (navigator.sendBeacon) {
+          const blob = new Blob([bodyText], { type: 'text/plain;charset=UTF-8' });
+          dispatched = navigator.sendBeacon(APPS_SCRIPT_URL, blob);
+          console.log('[feedbackform] sendBeacon dispatched:', dispatched);
+        }
+      } catch (_) {
+        dispatched = false;
+      }
+
+      if (!dispatched) {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: bodyText
+        });
+        console.log('[feedbackform] fetch dispatched (no-cors).');
+      }
+
+      if (statusMsg) statusMsg.textContent = 'Feedback submitted.';
+
+      const banner = document.getElementById('submitBanner');
+      if (banner) banner.classList.add('visible');
+
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('successMsg').classList.add('visible');
+
+    } catch (err) {
+      console.error('[feedbackform] Submit error:', err);
+      showError('Submit failed (network/CORS). Please try again. If it keeps happening, check that the Apps Script deployment access is set to allow submissions.');
+      if (statusMsg) statusMsg.style.display = 'none';
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Feedback <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>';
+    }
+  }
+
+  (function bindSubmit() {
+    const btn = document.getElementById('submitBtn');
+    if (!btn) return;
+    btn.addEventListener('click', (e) => submitForm(e));
+  })();
+
+  let submittedData = {};
+
+  function downloadPDF() {
+    const d = submittedData;
+    const items = [
+      { label: 'Students Enrolled', value: d.studentCount || '(no response)' },
+      { label: 'Q1 — Student Engagement', value: (d.engagement || '(no response)') + ' / 5' },
+      { label: 'Q2 — Lesson to Remove', value: d.removeLesson || '(no response)' },
+      { label: 'Q3 — PD: Open Response', value: d.pdOpen || '(no response)' },
+      { label: 'Q3 — Support Types Selected', value: d.supportTypes || '(none selected)' },
+      { label: 'Q4 — A Lesson That Worked', value: d.successStory || '(no response)' },
+      { label: 'Q5 — Topics to Add', value: d.topicsAdd || '(no response)' },
+      { label: 'Q6 — LLM Integration (Yes / No / Not sure)', value: d.llmSupport || '(no response)' },
+      { label: 'Q6 — LLM Comments', value: d.llmOpen || '(no response)' },
+    ];
+
+    const rows = items.map(i =>
+      '<div class="item"><div class="qlabel">' + i.label + '</div><div class="qval">' + (i.value || '').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div></div>'
+    ).join('');
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>ASCTE Feedback — My Responses</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap');
+  body { font-family: 'IBM Plex Serif', Georgia, serif; max-width: 660px; margin: 48px auto; padding: 0 24px; color: #111827; font-size: 14px; line-height: 1.7; }
+  .header-title { font-size: 24px; font-weight: 300; color: #002868; }
+  .header-sub { font-size: 22px; font-weight: 300; font-style: italic; color: #6598E9; margin-bottom: 6px; }
+  .meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #666; border-bottom: 2px solid #BF0A30; padding-bottom: 16px; margin-bottom: 28px; }
+  .item { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb; }
+  .item:last-child { border-bottom: none; }
+  .qlabel { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #BF0A30; margin-bottom: 5px; }
+  .qval { color: #111827; white-space: pre-wrap; font-weight: 300; }
+  @media print { body { margin: 24px; } }
+</sty${''}le></head><body>
+<div class="header-title">ASCTE AI Curriculum</div>
+<div class="header-sub">My Pilot Feedback Responses</div>
+<div class="meta">Submitted: ${d.timestamp || ''}  &nbsp;|&nbsp;  ${d.email || ''}</div>
+${rows}
+</bo${''}dy></ht${''}ml>`;
+
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => { win.focus(); win.print(); }, 500);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('visible');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+</script>
+</body>
+</html>
