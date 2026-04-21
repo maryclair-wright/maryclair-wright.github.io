@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding IDE — ASCTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:   #BF0A30;
+    --navy:  #002868;
+    --blue:  #6598E9;
+    --grey:  #A5A5A4;
+    --light: #f4f6fb;
+    --white: #ffffff;
+    --border: #dde3ef;
+    --text:  #1a2340;
+    --muted: #6b7a99;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--light);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-bottom: 3px solid var(--red);
+  }
+
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ascte-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    color: var(--white);
+    background: var(--red);
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+
+  .app-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+  }
+
+  .app-title span { color: var(--blue); }
+
+  .workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .editor-side {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--border);
+    background: var(--white);
+    flex-shrink: 0;
+  }
+
+  .panel-bar {
+    background: var(--navy);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .panel-bar-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    opacity: 0.9;
+  }
+
+  .btn-run {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 7px 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-run:hover { background: #a00828; transform: translateY(-1px); }
+  .btn-run:active { transform: translateY(0); }
+
+  textarea#code-input {
+    flex: 1;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 20px;
+    border: none;
+    outline: none;
+    resize: none;
+    color: var(--text);
+    background: var(--white);
+    tab-size: 2;
+  }
+
+  textarea#code-input::placeholder {
+    color: #b0b8cc;
+    font-style: italic;
+  }
+
+  textarea#code-input::-webkit-scrollbar { width: 6px; }
+  textarea#code-input::-webkit-scrollbar-track { background: var(--light); }
+  textarea#code-input::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .hint-bar {
+    background: #eef1f8;
+    border-top: 1px solid var(--border);
+    padding: 6px 16px;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .error-bar {
+    background: #fff0f2;
+    border-top: 2px solid var(--red);
+    padding: 7px 16px;
+    font-size: 12px;
+    color: var(--red);
+    font-family: 'Courier New', monospace;
+    display: none;
+    flex-shrink: 0;
+  }
+  .error-bar.visible { display: block; }
+
+  .preview-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+  }
+
+  .preview-bar {
+    background: var(--navy);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .preview-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--blue);
+    opacity: 0.4;
+  }
+  .preview-dot.active {
+    background: #4cdb8a;
+    opacity: 1;
+    box-shadow: 0 0 6px #4cdb8a;
+  }
+
+  iframe#preview {
+    flex: 1;
+    border: none;
+    background: #fff;
+    display: none;
+  }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: var(--light);
+  }
+
+  .empty-arrow {
+    font-size: 40px;
+    color: var(--blue);
+    opacity: 0.4;
+  }
+
+  .empty-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .empty-sub {
+    font-size: 13px;
+    color: #b0b8cc;
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    padding: 9px 20px;
+    border-radius: 6px;
+    border-left: 4px solid var(--red);
+    opacity: 0;
+    transition: all 0.2s;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <div class="ascte-badge">ASCTE</div>
+    <div class="app-title">Vibe Coding <span>IDE</span></div>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <div class="editor-side">
+    <div class="panel-bar">
+      <span class="panel-bar-label">PASTE YOUR CODE HERE</span>
+      <button class="btn-run" onclick="runCode()">&#9654; Run It</button>
+    </div>
+    <textarea id="code-input" spellcheck="false" placeholder="Paste the code your AI gave you right here, then click Run It."></textarea>
+    <div class="hint-bar">If something looks wrong, try changing your prompt and asking the AI again.</div>
+    <div class="error-bar" id="error-bar"></div>
+  </div>
+
+  <div class="preview-side">
+    <div class="preview-bar">
+      <div class="preview-dot" id="preview-dot"></div>
+      <span class="panel-bar-label" style="opacity:0.8;">YOUR RESULT</span>
+    </div>
+    <div class="empty-state" id="empty-state">
+      <div class="empty-arrow">&#8592;</div>
+      <div class="empty-title">Nothing here yet</div>
+      <div class="empty-sub">Paste your code on the left<br>and hit Run It</div>
+    </div>
+    <iframe id="preview"></iframe>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const codeInput  = document.getElementById('code-input');
+  const preview    = document.getElementById('preview');
+  const emptyState = document.getElementById('empty-state');
+  const errorBar   = document.getElementById('error-bar');
+  const toast      = document.getElementById('toast');
+  const dot        = document.getElementById('preview-dot');
+
+  function runCode() {
+    const code = codeInput.value.trim();
+    if (!code) { showToast('Paste some code first'); return; }
+
+    errorBar.classList.remove('visible');
+
+    try {
+      const doc = preview.contentDocument || preview.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+
+      emptyState.style.display = 'none';
+      preview.style.display = 'block';
+      dot.classList.add('active');
+
+      preview.contentWindow.onerror = function(msg, src, line) {
+        errorBar.textContent = 'Something went wrong on line ' + line + ': ' + msg;
+        errorBar.classList.add('visible');
+      };
+    } catch(e) {
+      errorBar.textContent = 'Error: ' + e.message;
+      errorBar.classList.add('visible');
+    }
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  codeInput.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      runCode();
+    }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = this.selectionStart;
+      this.value = this.value.substring(0, s) + '  ' + this.value.substring(this.selectionEnd);
+      this.selectionStart = this.selectionEnd = s + 2;
+    }
+  });
+</script>
+</body>
+</html>
