@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>color classifier</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #F4F1E8; --navy: #1B2A4A; --navy-mid: #2E4070; --navy-light: #3D5490;
+  --gray-light: #DDD9CE; --gray-mid: #A8A49A; --gray-text: #6B6760;
+  --warm-accent: #B86A2A; --warm-light: #F5E6D3;
+  --cool-accent: #2A5A8A; --cool-light: #D3E4F5;
+  --text-primary: #1B2A4A;
+  --term-bg: #0D1824; --term-border: #1A2D42; --term-dim: #2E4A62;
+  --term-mid: #3A6080; --term-bright: #D8EAF8; --term-blue: #5A9AD0;
+  --term-warm: #D4845A; --term-cool: #5A9AD0;
+}
+html, body { background: var(--cream); font-family: 'IBM Plex Sans', sans-serif; color: var(--text-primary); min-height: 100vh; }
+body { padding: 2rem; }
+.page-header { text-align: center; margin-bottom: 1.75rem; }
+.framing-line { font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--gray-text); letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+.framing-line .human { color: var(--warm-accent); font-weight: 500; }
+.framing-line .machine { color: var(--cool-accent); font-weight: 500; }
+.page-title { font-size: 28px; font-weight: 300; color: var(--navy); letter-spacing: -0.02em; }
+.moment-strip { background: var(--navy); color: #F4F1E8; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 10px 16px; border-radius: 6px; margin-bottom: 1.5rem; min-height: 38px; display: flex; align-items: center; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.02em; line-height: 1.6; }
+.moment-strip.visible { opacity: 1; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; align-items: stretch; }
+.left-col, .right-col { display: flex; flex-direction: column; }
+.col-header { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; margin-bottom: 1rem; display: inline-block; font-family: 'IBM Plex Mono', monospace; }
+.col-header.human { background: var(--warm-light); color: var(--warm-accent); }
+.col-header.machine { background: var(--term-bg); color: var(--term-mid); }
+.panel { background: white; border: 1px solid var(--gray-light); border-radius: 10px; padding: 1.25rem; flex: 1; }
+.picker-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+input[type=color] { width: 52px; height: 52px; border: 1px solid var(--gray-light); border-radius: 8px; cursor: pointer; padding: 2px; background: white; flex-shrink: 0; }
+.swatch-preview { width: 52px; height: 52px; border-radius: 8px; border: 1px solid var(--gray-light); flex-shrink: 0; transition: background 0.1s; }
+.rgb-inputs { display: flex; gap: 8px; flex: 1; }
+.rgb-group { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.rgb-group label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; color: var(--gray-text); letter-spacing: 0.08em; }
+.rgb-group input[type=number] { width: 100%; padding: 6px 8px; border: 1px solid var(--gray-light); border-radius: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--text-primary); background: var(--cream); }
+.rgb-group input[type=number]:focus { outline: none; border-color: var(--navy-light); }
+.add-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.add-btn { padding: 9px 12px; border-radius: 6px; border: 1px solid; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+.add-btn.warm { background: var(--warm-light); border-color: var(--warm-accent); color: var(--warm-accent); }
+.add-btn.warm:hover { background: #EDD4B8; }
+.add-btn.cool { background: var(--cool-light); border-color: var(--cool-accent); color: var(--cool-accent); }
+.add-btn.cool:hover { background: #BDD4EA; }
+.divider { border: none; border-top: 1px solid var(--gray-light); margin: 1rem 0; }
+.examples-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.examples-col-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.examples-col-label.warm { color: var(--warm-accent); }
+.examples-col-label.cool { color: var(--cool-accent); }
+.example-list { display: flex; flex-direction: column; gap: 4px; max-height: 160px; overflow-y: auto; }
+.example-item { display: flex; align-items: center; gap: 8px; }
+.ex-swatch { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--gray-light); flex-shrink: 0; }
+.ex-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gray-text); }
+.machine-panel { background: var(--term-bg); border-radius: 10px; display: flex; flex-direction: column; flex: 1; overflow: hidden; font-family: 'IBM Plex Mono', monospace; }
+.term-log { flex: 1; overflow-y: auto; padding: 0.75rem 1.25rem; display: flex; flex-direction: column-reverse; min-height: 200px; }
+.log-entry { padding: 6px 0; border-bottom: 1px solid #121F2E; }
+.log-entry:last-child { border-bottom: none; }
+.log-line { font-size: 11px; line-height: 1.75; display: block; }
+.log-prompt { color: var(--term-dim); }
+.log-cmd { color: #7AAFDF; }
+.log-out { color: #5A7A96; padding-left: 14px; }
+.lw { color: var(--term-warm); font-weight: 500; }
+.lc { color: var(--term-cool); font-weight: 500; }
+.lv { color: var(--term-bright); font-weight: 500; }
+.ld { color: var(--term-dim); }
+.full-width-section { background: white; border: 1px solid var(--gray-light); border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; }
+.train-row { display: flex; align-items: center; gap: 1rem; }
+.train-btn { padding: 10px 28px; background: var(--navy); color: #F4F1E8; border: none; border-radius: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s, opacity 0.15s; flex-shrink: 0; }
+.train-btn:disabled { opacity: 0.35; cursor: default; }
+.train-btn:not(:disabled):hover { background: var(--navy-mid); }
+.train-status { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--gray-text); }
+.test-section { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--gray-light); }
+.test-section.visible { display: block; }
+.test-section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-text); margin-bottom: 0.5rem; }
+.preset-hint { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gray-mid); margin-bottom: 0.75rem; }
+.test-row { display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 1rem; }
+.classify-btn { padding: 10px 24px; background: var(--navy-mid); color: #F4F1E8; border: none; border-radius: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+.classify-btn:hover { background: var(--navy-light); }
+.result-block { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--gray-light); }
+.result-block.visible { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.result-prediction { display: flex; align-items: center; gap: 12px; }
+.result-swatch { width: 48px; height: 48px; border-radius: 8px; border: 1px solid var(--gray-light); flex-shrink: 0; }
+.result-label-text { font-size: 26px; font-weight: 300; color: var(--navy); letter-spacing: -0.02em; }
+.result-conf { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--gray-text); margin-top: 2px; }
+.result-explain { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gray-text); margin-top: 6px; line-height: 1.6; }
+.result-math-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-text); margin-bottom: 8px; }
+.math-table { width: 100%; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border-collapse: collapse; }
+.math-table td { padding: 4px 0; }
+.math-table td:first-child { color: var(--gray-text); width: 20px; }
+.math-table td:nth-child(2) { color: var(--text-primary); font-weight: 500; padding-left: 8px; }
+.next-color-wrap { margin-top: 1rem; }
+.next-color-btn { padding: 7px 16px; background: transparent; border: 1px solid var(--navy); border-radius: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--navy); cursor: pointer; transition: all 0.15s; }
+.next-color-btn:hover { background: var(--navy); color: #F4F1E8; }
+.page-footer { text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gray-mid); margin-top: 2rem; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="framing-line">
+    <span class="human">you see color</span> &nbsp;/&nbsp; <span class="machine">it sees three numbers</span>
+  </div>
+  <div class="page-title">color classifier</div>
+</div>
+
+<div class="moment-strip" id="momentStrip"></div>
+
+<div class="two-col">
+  <div class="left-col">
+    <span class="col-header human">what you see</span>
+    <div class="panel">
+      <div class="picker-row">
+        <input type="color" id="colorPicker" value="#E8703A">
+        <div class="rgb-inputs">
+          <div class="rgb-group"><label>R</label><input type="number" id="rVal" min="0" max="255" value="232"></div>
+          <div class="rgb-group"><label>G</label><input type="number" id="gVal" min="0" max="255" value="112"></div>
+          <div class="rgb-group"><label>B</label><input type="number" id="bVal" min="0" max="255" value="58"></div>
+        </div>
+        <div class="swatch-preview" id="swatchPreview" style="background:rgb(232,112,58);"></div>
+      </div>
+      <div class="add-buttons">
+        <button class="add-btn warm" onclick="addExample('warm')">+ warm</button>
+        <button class="add-btn cool" onclick="addExample('cool')">+ cool</button>
+      </div>
+      <hr class="divider">
+      <div class="examples-cols">
+        <div>
+          <div class="examples-col-label warm">warm <span id="warmCount" style="font-weight:300;">0</span></div>
+          <div class="example-list" id="warmList"></div>
+        </div>
+        <div>
+          <div class="examples-col-label cool">cool <span id="coolCount" style="font-weight:300;">0</span></div>
+          <div class="example-list" id="coolList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-col">
+    <span class="col-header machine">what the model sees</span>
+    <div class="machine-panel">
+      <div class="term-log" id="termLog">
+        <div class="log-entry">
+          <span class="log-line log-out"><span class="ld">-- waiting for input --</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="full-width-section">
+  <div class="train-row">
+    <button class="train-btn" id="trainBtn" onclick="trainModel()" disabled>train</button>
+    <span class="train-status" id="trainStatus">add at least 3 warm and 3 cool examples to begin</span>
+  </div>
+  <div class="test-section" id="testSection">
+    <div class="test-section-label">test a color</div>
+    <div class="preset-hint" id="presetHint">try these in order</div>
+    <div class="test-row">
+      <input type="color" id="testPicker" value="#DC501E">
+      <div class="rgb-inputs">
+        <div class="rgb-group"><label>R</label><input type="number" id="tR" min="0" max="255" value="220"></div>
+        <div class="rgb-group"><label>G</label><input type="number" id="tG" min="0" max="255" value="80"></div>
+        <div class="rgb-group"><label>B</label><input type="number" id="tB" min="0" max="255" value="30"></div>
+      </div>
+      <button class="classify-btn" onclick="classifyColor()">classify</button>
+    </div>
+    <div class="result-block" id="resultBlock">
+      <div>
+        <div class="result-prediction">
+          <div class="result-swatch" id="resultSwatch"></div>
+          <div>
+            <div class="result-label-text" id="resultLabel"></div>
+            <div class="result-conf" id="resultConf"></div>
+            <div class="result-explain" id="resultExplain"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="result-math-label">what the model received</div>
+        <table class="math-table">
+          <tr><td>R</td><td id="mR"></td></tr>
+          <tr><td>G</td><td id="mG"></td></tr>
+          <tr><td>B</td><td id="mB"></td></tr>
+        </table>
+        <div class="next-color-wrap" id="nextColorWrap" style="display:none;">
+          <button class="next-color-btn" id="nextColorBtn">next color &#8594;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-footer">
+  no if-else statements were written &nbsp;&nbsp;/&nbsp;&nbsp; no rules were defined &nbsp;&nbsp;/&nbsp;&nbsp; runs entirely in your browser
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ml5@0.12.2/dist/ml5.min.js"></script>
+<script>
+
+var examples = { warm: [], cool: [] };
+var classifier = null;
+var trained = false;
+var firstClassification = true;
+var presetIndex = 0;
+var PRESETS = [
+  { r: 220, g: 80,  b: 30,  label: 'clearly warm' },
+  { r: 40,  g: 100, b: 210, label: 'clearly cool' },
+  { r: 130, g: 110, b: 95,  label: 'ambiguous' }
+];
+
+function clamp(v) { return Math.min(255, Math.max(0, parseInt(v) || 0)); }
+
+function getRGB() {
+  return {
+    r: clamp(document.getElementById('rVal').value),
+    g: clamp(document.getElementById('gVal').value),
+    b: clamp(document.getElementById('bVal').value)
+  };
+}
+
+function updatePreview() {
+  var rgb = getRGB();
+  document.getElementById('swatchPreview').style.background = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
+  document.getElementById('colorPicker').value = '#' + [rgb.r, rgb.g, rgb.b].map(function(v) { return v.toString(16).padStart(2,'0'); }).join('');
+}
+
+document.getElementById('colorPicker').addEventListener('input', function() {
+  var h = this.value;
+  var r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16);
+  document.getElementById('rVal').value = r;
+  document.getElementById('gVal').value = g;
+  document.getElementById('bVal').value = b;
+  document.getElementById('swatchPreview').style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+});
+
+['rVal','gVal','bVal'].forEach(function(id) { document.getElementById(id).addEventListener('input', updatePreview); });
+
+document.getElementById('testPicker').addEventListener('input', function() {
+  var h = this.value;
+  document.getElementById('tR').value = parseInt(h.slice(1,3),16);
+  document.getElementById('tG').value = parseInt(h.slice(3,5),16);
+  document.getElementById('tB').value = parseInt(h.slice(5,7),16);
+});
+
+['tR','tG','tB'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', function() {
+    var r = clamp(document.getElementById('tR').value);
+    var g = clamp(document.getElementById('tG').value);
+    var b = clamp(document.getElementById('tB').value);
+    document.getElementById('testPicker').value = '#' + [r,g,b].map(function(v){ return v.toString(16).padStart(2,'0'); }).join('');
+  });
+});
+
+document.getElementById('nextColorBtn').addEventListener('click', function() {
+  presetIndex++;
+  if (presetIndex !== PRESETS.length) {
+    loadPreset(presetIndex);
+  } else {
+    document.getElementById('presetHint').textContent = 'now try your own';
+    document.getElementById('nextColorWrap').style.display = 'none';
+    document.getElementById('resultBlock').classList.remove('visible');
+    document.getElementById('nextColorBtn').textContent = 'next color →';
+  }
+});
+
+function loadPreset(index) {
+  if (index === PRESETS.length) return;
+  var p = PRESETS[index];
+  document.getElementById('tR').value = p.r;
+  document.getElementById('tG').value = p.g;
+  document.getElementById('tB').value = p.b;
+  document.getElementById('testPicker').value = '#' + [p.r, p.g, p.b].map(function(v){ return v.toString(16).padStart(2,'0'); }).join('');
+  document.getElementById('resultBlock').classList.remove('visible');
+  document.getElementById('nextColorWrap').style.display = 'none';
+  var label = PRESETS[index].label;
+  var isLast = (index === PRESETS.length - 1);
+  var hint = isLast ? ('color 3 of 3: ' + label + ' -- what will it do?') : ('color ' + (index+1) + ' of 3: ' + label);
+  document.getElementById('presetHint').textContent = hint;
+}
+
+function showMoment(text) {
+  var strip = document.getElementById('momentStrip');
+  strip.textContent = text;
+  strip.classList.add('visible');
+}
+
+function logEntry(html) {
+  var log = document.getElementById('termLog');
+  var entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = html;
+  log.insertBefore(entry, log.firstChild);
+}
+
+function addExample(cat) {
+  var rgb = getRGB();
+  examples[cat].push(rgb);
+  var total = examples.warm.length + examples.cool.length;
+  if (total === 1) {
+    showMoment('you just taught it that ' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ' is ' + cat + '. it stored three numbers.');
+  } else {
+    showMoment('you taught it that ' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ' is ' + cat + '. ' + total + ' examples total.');
+  }
+  var catClass = cat === 'warm' ? 'lw' : 'lc';
+  logEntry(
+    '<span class="log-line log-prompt">RUN store_example <span class="log-cmd">[' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ']</span></span>' +
+    '<span class="log-line log-out">label: <span class="' + catClass + '">' + cat + '</span></span>' +
+    '<span class="log-line log-out">example <span class="lv">#' + total + '</span> <span class="ld">saved to training set</span></span>'
+  );
+  renderExamples(cat);
+  checkTrainReady();
+}
+
+function renderExamples(cat) {
+  document.getElementById(cat + 'Count').textContent = examples[cat].length;
+  document.getElementById(cat + 'List').innerHTML = examples[cat].slice().reverse().slice(0,8).map(function(ex) {
+    return '<div class="example-item"><div class="ex-swatch" style="background:rgb(' + ex.r + ',' + ex.g + ',' + ex.b + ');"></div><span class="ex-label">' + ex.r + ', ' + ex.g + ', ' + ex.b + '</span></div>';
+  }).join('');
+}
+
+function checkTrainReady() {
+  var w = examples.warm.length, c = examples.cool.length;
+  var ready = (w > 2) && (c > 2);
+  document.getElementById('trainBtn').disabled = !ready;
+  if (!ready) {
+    var parts = [];
+    if ((3 - w) > 0) parts.push((3-w) + ' more warm');
+    if ((3 - c) > 0) parts.push((3-c) + ' more cool');
+    document.getElementById('trainStatus').textContent = 'need ' + parts.join(' and ');
+  } else if (!trained) {
+    document.getElementById('trainStatus').textContent = 'ready to train';
+  }
+}
+
+function calcAverages() {
+  function avg(arr, ch) { return Math.round(arr.reduce(function(s,x){ return s + x[ch]; }, 0) / arr.length); }
+  return {
+    warm: { r: avg(examples.warm,'r'), g: avg(examples.warm,'g'), b: avg(examples.warm,'b') },
+    cool: { r: avg(examples.cool,'r'), g: avg(examples.cool,'g'), b: avg(examples.cool,'b') }
+  };
+}
+
+function trainModel() {
+  document.getElementById('trainStatus').textContent = 'training...';
+  document.getElementById('trainBtn').disabled = true;
+  trained = false;
+  logEntry(
+    '<span class="log-line log-prompt">RUN train_model</span>' +
+    '<span class="log-line log-out"><span class="ld">loading examples into network...</span></span>' +
+    '<span class="log-line log-out"><span class="ld">adjusting weights...</span></span>'
+  );
+  classifier = ml5.neuralNetwork({ task: 'classification', debug: false });
+  examples.warm.forEach(function(ex) { classifier.addData([ex.r/255, ex.g/255, ex.b/255], ['warm']); });
+  examples.cool.forEach(function(ex) { classifier.addData([ex.r/255, ex.g/255, ex.b/255], ['cool']); });
+  classifier.normalizeData();
+  classifier.train({ epochs: 100 }, function() {
+    trained = true;
+    var total = examples.warm.length + examples.cool.length;
+    var avgs = calcAverages();
+    document.getElementById('trainStatus').textContent = 'trained on ' + total + ' examples';
+    document.getElementById('trainBtn').disabled = false;
+    document.getElementById('trainBtn').textContent = 'retrain';
+    document.getElementById('testSection').classList.add('visible');
+    presetIndex = 0;
+    loadPreset(0);
+    logEntry(
+      '<span class="log-line log-prompt">RUN training_complete</span>' +
+      '<span class="log-line log-out">examples processed: <span class="lv">' + total + '</span></span>' +
+      '<span class="log-line log-out"><span class="ld">no rules written. no if-else. patterns learned.</span></span>' +
+      '<span class="log-line log-out">avg warm: <span class="lw">R:' + avgs.warm.r + ' G:' + avgs.warm.g + ' B:' + avgs.warm.b + '</span></span>' +
+      '<span class="log-line log-out">avg cool: <span class="lc">R:' + avgs.cool.r + ' G:' + avgs.cool.g + ' B:' + avgs.cool.b + '</span></span>'
+    );
+    showMoment('the model adjusted its internal weights based on your examples. no rules. no if-else. it found patterns in the numbers you gave it.');
+  });
+}
+
+function classifyColor() {
+  if (!trained || !classifier) return;
+  var r = clamp(document.getElementById('tR').value);
+  var g = clamp(document.getElementById('tG').value);
+  var b = clamp(document.getElementById('tB').value);
+  classifier.classify([r/255, g/255, b/255], function(err, results) {
+    if (err || !results) return;
+    var top = results[0];
+    var conf = Math.round(top.confidence * 100);
+    var avgs = calcAverages();
+    var dw = Math.round(Math.sqrt(Math.pow(r-avgs.warm.r,2) + Math.pow(g-avgs.warm.g,2) + Math.pow(b-avgs.warm.b,2)));
+    var dc = Math.round(Math.sqrt(Math.pow(r-avgs.cool.r,2) + Math.pow(g-avgs.cool.g,2) + Math.pow(b-avgs.cool.b,2)));
+    var closer = top.label;
+    var further = top.label === 'warm' ? 'cool' : 'warm';
+    var closerDist = top.label === 'warm' ? dw : dc;
+    var furtherDist = top.label === 'warm' ? dc : dw;
+    document.getElementById('resultSwatch').style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+    document.getElementById('resultLabel').textContent = top.label;
+    document.getElementById('resultLabel').style.color = top.label === 'warm' ? 'var(--warm-accent)' : 'var(--cool-accent)';
+    document.getElementById('resultConf').textContent = conf + '% confidence';
+    document.getElementById('resultExplain').textContent = '[' + r + ', ' + g + ', ' + b + '] was ' + closerDist + ' units from your ' + closer + ' avg and ' + furtherDist + ' units from your ' + further + ' avg. closer to ' + closer + '.';
+    document.getElementById('mR').textContent = r;
+    document.getElementById('mG').textContent = g;
+    document.getElementById('mB').textContent = b;
+    document.getElementById('resultBlock').classList.add('visible');
+    var catClass = top.label === 'warm' ? 'lw' : 'lc';
+    logEntry(
+      '<span class="log-line log-prompt">RUN classify [' + r + ', ' + g + ', ' + b + ']</span>' +
+      '<span class="log-line log-out">result: <span class="' + catClass + '">' + top.label + '</span> <span class="ld">(' + conf + '%)</span></span>' +
+      '<span class="log-line log-out">dist to warm: <span class="lw">' + dw + '</span>  dist to cool: <span class="lc">' + dc + '</span></span>'
+    );
+    if (presetIndex !== PRESETS.length - 1) {
+      document.getElementById('nextColorWrap').style.display = 'block';
+    } else if (presetIndex === PRESETS.length - 1) {
+      document.getElementById('nextColorWrap').style.display = 'block';
+      document.getElementById('nextColorBtn').textContent = 'try your own →';
+    }
+    if (firstClassification) {
+      firstClassification = false;
+      showMoment("it didn't see a color. it saw " + r + ', ' + g + ', ' + b + " -- and measured how far those numbers were from each category's average.");
+    }
+  });
+}
+
+</script>
+</body>
+</html>

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASCTE Cyber 101 Tools</title>
-    <!-- IBM Plex Serif font import -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -35,18 +34,23 @@
         .button:hover {
             background-color: #00194a;
         }
-        .python-button-row .button {
-            background-color: rgb(101, 152, 233);
+        .navy { background-color: #002868; }
+        .navy:hover { background-color: #00194a; }
+
+        .light-blue { background-color: #6598E9; }
+        .light-blue:hover { background-color: #4177b7; }
+
+        .gray { background-color: #6c757d; }
+        .gray:hover { background-color: #565e64; }
+
+        .orange { background-color: #ff6b35; }
+        .orange:hover { background-color: #e55a2b; }
+
+        h2 {
+            margin-top: 50px;
+            color: #002868;
         }
-        .python-button-row .button:hover {
-            background-color: #4177b7;
-        }
-        .accel-button-row .button {
-            background-color: #ff6b35;
-        }
-        .accel-button-row .button:hover {
-            background-color: #e55a2b;
-        }
+
         footer {
             margin-top: 60px;
             color: #555;
@@ -55,70 +59,73 @@
     </style>
 </head>
 <body>
-    <h1>ASCTE Cyber 101 Tools</h1>
+    <h1>Mrs. Wright: Cyber 101, AP CSP, AI, PD Tools</h1>
     <p>Select a tool to get started:</p>
+
+    <h2>Cyber 101 Practice Sets</h2>
     <div class="button-row">
-        <a href="be-the-reader.html" class="button">Be The Reader</a>
-        <a href="binaryToDecimal.html" class="button">Binary To Decimal</a>
-        <a href="hexConversion.html" class="button">Hex Conversion</a>
-    </div>
-    <div class="button-row">
-        <a href="RGB Colors.html" class="button">RGB Colors</a>
-        <a href="rgbToPixel.html" class="button">Pixel Examiner</a>
-        <a href="railfence.html" class="button">Rail Fence</a>
-        <a href="ELT2ReviewPodcast.html" class="button">ELT2 Review Podcast</a>
+        <a href="binaryToDecimal.html" class="button navy">Binary To Decimal</a>
+        <a href="hexConversion.html" class="button navy">Hex Conversion</a>
+        <a href="ELT2ReviewPodcast.html" class="button navy">ELT2 Review Podcast</a>
     </div>
     <div class="button-row">
-        <a href="typing1.html" class="button">Cyber101 Typing 1</a>
+        <a href="python expressions.html" class="button navy">Python Expressions</a>
+        <a href="conditional-expressions.html" class="button navy">Conditional Expressions</a>
+        <a href="strings1.html" class="button navy">Strings 1</a>
+        <a href="strings2.html" class="button navy">Strings 2</a>
+        <a href="strings3.html" class="button navy">Strings 3</a>
+        <a href="casting.html" class="button navy">Casting Practice</a>
+        <a href="ELT3Debug.html" class="button navy">ELT3 Debug</a>
+        <a href="mod math.html" class="button navy">Mod Math</a>
+        <a href="returnBooleanValues.html" class="button navy">Return Boolean Values Lab</a>
+        <a href="virtualDayReadingLoops.html" class="button navy">Virtual Day Reading Loops</a>
+        <a href="ELT5ReassessmentStudyGuide.html" class="button navy">ELT5 Reassessment Study Guide</a>
+        <a href="backToSchoolCodeReview.html" class="button navy">Back to School Code Review</a>
+        <a href="readlingListCommands.html" class="button navy">Reading List Commands</a>
+        <a href="listsAndLoopsPractice.html" class="button navy">Lists and Loops Practice</a>
+        <a href="ELT7ReviewMCQuestions.html" class="button navy">ELT7 Review MC Questions</a>
     </div>
-    <div class="button-row python-button-row" style="margin-top:30px;">
-           <a href="python expressions.html" class="button">Python Expressions</a>
-           <a href="conditional-expressions.html" class="button">Conditional Expressions</a>
-           <a href="strings1.html" class="button">Strings 1</a>
-           <a href="strings2.html" class="button">Strings 2</a>
-           <a href="strings3.html" class="button">Strings 3</a>
-           <a href="casting.html" class="button">Casting Practice</a>
-           <a href="ELT3Debug.html" class="button">ELT3 Debug</a>
-           <a href="mod math.html" class="button">Mod Math</a>
-           <a href="returnBooleanValues.html" class="button">Return Boolean Values Lab</a>
-           <a href="snowflakes.html" class="button">Snowflakes Lab</a>
-       <a href="virtualDayReadingLoops.html" class="button">Virtual Day Reading Loops</a>
-       <a href="ELT5ReassessmentStudyGuide.html" class="button">ELT5 Reassessment Study Guide</a>
-       <a href="backToSchoolCodeReview.html" class="button">Back to School Code Review</a>
-       <a href="readlingListCommands.html" class="button">Reading List Commands</a>
-       <a href="listsAndLoopsPractice.html" class="button">Lists and Loops Practice</a>
-       <a href="ELT7ReviewMCQuestions.html" class="button">ELT7 Review MC Questions</a>
+
+    <h2>Labs</h2>
+    <div class="button-row">
+        <a href="be-the-reader.html" class="button gray">Be The Reader</a>
+        <a href="typing1.html" class="button gray">Cyber101 Typing 1</a>
+        <a href="rgbToPixel.html" class="button gray">Pixel Examiner</a>
+        <a href="RGB Colors.html" class="button gray">RGB Colors</a>
+        <a href="railfence.html" class="button gray">Rail Fence</a>
+        <a href="snowflakes.html" class="button gray">Snowflakes Lab</a>
+        <a href="elt5-valid-credit-card-lab.html" class="button gray">ELT5 Valid Credit Card Lab</a>
+        <a href="mars-rover-command-and-control.html" class="button gray">Mars Rover Command and Control Lab</a>
+        <a href="weatherstationPracticeSelectionStatemetns.html" class="button gray">Weather Station Practice: Selection Statements</a>
+        <a href="redLightCameraStation.html" class="button gray">Red Light Camera Station Lab</a>
+        <a href="sentinelstore-lab.html" class="button gray">SentinelStore Lab</a>
+        <a href="gradeScaleDebugLab.html" class="button gray">Grade Scale Debug Lab</a>
+        <a href="dinoDictionariesLab.html" class="button gray">Dino Dictionaries Lab</a>
+        <a href="mockCreatePT.html" class="button gray">Mock Create PT</a>
+        <a href="soccerFieldLab.html" class="button gray">Soccer Field Lab</a>
+        <a href="glacierMeasurements.html" class="button gray">Glacier Measurements</a>
+        <a href="passwordAuditLab.html" class="button gray">Password Audit Lab</a>
+        <a href="ELT6IteratonReasesssmentReview.html" class="button gray">ELT6 Iteration Reassessment Review</a>
     </div>
-    
-    <h2 style="margin-top: 50px; color: #002868;">Labs</h2>
-    <div class="button-row" style="margin-top:20px;">
-           <a href="elt5-valid-credit-card-lab.html" class="button" style="background-color:#6c757d;">ELT5 Valid Credit Card Lab</a>
-           <a href="mars-rover-command-and-control.html" class="button" style="background-color:#6c757d;">Mars Rover Command and Control Lab</a>
-           <a href="weatherstationPracticeSelectionStatemetns.html" class="button" style="background-color:#6c757d;">Weather Station Practice: Selection Statements</a>
-           <a href="redLightCameraStation.html" class="button" style="background-color:#6c757d;">Red Light Camera Station Lab</a>
-           <a href="sentinelstore-lab.html" class="button" style="background-color:#6c757d;">SentinelStore Lab</a>
-           <a href="gradeScaleDebugLab.html" class="button" style="background-color:#6c757d;">Grade Scale Debug Lab</a>
-          <a href="dinoDictionariesLab.html" class="button" style="background-color:#6c757d;">Dino Dictionaries Lab</a>
-          <a href="mockCreatePT.html" class="button" style="background-color:#6c757d;">Mock Create PT</a>
-       <a href="soccerFieldLab.html" class="button" style="background-color:#6c757d;">Soccer Field Lab</a>
-       <a href="glacierMeasurements.html" class="button" style="background-color:#6c757d;">Glacier Measurements</a>
-       <a href="passwordAuditLab.html" class="button" style="background-color:#6c757d;">Password Audit Lab</a>
-       <a href="ELT6IteratonReasesssmentReview.html" class="button" style="background-color:#6c757d;">ELT6 Iteration Reassessment Review</a>
+
+    <h2>ACCEL Cyber Immersion Day Labs</h2>
+    <div class="button-row">
+        <a href="password-lab.html" class="button orange">Password Lab</a>
+        <a href="steg-lab.html" class="button orange">Steg Lab</a>
+        <a href="basicPasswordCheckerLab.html" class="button orange">Basic Password Checker Lab</a>
+        <a href="qrCodeLab.html" class="button orange">QR Code Lab</a>
+        <a href="phishing-lab.html" class="button orange">Phishing Lab</a>
+        <a href="diffie-hellman-key-exchange.html" class="button orange">Diffie-Hellman Key Exchange</a>
     </div>
-    <h2 style="margin-top: 50px; color: #002868;">ACCEL Cyber Immersion Day Labs</h2>
-    <div class="button-row accel-button-row" style="margin-top:20px;">
-           <a href="password-lab.html" class="button">Password Lab</a>
-           <a href="steg-lab.html" class="button">Steg Lab</a>
-           <a href="basicPasswordCheckerLab.html" class="button" style="background-color:#6c757d;">Basic Password Checker Lab</a>
-           <a href="qrCodeLab.html" class="button">QR Code Lab</a>
-           <a href="phishing-lab.html" class="button">Phishing Lab</a>
-           <a href="diffie-hellman-key-exchange.html" class="button">Diffie-Hellman Key Exchange</a>
+
+    <h2>AI Class Labs</h2>
+    <div class="button-row">
+        <a href="knnClassifyColors.html" class="button light-blue">KNN: Classify Colors</a>
+        <a href="knnDesignYourOwn.html" class="button light-blue">KNN: Design Your Own</a>
     </div>
+
     <footer>
         These tools were developed for teaching Cyber101 and AP Computer Science Principles at ASCTE by Mary Clair Wright and ASCTE Student Interns.
     </footer>
-    <div class="button-row" style="margin-top:30px;">
-        <a href="ai-feedback.html" class="button" style="background-color:#28a745;">AI Feedback</a>
-    </div>
 </body>
 </html>
