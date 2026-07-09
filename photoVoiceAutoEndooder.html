@@ -1,0 +1,798 @@
+
+1
+100%
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Patterns of Residential Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --navy: #002868;
+    --red: #bf0a30;
+    --lightBlue: #6598E9;
+    --cream: #f8f5ef;
+    --ink: #1c2733;
+    --border: #d8d3c6;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", sans-serif;
+    line-height: 1.5;
+  }
+
+  header {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 28px 32px;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  header p {
+    margin: 6px 0 0;
+    color: #cfd9f2;
+    font-size: 0.95rem;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #5a6472;
+    font-weight: 600;
+  }
+
+  select, input[type="file"] {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.95rem;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  button {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 11px 22px;
+    background: var(--red);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    background: #b9a9a9;
+    cursor: not-allowed;
+  }
+
+  button:not(:disabled):hover {
+    background: #9d0827;
+  }
+
+  .status {
+    margin-top: 16px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.85rem;
+    color: #5a6472;
+    min-height: 1.2em;
+  }
+
+  .status.error {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  section.results {
+    margin-top: 32px;
+    display: none;
+  }
+
+  section.results.visible {
+    display: block;
+  }
+
+  .summaryRow {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .summaryCard {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    min-width: 140px;
+  }
+
+  .summaryCard .value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--navy);
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .summaryCard .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #5a6472;
+  }
+
+  .heatStripWrap {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+
+  .heatStripLabel {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #5a6472;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .heatStrip {
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    height: 60px;
+    overflow-x: auto;
+  }
+
+  .heatBar {
+    flex: 0 0 auto;
+    width: 5px;
+    min-width: 5px;
+    border-radius: 1px 1px 0 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.88rem;
+  }
+
+  thead th {
+    background: var(--navy);
+    color: var(--cream);
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  tbody td {
+    padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.85rem;
+  }
+
+  tbody tr.flaggedRow {
+    background: #fbe9e9;
+  }
+
+  .flagTag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: "IBM Plex Sans", sans-serif;
+  }
+
+  .flagTag.flagged {
+    background: var(--red);
+    color: #ffffff;
+  }
+
+  .flagTag.clear {
+    background: #e4e0d4;
+    color: #5a6472;
+  }
+
+  .tableWrap {
+    max-height: 520px;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+
+  .tableWrap table {
+    border-radius: 0;
+  }
+
+  .conceptPanel {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+  }
+
+  .conceptPanel h2 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    color: var(--navy);
+  }
+
+  .conceptBlock {
+    margin-top: 16px;
+  }
+
+  .conceptBlock:first-of-type {
+    margin-top: 18px;
+  }
+
+  .conceptBlock h3 {
+    margin: 0 0 6px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--red);
+  }
+
+  .conceptBlock p {
+    margin: 0 0 8px;
+    font-size: 0.92rem;
+  }
+
+  .formula {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Patterns of Residential Life</h1>
+  <p>Upload a log, pick the matching device, and see which rows the model flags as unusual.</p>
+</header>
+
+<main>
+  <div class="conceptPanel">
+    <h2>What the model is doing</h2>
+
+    <div class="conceptBlock">
+      <h3>Autoencoder</h3>
+      <p>A small neural network made of adjustable internal connections. During training, it's shown every row in the file, over and over, and each time it tries to rebuild the row from a version of itself squeezed down to a single number. It compares its rebuild to the real row, then adjusts its own connections slightly to do better next time. Nobody tells it what a normal row looks like. It just keeps practicing on whatever rows it's given, so it naturally gets best at rebuilding whichever pattern shows up the most, since that's what it practices on most often.</p>
+    </div>
+
+    <div class="conceptBlock">
+      <h3>Reconstruction error</h3>
+      <p>Every row gets a reconstruction error: the difference between what the row actually was and what the model rebuilt from its compressed version. The network produces this same way, for every row, without exception. It isn't deciding a row is normal or unusual here, it's only measuring how close its rebuild came.</p>
+    </div>
+
+    <div class="conceptBlock">
+      <h3>How a row gets flagged</h3>
+      <p>Calling a row an outlier happens after training, as a separate step. Every row's error gets compared to every other row's error in the same file, and whichever rows sit far above the rest get flagged. That comparison is a rule applied on top of the network's output. The network itself has no concept of normal or outlier, only how well or poorly it could rebuild each row.</p>
+    </div>
+
+    <div class="conceptBlock">
+      <h3>What flagging doesn't mean</h3>
+      <p>A flagged row is a statement that the row is statistically rare in this file, nothing more. The model doesn't know why it's rare, whether it matters, or what it means. It can't tell a real problem from a harmless one-off from something it just hadn't seen enough times yet. Deciding what a flagged row actually means is a human job the model can't do.</p>
+    </div>
+
+    <div class="conceptBlock">
+      <h3>The math</h3>
+      <p>Reconstruction error is really just a distance: how far off the model's rebuilt row landed from the real row, added up across every feature in that row. Landing too high or too low both count as being off by the same amount, being off by a little barely registers, and being off by a lot stands out a lot more than twice as much.</p>
+      <p style="margin-top:10px;">To decide what counts as far, the tool looks at every row's distance in the file and finds the typical range those distances fall into. A row gets flagged when its distance is well beyond that typical range, further off than almost every other row in the file.</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="streamSelect">Log type</label>
+      <select id="streamSelect">
+        <option value="badge">Badge scanner</option>
+        <option value="fob">Key fob scanner</option>
+        <option value="camera">Parking lot camera</option>
+        <option value="printer">3D printer</option>
+        <option value="server">Server room</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="fileInput">CSV file</label>
+      <input type="file" id="fileInput" accept=".csv,.txt">
+    </div>
+    <button id="trainButton" disabled>Train &amp; flag</button>
+  </div>
+
+  <div class="status" id="statusLine"></div>
+
+  <section class="results" id="resultsSection">
+    <div class="summaryRow">
+      <div class="summaryCard">
+        <div class="value" id="summaryTotal">0</div>
+        <div class="label">Rows</div>
+      </div>
+      <div class="summaryCard">
+        <div class="value" id="summaryFlagged">0</div>
+        <div class="label">Flagged</div>
+      </div>
+      <div class="summaryCard">
+        <div class="value" id="summaryThreshold">0.000</div>
+        <div class="label">Error threshold</div>
+      </div>
+    </div>
+
+    <div class="heatStripWrap">
+      <div class="heatStripLabel">Reconstruction error, in file order</div>
+      <div class="heatStrip" id="heatStrip"></div>
+    </div>
+
+    <div class="tableWrap">
+      <table id="resultsTable">
+        <thead><tr id="tableHeadRow"></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+// ---------------------------------------------------------------------
+// Shared feature-engineering and autoencoder logic.
+// Verified separately against synthetic data for all five streams.
+// ---------------------------------------------------------------------
+
+function hourFraction(date) {
+  return (date.getHours() + date.getMinutes() / 60) / 24;
+}
+
+function dayOfWeekFraction(date) {
+  return date.getDay() / 7;
+}
+
+function isWeekendFlag(date) {
+  return date.getDay() === 0 || date.getDay() === 6 ? 1 : 0;
+}
+
+function minMaxNormalize(values) {
+  const maxVal = Math.max(...values);
+  const minVal = Math.min(...values);
+  const range = maxVal - minVal;
+  if (range === 0) {
+    return values.map(() => 0.5);
+  }
+  return values.map((v) => (v - minVal) / range);
+}
+
+function meanSquaredError(a, b) {
+  const total = a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0);
+  return total / a.length;
+}
+
+function meanOf(values) {
+  return values.reduce((sum, v) => sum + v, 0) / values.length;
+}
+
+function stdDevOf(values) {
+  const mean = meanOf(values);
+  const variance = meanOf(values.map((v) => (v - mean) ** 2));
+  return Math.sqrt(variance);
+}
+
+function computeClusterFailureRates(rows, windowHours) {
+  const windowMs = windowHours * 60 * 60 * 1000;
+  const byIdentifier = {};
+  rows.forEach((row, originalIndex) => {
+    if (!byIdentifier[row.identifier]) {
+      byIdentifier[row.identifier] = [];
+    }
+    byIdentifier[row.identifier].push({ ...row, originalIndex, time: new Date(row.timestamp).getTime() });
+  });
+
+  const rateByOriginalIndex = new Array(rows.length).fill(0);
+  Object.values(byIdentifier).forEach((jobs) => {
+    jobs.forEach((job) => {
+      const neighbors = jobs.filter((other) => other !== job && windowMs >= Math.abs(other.time - job.time));
+      const failCount = neighbors.filter((n) => n.status === "failed").length;
+      const rate = neighbors.length > 0 ? failCount / neighbors.length : 0;
+      rateByOriginalIndex[job.originalIndex] = rate;
+    });
+  });
+  return rateByOriginalIndex;
+}
+
+function computeGapsSeconds(rows) {
+  const withIndex = rows.map((row, originalIndex) => ({ ...row, originalIndex }));
+  const sorted = withIndex.slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+  const rawGaps = sorted.map((row, posInSeries) => {
+    if (posInSeries === 0) {
+      return null;
+    }
+    const prevDate = new Date(sorted[posInSeries - 1].timestamp);
+    const currDate = new Date(row.timestamp);
+    return (currDate - prevDate) / 1000;
+  });
+
+  const definedGaps = rawGaps.filter((g) => g !== null);
+  const sortedDefined = definedGaps.slice().sort((a, b) => a - b);
+  const medianGap = sortedDefined.length > 0 ? sortedDefined[Math.floor(sortedDefined.length / 2)] : 0;
+
+  const gapByOriginalIndex = new Array(rows.length).fill(0);
+  sorted.forEach((row, posInSeries) => {
+    const gap = rawGaps[posInSeries] === null ? medianGap : rawGaps[posInSeries];
+    gapByOriginalIndex[row.originalIndex] = gap;
+  });
+  return gapByOriginalIndex;
+}
+
+const streamConfigs = {
+  badge: {
+    label: "Badge scanner",
+    requiredColumns: ["timestamp", "identifier", "location", "status"],
+    displayColumns: ["timestamp", "identifier", "location", "status"],
+    buildFeatures(rows) {
+      const hours = rows.map((r) => hourFraction(new Date(r.timestamp)));
+      const dows = rows.map((r) => dayOfWeekFraction(new Date(r.timestamp)));
+      const weekends = rows.map((r) => isWeekendFlag(new Date(r.timestamp)));
+      const isStudents = rows.map((r) => {
+        const parts = r.identifier.split("-");
+        return parts[2] === "S" ? 1 : 0;
+      });
+      const matrix = rows.map((r, i) => [hours[i], dows[i], weekends[i], isStudents[i]]);
+      return { matrix, names: ["hourOfDay", "dayOfWeek", "isWeekend", "isStudent"] };
+    },
+  },
+
+  fob: {
+    label: "Key fob scanner",
+    requiredColumns: ["timestamp", "identifier", "location", "status"],
+    displayColumns: ["timestamp", "identifier", "location", "status"],
+    buildFeatures(rows) {
+      const hours = rows.map((r) => hourFraction(new Date(r.timestamp)));
+      const dows = rows.map((r) => dayOfWeekFraction(new Date(r.timestamp)));
+      const weekends = rows.map((r) => isWeekendFlag(new Date(r.timestamp)));
+      const assignedFloors = rows.map((r) => Number(r.identifier.split("-")[1]));
+      const accessedFloors = rows.map((r, i) => {
+        const match = r.location.match(/Floor (\d+)/);
+        return match ? Number(match[1]) : assignedFloors[i];
+      });
+      const mismatches = rows.map((r, i) => (accessedFloors[i] !== assignedFloors[i] ? 1 : 0));
+      const maxFloor = Math.max(...assignedFloors, ...accessedFloors);
+      const matrix = rows.map((r, i) => [
+        hours[i],
+        dows[i],
+        weekends[i],
+        assignedFloors[i] / maxFloor,
+        accessedFloors[i] / maxFloor,
+        mismatches[i],
+      ]);
+      return {
+        matrix,
+        names: ["hourOfDay", "dayOfWeek", "isWeekend", "assignedFloorNorm", "accessedFloorNorm", "floorMismatch"],
+      };
+    },
+  },
+
+  camera: {
+    label: "Parking lot camera",
+    requiredColumns: ["timestamp", "identifier", "location", "status"],
+    displayColumns: ["timestamp", "identifier", "location", "status"],
+    buildFeatures(rows) {
+      const hours = rows.map((r) => hourFraction(new Date(r.timestamp)));
+      const dows = rows.map((r) => dayOfWeekFraction(new Date(r.timestamp)));
+      const gaps = computeGapsSeconds(rows);
+      const logGaps = gaps.map((g) => Math.log(g + 1));
+      const normGaps = minMaxNormalize(logGaps);
+      const matrix = rows.map((r, i) => [hours[i], dows[i], normGaps[i]]);
+      return { matrix, names: ["hourOfDay", "dayOfWeek", "gapSincePreviousNormalized"] };
+    },
+  },
+
+  printer: {
+    label: "3D printer",
+    requiredColumns: ["timestamp", "identifier", "value", "status"],
+    displayColumns: ["timestamp", "identifier", "value", "status"],
+    buildFeatures(rows) {
+      const hours = rows.map((r) => hourFraction(new Date(r.timestamp)));
+      const dows = rows.map((r) => dayOfWeekFraction(new Date(r.timestamp)));
+      const weekends = rows.map((r) => isWeekendFlag(new Date(r.timestamp)));
+      const durations = rows.map((r) => Number(r.value));
+      const durationsNorm = minMaxNormalize(durations);
+      const failedFlags = rows.map((r) => (r.status === "failed" ? 1 : 0));
+      const clusterFailureRates = computeClusterFailureRates(rows, 24);
+      const matrix = rows.map((r, i) => [
+        hours[i],
+        dows[i],
+        weekends[i],
+        durationsNorm[i],
+        failedFlags[i],
+        clusterFailureRates[i],
+      ]);
+      return {
+        matrix,
+        names: ["hourOfDay", "dayOfWeek", "isWeekend", "durationNormalized", "statusFailed", "clusterFailureRate"],
+      };
+    },
+  },
+
+  server: {
+    label: "Server room",
+    requiredColumns: ["timestamp", "identifier", "packets_expected", "packets_received"],
+    displayColumns: ["timestamp", "identifier", "packets_expected", "packets_received"],
+    buildFeatures(rows) {
+      const hours = rows.map((r) => hourFraction(new Date(r.timestamp)));
+      const dows = rows.map((r) => dayOfWeekFraction(new Date(r.timestamp)));
+      const expected = rows.map((r) => Number(r.packets_expected));
+      const received = rows.map((r) => Number(r.packets_received));
+      const lossPct = rows.map((r, i) => (expected[i] > 0 ? (expected[i] - received[i]) / expected[i] : 0));
+      const expectedNorm = minMaxNormalize(expected.map((v) => Math.log(v + 1)));
+      const receivedNorm = minMaxNormalize(received.map((v) => Math.log(v + 1)));
+      const matrix = rows.map((r, i) => [hours[i], dows[i], expectedNorm[i], receivedNorm[i], lossPct[i]]);
+      return { matrix, names: ["hourOfDay", "dayOfWeek", "packetsExpectedNorm", "packetsReceivedNorm", "lossPercentage"] };
+    },
+  },
+};
+
+async function trainAndFlagOnce(featureMatrix) {
+  const inputDim = featureMatrix[0].length;
+  const hiddenSize = 4;
+  const bottleneckSize = 1;
+
+  const model = tf.sequential();
+  model.add(tf.layers.dense({ inputShape: [inputDim], units: hiddenSize, activation: "relu" }));
+  model.add(tf.layers.dense({ units: bottleneckSize, activation: "relu" }));
+  model.add(tf.layers.dense({ units: hiddenSize, activation: "relu" }));
+  model.add(tf.layers.dense({ units: inputDim, activation: "sigmoid" }));
+  model.compile({ optimizer: tf.train.adam(0.005), loss: "meanSquaredError" });
+
+  const xs = tf.tensor2d(featureMatrix);
+  await model.fit(xs, xs, {
+    epochs: 60,
+    batchSize: Math.min(32, featureMatrix.length),
+    shuffle: true,
+    verbose: 0,
+  });
+
+  const predictions = model.predict(xs);
+  const predArray = await predictions.array();
+  const errors = featureMatrix.map((row, i) => meanSquaredError(row, predArray[i]));
+
+  xs.dispose();
+  predictions.dispose();
+  model.dispose();
+
+  return errors;
+}
+
+// training has real run-to-run variance on small datasets, so results are
+// averaged over several runs before deciding what counts as an outlier
+async function trainAndFlagEnsemble(featureMatrix, runCount, onProgress) {
+  const totalRuns = runCount || 5;
+  const allErrors = [];
+  for (let r = 0; r < totalRuns; r++) {
+    const errors = await trainAndFlagOnce(featureMatrix);
+    allErrors.push(errors);
+    if (onProgress) onProgress(r + 1, totalRuns);
+  }
+  const avgErrors = featureMatrix.map((_, i) => allErrors.reduce((sum, e) => sum + e[i], 0) / totalRuns);
+  const mean = meanOf(avgErrors);
+  const std = stdDevOf(avgErrors);
+  const threshold = mean + 1.75 * std;
+  const flagged = avgErrors.map((e) => e > threshold);
+  return { errors: avgErrors, flagged, threshold, meanError: mean, stdError: std };
+}
+
+// ---------------------------------------------------------------------
+// UI wiring
+// ---------------------------------------------------------------------
+
+const streamSelect = document.getElementById("streamSelect");
+const fileInput = document.getElementById("fileInput");
+const trainButton = document.getElementById("trainButton");
+const statusLine = document.getElementById("statusLine");
+const resultsSection = document.getElementById("resultsSection");
+
+let parsedRows = null;
+let parsedHeaders = null;
+
+function setStatus(message, isError) {
+  statusLine.textContent = message;
+  statusLine.className = isError ? "status error" : "status";
+}
+
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  parsedRows = null;
+  parsedHeaders = null;
+  trainButton.disabled = true;
+  resultsSection.classList.remove("visible");
+
+  if (!file) {
+    setStatus("");
+    return;
+  }
+
+  setStatus(`Reading ${file.name}...`);
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete(result) {
+      parsedRows = result.data;
+      parsedHeaders = result.meta.fields;
+      const config = streamConfigs[streamSelect.value];
+      const missingCols = config.requiredColumns.filter((c) => !parsedHeaders.includes(c));
+      if (missingCols.length > 0) {
+        setStatus(`This file doesn't match "${config.label}". Missing columns: ${missingCols.join(", ")}`, true);
+        trainButton.disabled = true;
+        return;
+      }
+      setStatus(`Loaded ${parsedRows.length} rows. Ready to train.`);
+      trainButton.disabled = false;
+    },
+    error(err) {
+      setStatus(`Could not read file: ${err.message}`, true);
+    },
+  });
+});
+
+streamSelect.addEventListener("change", () => {
+  if (parsedRows && parsedHeaders) {
+    const config = streamConfigs[streamSelect.value];
+    const missingCols = config.requiredColumns.filter((c) => !parsedHeaders.includes(c));
+    if (missingCols.length > 0) {
+      setStatus(`This file doesn't match "${config.label}". Missing columns: ${missingCols.join(", ")}`, true);
+      trainButton.disabled = true;
+    } else {
+      setStatus(`Loaded ${parsedRows.length} rows. Ready to train.`);
+      trainButton.disabled = false;
+    }
+  }
+});
+
+trainButton.addEventListener("click", async () => {
+  if (!parsedRows) return;
+  trainButton.disabled = true;
+  fileInput.disabled = true;
+  streamSelect.disabled = true;
+  resultsSection.classList.remove("visible");
+
+  const config = streamConfigs[streamSelect.value];
+  const { matrix } = config.buildFeatures(parsedRows);
+
+  try {
+    const result = await trainAndFlagEnsemble(matrix, 5, (done, total) => {
+      setStatus(`Training model... run ${done} of ${total}`);
+    });
+    renderResults(config, parsedRows, result);
+    setStatus(`Done. ${result.flagged.filter(Boolean).length} of ${parsedRows.length} rows flagged.`);
+  } catch (err) {
+    setStatus(`Training failed: ${err.message}`, true);
+  } finally {
+    trainButton.disabled = false;
+    fileInput.disabled = false;
+    streamSelect.disabled = false;
+  }
+});
+
+function renderResults(config, rows, result) {
+  const { errors, flagged, threshold } = result;
+  const flaggedCount = flagged.filter(Boolean).length;
+
+  document.getElementById("summaryTotal").textContent = rows.length;
+  document.getElementById("summaryFlagged").textContent = flaggedCount;
+  document.getElementById("summaryThreshold").textContent = threshold.toFixed(4);
+
+  const maxError = Math.max(...errors);
+  const heatStrip = document.getElementById("heatStrip");
+  heatStrip.innerHTML = "";
+  rows.forEach((row, i) => {
+    const bar = document.createElement("div");
+    bar.className = "heatBar";
+    const heightPct = maxError > 0 ? Math.max(6, (errors[i] / maxError) * 100) : 6;
+    bar.style.height = heightPct + "%";
+    bar.style.background = flagged[i] ? "var(--red)" : "var(--lightBlue)";
+    bar.title = `Row ${i + 1}: error ${errors[i].toFixed(4)}${flagged[i] ? " (flagged)" : ""}`;
+    heatStrip.appendChild(bar);
+  });
+
+  const headRow = document.getElementById("tableHeadRow");
+  headRow.innerHTML = "";
+  const columns = [...config.displayColumns, "reconstructionError", "flagged"];
+  columns.forEach((col) => {
+    const th = document.createElement("th");
+    th.textContent = col;
+    headRow.appendChild(th);
+  });
+
+  const indexed = rows.map((row, i) => ({ row, error: errors[i], flagged: flagged[i] }));
+  indexed.sort((a, b) => b.error - a.error);
+
+  const tableBody = document.getElementById("tableBody");
+  tableBody.innerHTML = "";
+  indexed.forEach((item) => {
+    const tr = document.createElement("tr");
+    if (item.flagged) tr.className = "flaggedRow";
+
+    config.displayColumns.forEach((col) => {
+      const td = document.createElement("td");
+      td.textContent = item.row[col];
+      tr.appendChild(td);
+    });
+
+    const errorTd = document.createElement("td");
+    errorTd.textContent = item.error.toFixed(4);
+    tr.appendChild(errorTd);
+
+    const flagTd = document.createElement("td");
+    const tag = document.createElement("span");
+    tag.className = "flagTag " + (item.flagged ? "flagged" : "clear");
+    tag.textContent = item.flagged ? "flagged" : "clear";
+    flagTd.appendChild(tag);
+    tr.appendChild(flagTd);
+
+    tableBody.appendChild(tr);
+  });
+
+  resultsSection.classList.add("visible");
+}
+</script>
+
+</body>
+</html>
+
