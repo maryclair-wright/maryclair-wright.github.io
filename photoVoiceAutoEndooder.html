@@ -1,6 +1,3 @@
-
-1
-100%
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -347,7 +344,7 @@
       <select id="streamSelect">
         <option value="badge">Badge scanner</option>
         <option value="fob">Key fob scanner</option>
-        <option value="camera">Parking lot camera</option>
+        <option value="laptop">Student laptop sign-on</option>
         <option value="printer">3D printer</option>
         <option value="server">Server room</option>
       </select>
@@ -456,31 +453,6 @@ function computeClusterFailureRates(rows, windowHours) {
   return rateByOriginalIndex;
 }
 
-function computeGapsSeconds(rows) {
-  const withIndex = rows.map((row, originalIndex) => ({ ...row, originalIndex }));
-  const sorted = withIndex.slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-  const rawGaps = sorted.map((row, posInSeries) => {
-    if (posInSeries === 0) {
-      return null;
-    }
-    const prevDate = new Date(sorted[posInSeries - 1].timestamp);
-    const currDate = new Date(row.timestamp);
-    return (currDate - prevDate) / 1000;
-  });
-
-  const definedGaps = rawGaps.filter((g) => g !== null);
-  const sortedDefined = definedGaps.slice().sort((a, b) => a - b);
-  const medianGap = sortedDefined.length > 0 ? sortedDefined[Math.floor(sortedDefined.length / 2)] : 0;
-
-  const gapByOriginalIndex = new Array(rows.length).fill(0);
-  sorted.forEach((row, posInSeries) => {
-    const gap = rawGaps[posInSeries] === null ? medianGap : rawGaps[posInSeries];
-    gapByOriginalIndex[row.originalIndex] = gap;
-  });
-  return gapByOriginalIndex;
-}
-
 const streamConfigs = {
   badge: {
     label: "Badge scanner",
@@ -529,18 +501,21 @@ const streamConfigs = {
     },
   },
 
-  camera: {
-    label: "Parking lot camera",
-    requiredColumns: ["timestamp", "identifier", "location", "status"],
-    displayColumns: ["timestamp", "identifier", "location", "status"],
+  laptop: {
+    label: "Student laptop sign-on",
+    requiredColumns: ["timestamp", "identifier", "status"],
+    displayColumns: ["timestamp", "identifier", "status"],
     buildFeatures(rows) {
       const hours = rows.map((r) => hourFraction(new Date(r.timestamp)));
       const dows = rows.map((r) => dayOfWeekFraction(new Date(r.timestamp)));
-      const gaps = computeGapsSeconds(rows);
-      const logGaps = gaps.map((g) => Math.log(g + 1));
-      const normGaps = minMaxNormalize(logGaps);
-      const matrix = rows.map((r, i) => [hours[i], dows[i], normGaps[i]]);
-      return { matrix, names: ["hourOfDay", "dayOfWeek", "gapSincePreviousNormalized"] };
+      const weekends = rows.map((r) => isWeekendFlag(new Date(r.timestamp)));
+      const failedFlags = rows.map((r) => (r.status === "failed" ? 1 : 0));
+      const clusterFailureRates = computeClusterFailureRates(rows, 24);
+      const matrix = rows.map((r, i) => [hours[i], dows[i], weekends[i], failedFlags[i], clusterFailureRates[i]]);
+      return {
+        matrix,
+        names: ["hourOfDay", "dayOfWeek", "isWeekend", "statusFailed", "clusterFailureRate"],
+      };
     },
   },
 
@@ -795,4 +770,3 @@ function renderResults(config, rows, result) {
 
 </body>
 </html>
-
