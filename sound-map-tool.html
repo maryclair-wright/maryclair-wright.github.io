@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound Frequency Lab — ASCTE / ACCEL</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #BF0A30;
+    --navy: #002868;
+    --blue: #6598E9;
+    --grey: #A5A5A4;
+    --light: #F4F6FA;
+    --white: #FFFFFF;
+    --dark: #0D1B2A;
+  }
+
+  body {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    background: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    border-bottom: 4px solid var(--red);
+  }
+
+  .header-brand { display: flex; align-items: center; gap: 1rem; }
+
+  .logo-mark {
+    width: 44px; height: 44px;
+    background: var(--red);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600; font-size: 1rem;
+    color: white; letter-spacing: 0.05em; flex-shrink: 0;
+    line-height: 1.2; text-align: center;
+  }
+
+  .header-text h1 { font-size: 1.05rem; font-weight: 600; color: var(--white); }
+  .header-text p  { font-size: 0.75rem; color: var(--blue); font-style: italic; font-weight: 300; }
+
+  .header-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem; color: var(--grey);
+    text-transform: uppercase; letter-spacing: 0.15em; text-align: right;
+  }
+
+  main {
+    flex: 1; max-width: 900px; width: 100%;
+    margin: 0 auto; padding: 2rem 1.5rem;
+    display: flex; flex-direction: column; gap: 1.5rem;
+  }
+
+  .intro { border-left: 4px solid var(--red); padding-left: 1.25rem; }
+  .intro h2 { font-size: 1.3rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem; }
+  .intro p  { font-size: 0.9rem; color: #444; line-height: 1.6; font-weight: 300; }
+
+  /* MODE TABS */
+  .mode-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--navy);
+    gap: 0;
+  }
+
+  .mode-tab {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: var(--grey);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .mode-tab.active {
+    color: var(--navy);
+    border-bottom-color: var(--red);
+    background: var(--white);
+  }
+
+  .mode-tab:hover:not(.active) { color: var(--navy); }
+
+  .mode-panel { display: none; }
+  .mode-panel.active { display: flex; flex-direction: column; gap: 1rem; }
+
+  /* UPLOAD PANEL */
+  .upload-zone {
+    border: 2px dashed var(--grey);
+    background: var(--white);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--blue);
+    background: #EFF3FB;
+  }
+
+  .upload-zone p {
+    font-size: 0.9rem; color: #555; font-weight: 300; margin-bottom: 0.75rem;
+  }
+
+  .upload-zone .upload-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; color: var(--grey);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+
+  #fileInput { display: none; }
+
+  .btn-upload {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 0.88rem; font-weight: 600;
+    padding: 0.55rem 1.3rem;
+    background: var(--navy); color: white;
+    border: none; cursor: pointer;
+    margin-top: 0.75rem;
+    display: inline-block;
+  }
+
+  .file-loaded-bar {
+    display: none;
+    background: var(--white);
+    border: 1.5px solid #DDE3EE;
+    border-left: 4px solid var(--blue);
+    padding: 0.75rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--navy);
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .file-loaded-bar.visible { display: flex; }
+
+  .file-error {
+    display: none;
+    background: #FFF0F2;
+    border: 1.5px solid var(--red);
+    padding: 0.65rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--red);
+  }
+
+  .file-error.visible { display: block; }
+
+  /* PLAYBACK */
+  .playback-row {
+    display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
+  }
+
+  audio {
+    height: 36px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+  button {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 0.9rem; font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border: none; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  .btn-primary  { background: var(--navy); color: white; }
+  .btn-record   { background: var(--red);  color: white; }
+  .btn-capture  { background: var(--blue); color: white; }
+  .btn-analyze  { background: var(--red);  color: white; }
+
+  .btn-download {
+    background: transparent; color: var(--navy);
+    border: 2px solid var(--navy);
+  }
+  .btn-download:hover:not(:disabled) { background: var(--navy); color: white; }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0.3rem 0.8rem;
+    background: var(--white); border: 1.5px solid var(--grey); color: var(--grey);
+  }
+
+  .status-pill.active { border-color: var(--red); color: var(--red); }
+  .status-pill.active .dot {
+    width: 7px; height: 7px; background: var(--red); border-radius: 50%;
+    animation: pulse 1s ease-in-out infinite;
+  }
+  .dot { width: 7px; height: 7px; background: var(--grey); border-radius: 50%; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* VISUALIZER */
+  .viz-panel { background: var(--white); border: 1.5px solid #DDE3EE; }
+
+  .viz-label {
+    background: var(--navy); color: var(--blue);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0.4rem 1rem;
+  }
+
+  canvas {
+    display: block; width: 100%; height: 220px; background: var(--dark);
+  }
+
+  .viz-axis {
+    display: flex; justify-content: space-between;
+    padding: 0.3rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem; color: var(--grey);
+  }
+
+  /* SNAPSHOT */
+  .snapshot-section { display: none; }
+  .snapshot-section.visible { display: block; }
+
+  .section-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 1rem; padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--navy);
+  }
+
+  .section-header h3 { font-size: 1rem; font-weight: 600; color: var(--navy); }
+
+  .snapshot-meta {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--grey);
+  }
+
+  .chart-container {
+    background: var(--white); border: 1.5px solid #DDE3EE;
+    padding: 1.25rem; margin-bottom: 1rem;
+  }
+
+  .chart-bar-area { display: flex; flex-direction: column; gap: 0.45rem; }
+
+  .bar-row {
+    display: grid; grid-template-columns: 90px 1fr 60px;
+    align-items: center; gap: 0.5rem;
+  }
+
+  .bar-freq {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--navy); text-align: right;
+  }
+
+  .bar-track { background: #EEF1F7; height: 18px; position: relative; }
+
+  .bar-fill { height: 100%; background: var(--blue); }
+  .bar-fill.top { background: var(--red); }
+
+  .bar-amp {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--grey);
+  }
+
+  .data-table-wrap {
+    overflow-x: auto; background: var(--white); border: 1.5px solid #DDE3EE;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
+
+  thead { background: var(--navy); color: var(--white); }
+  thead th {
+    padding: 0.6rem 1rem; text-align: left; font-weight: 600;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  tbody tr:nth-child(even) { background: #F4F6FA; }
+  tbody td { padding: 0.5rem 1rem; border-bottom: 1px solid #DDE3EE; color: var(--dark); }
+  tbody tr.highlight td { color: var(--red); font-weight: 600; }
+
+  .download-row {
+    display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 1rem;
+  }
+
+  .note-label { font-size: 0.78rem; color: var(--grey); font-style: italic; }
+
+  .math-box {
+    background: var(--white); border: 1.5px solid #DDE3EE;
+    border-left: 4px solid var(--blue); padding: 1.25rem;
+  }
+
+  .math-box h4 {
+    font-size: 0.85rem; font-weight: 600; color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;
+  }
+
+  .math-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .math-box li {
+    font-size: 0.85rem; color: #333; font-weight: 300;
+    line-height: 1.5; padding-left: 1.25rem; position: relative;
+  }
+
+  .math-box li::before { content: "—"; position: absolute; left: 0; color: var(--blue); }
+
+  footer {
+    background: var(--navy); border-top: 3px solid var(--red);
+    padding: 1.25rem 2rem; margin-top: auto;
+  }
+
+  .footer-inner {
+    max-width: 900px; margin: 0 auto;
+    font-size: 0.72rem; color: var(--grey);
+    font-style: italic; line-height: 1.5; text-align: center;
+  }
+
+  .footer-inner a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    header { padding: 0 1rem; }
+    main { padding: 1.25rem 1rem; }
+    .bar-row { grid-template-columns: 70px 1fr 50px; }
+    .mode-tab { padding: 0.55rem 0.9rem; font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="logo-mark">AC<br>CEL</div>
+    <div class="header-text">
+      <h1>Sound Frequency Lab</h1>
+      <p>Decomposing sound into component waves</p>
+    </div>
+  </div>
+  <div class="header-label">ASCTE / ACCEL<br>Cyber Immersion: Discovery</div>
+</header>
+
+<main>
+
+  <div class="intro">
+    <h2>What is this tool doing?</h2>
+    <p>Any sound you hear — a voice, a clap, a musical note — is actually made of many simple sine waves layered on top of each other. This tool separates that sound into its component frequencies and shows you how strong each one is. Use your microphone for live capture, or upload a recorded audio file. When you are ready, freeze the data and download it to analyze the math behind what you heard.</p>
+  </div>
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabMic" onclick="switchMode('mic')">Use Microphone</button>
+    <button class="mode-tab" id="tabFile" onclick="switchMode('file')">Upload Audio File</button>
+  </div>
+
+  <!-- MIC PANEL -->
+  <div class="mode-panel active" id="panelMic">
+    <div class="controls">
+      <button class="btn-primary" id="btnStart">Enable Microphone</button>
+      <button class="btn-record" id="btnRecord" disabled>Start Listening</button>
+      <button class="btn-capture" id="btnCapture" disabled>Freeze &amp; Capture</button>
+      <div class="status-pill" id="statusPill">
+        <span class="dot"></span>
+        <span id="statusText">Microphone off</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILE PANEL -->
+  <div class="mode-panel" id="panelFile">
+
+    <div class="upload-zone" id="uploadZone">
+      <p>Record up to 60 seconds of sound on your phone or another device, save the file, then upload it here.<br>Accepted formats: MP3, WAV, OGG, M4A, FLAC</p>
+      <span class="upload-hint">Drag &amp; drop a file here, or click to browse</span>
+      <br>
+      <button class="btn-upload" onclick="document.getElementById('fileInput').click()">Choose File</button>
+      <input type="file" id="fileInput" accept="audio/*">
+    </div>
+
+    <div class="file-error" id="fileError"></div>
+
+    <div class="file-loaded-bar" id="fileLoadedBar">
+      <span id="fileLoadedName"></span>
+      <span id="fileLoadedDuration"></span>
+    </div>
+
+    <div class="playback-row" id="playbackRow" style="display:none;">
+      <audio id="audioPlayer" controls></audio>
+      <button class="btn-analyze" id="btnAnalyze">Analyze This File</button>
+    </div>
+
+  </div>
+
+  <!-- SHARED VISUALIZER -->
+  <div class="viz-panel">
+    <div class="viz-label" id="vizLabel">Live Frequency Spectrum — amplitude vs. frequency (Hz)</div>
+    <canvas id="spectrumCanvas" width="900" height="220"></canvas>
+    <div class="viz-axis">
+      <span>0 Hz</span>
+      <span>2,000 Hz</span>
+      <span>4,000 Hz</span>
+      <span>6,000 Hz</span>
+      <span>8,000 Hz</span>
+      <span>10,000 Hz</span>
+      <span>12,000 Hz+</span>
+    </div>
+  </div>
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot-section" id="snapshotSection">
+
+    <div class="section-header">
+      <h3>Captured Snapshot</h3>
+      <span class="snapshot-meta" id="snapMeta"></span>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-bar-area" id="barChart"></div>
+    </div>
+
+    <div class="data-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Frequency (Hz)</th>
+            <th>Amplitude (0–255)</th>
+            <th>Relative Strength (%)</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+      </table>
+    </div>
+
+    <div class="download-row">
+      <button class="btn-download" id="btnDownload">Download Data as CSV</button>
+      <span class="note-label">Open in a spreadsheet to graph and model the data.</span>
+    </div>
+
+    <div class="math-box" style="margin-top:1.25rem;">
+      <h4>Math Extension — questions to explore with your data</h4>
+      <ul>
+        <li>Graph frequency (x) vs. amplitude (y). What does the shape of that graph tell you about your sound?</li>
+        <li>Which frequency has the highest amplitude? That is the dominant wave in your sound. What sine function could model it?</li>
+        <li>Calculate the ratio of each frequency's amplitude to the maximum amplitude. What does it mean when ratios are close together vs. far apart?</li>
+        <li>If you capture two different sounds — a voice and a clap — how do the frequency distributions compare? What statistics would you use to describe the difference?</li>
+        <li>Fourier's theorem says any periodic signal is a sum of sine waves. Write a general expression: <em>f(t) = A₁sin(2πf₁t) + A₂sin(2πf₂t) + …</em> and substitute in values from your data.</li>
+      </ul>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    Designed by the ASCTE Instructional Design Team for Alabama public school teachers. Questions or interested in using this with your students? Email us at <a href="mailto:instructionaldesign@ascte.org">instructionaldesign@ascte.org</a> | &copy; Alabama School of Cyber Technology and Engineering (ASCTE) / ACCEL Program
+  </div>
+</footer>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let audioCtx    = null;
+  let analyser    = null;
+  let micSource   = null;
+  let fileSource  = null;
+  let stream      = null;
+  let animFrame   = null;
+  let isListening = false;
+  let capturedData = null;
+  let capturedAt   = null;
+  let currentMode  = 'mic'; // 'mic' | 'file'
+
+  const FFT_SIZE = 2048;
+  const TOP_N    = 20;
+  const MAX_FILE_SECONDS = 60;
+
+  // ── DOM ────────────────────────────────────────────────────────────────────
+  const btnStart       = document.getElementById('btnStart');
+  const btnRecord      = document.getElementById('btnRecord');
+  const btnCapture     = document.getElementById('btnCapture');
+  const btnDownload    = document.getElementById('btnDownload');
+  const btnAnalyze     = document.getElementById('btnAnalyze');
+  const statusPill     = document.getElementById('statusPill');
+  const statusText     = document.getElementById('statusText');
+  const canvas         = document.getElementById('spectrumCanvas');
+  const ctx2d          = canvas.getContext('2d');
+  const snapSection    = document.getElementById('snapshotSection');
+  const snapMeta       = document.getElementById('snapMeta');
+  const barChart       = document.getElementById('barChart');
+  const dataTable      = document.getElementById('dataTable');
+  const vizLabel       = document.getElementById('vizLabel');
+  const fileInput      = document.getElementById('fileInput');
+  const uploadZone     = document.getElementById('uploadZone');
+  const fileError      = document.getElementById('fileError');
+  const fileLoadedBar  = document.getElementById('fileLoadedBar');
+  const fileLoadedName = document.getElementById('fileLoadedName');
+  const fileLoadedDur  = document.getElementById('fileLoadedDuration');
+  const audioPlayer    = document.getElementById('audioPlayer');
+  const playbackRow    = document.getElementById('playbackRow');
+
+  // ── Canvas sizing ──────────────────────────────────────────────────────────
+  function resizeCanvas() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // ── Mode switching ─────────────────────────────────────────────────────────
+  function switchMode(mode) {
+    currentMode = mode;
+    document.getElementById('tabMic').classList.toggle('active', mode === 'mic');
+    document.getElementById('tabFile').classList.toggle('active', mode === 'file');
+    document.getElementById('panelMic').classList.toggle('active', mode === 'mic');
+    document.getElementById('panelFile').classList.toggle('active', mode === 'file');
+
+    // Stop any live listening if switching away
+    if (mode !== 'mic' && isListening) {
+      stopListening();
+    }
+
+    vizLabel.textContent = mode === 'mic'
+      ? 'Live Frequency Spectrum — amplitude vs. frequency (Hz)'
+      : 'File Frequency Spectrum — amplitude vs. frequency (Hz)';
+
+    drawIdle(mode === 'mic'
+      ? 'Enable your microphone, then click Start Listening to see the frequency spectrum.'
+      : 'Upload an audio file, then click Analyze This File.');
+  }
+
+  // ── Status helpers ─────────────────────────────────────────────────────────
+  function setStatus(text, active) {
+    statusText.textContent = text;
+    statusPill.classList.toggle('active', active);
+  }
+
+  function showFileError(msg) {
+    fileError.textContent = msg;
+    fileError.classList.add('visible');
+    fileLoadedBar.classList.remove('visible');
+    playbackRow.style.display = 'none';
+  }
+
+  function clearFileError() {
+    fileError.classList.remove('visible');
+  }
+
+  // ── Shared AudioContext init ───────────────────────────────────────────────
+  function ensureAudioCtx() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function buildAnalyser() {
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = FFT_SIZE;
+    analyser.smoothingTimeConstant = 0.8;
+  }
+
+  // ── MIC: Enable ───────────────────────────────────────────────────────────
+  btnStart.addEventListener('click', async () => {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      ensureAudioCtx();
+      buildAnalyser();
+      micSource = audioCtx.createMediaStreamSource(stream);
+      micSource.connect(analyser);
+      btnStart.disabled = true;
+      btnRecord.disabled = false;
+      setStatus('Microphone ready', false);
+      drawIdle('Click Start Listening to begin.');
+    } catch (e) {
+      setStatus('Microphone blocked — check browser permissions', false);
+    }
+  });
+
+  // ── MIC: Start/stop listening ──────────────────────────────────────────────
+  btnRecord.addEventListener('click', () => {
+    if (!isListening) {
+      isListening = true;
+      btnRecord.textContent = 'Stop Listening';
+      btnCapture.disabled = false;
+      setStatus('Listening…', true);
+      drawLive();
+    } else {
+      stopListening();
+    }
+  });
+
+  function stopListening() {
+    isListening = false;
+    cancelAnimationFrame(animFrame);
+    btnRecord.textContent = 'Start Listening';
+    btnCapture.disabled = true;
+    setStatus('Paused', false);
+    drawIdle('Click Start Listening to resume.');
+  }
+
+  // ── MIC: Freeze & capture ──────────────────────────────────────────────────
+  btnCapture.addEventListener('click', () => {
+    if (!analyser) return;
+    captureFromAnalyser('microphone');
+  });
+
+  // ── FILE: Drag & drop ──────────────────────────────────────────────────────
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+
+  uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+  });
+
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  // ── FILE: Input change ─────────────────────────────────────────────────────
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+  });
+
+  function handleFile(file) {
+    clearFileError();
+
+    // Check type
+    if (!file.type.startsWith('audio/')) {
+      showFileError('That file does not appear to be an audio file. Please upload an MP3, WAV, OGG, M4A, or FLAC file.');
+      return;
+    }
+
+    // Load into audio element to check duration
+    const url = URL.createObjectURL(file);
+    audioPlayer.src = url;
+    audioPlayer.load();
+
+    audioPlayer.addEventListener('loadedmetadata', function onMeta() {
+      audioPlayer.removeEventListener('loadedmetadata', onMeta);
+      if (audioPlayer.duration > MAX_FILE_SECONDS) {
+        showFileError(`This file is ${Math.round(audioPlayer.duration)} seconds long. Please upload a recording of 60 seconds or less.`);
+        audioPlayer.src = '';
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      // All good
+      fileLoadedName.textContent = file.name;
+      fileLoadedDur.textContent  = Math.round(audioPlayer.duration) + 's';
+      fileLoadedBar.classList.add('visible');
+      playbackRow.style.display  = 'flex';
+    }, { once: true });
+  }
+
+  // ── FILE: Analyze ──────────────────────────────────────────────────────────
+  btnAnalyze.addEventListener('click', async () => {
+    if (!audioPlayer.src) return;
+
+    btnAnalyze.disabled = true;
+    btnAnalyze.textContent = 'Analyzing…';
+
+    try {
+      ensureAudioCtx();
+
+      // Fetch the blob from the object URL and decode it
+      const response = await fetch(audioPlayer.src);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+      // Offline render to extract frequency data from the full file
+      // We sample at a point roughly 10% into the file for a representative snapshot
+      buildAnalyser();
+
+      const offlineCtx = new OfflineAudioContext(
+        audioBuffer.numberOfChannels,
+        audioBuffer.sampleRate * Math.min(audioBuffer.duration, 5), // analyze first 5s
+        audioBuffer.sampleRate
+      );
+
+      const offlineAnalyser = offlineCtx.createAnalyser();
+      offlineAnalyser.fftSize = FFT_SIZE;
+      offlineAnalyser.smoothingTimeConstant = 0;
+
+      const offlineSource = offlineCtx.createBufferSource();
+      offlineSource.buffer = audioBuffer;
+      offlineSource.connect(offlineAnalyser);
+      offlineAnalyser.connect(offlineCtx.destination);
+      offlineSource.start(0);
+
+      await offlineCtx.startRendering();
+
+      // Get frequency data from the offline analyser
+      const bufferLength = offlineAnalyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      offlineAnalyser.getByteFrequencyData(dataArray);
+
+      // Draw the static spectrum on canvas
+      drawStaticSpectrum(dataArray, offlineCtx.sampleRate);
+
+      // Capture
+      captureFromData(dataArray, offlineCtx.sampleRate, audioPlayer.src.split('/').pop() || 'uploaded file');
+
+    } catch (err) {
+      showFileError('Could not analyze this file. Try a different format (MP3 or WAV work best).');
+    }
+
+    btnAnalyze.disabled = false;
+    btnAnalyze.textContent = 'Analyze This File';
+  });
+
+  // ── Capture helpers ────────────────────────────────────────────────────────
+  function captureFromAnalyser(label) {
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+    captureFromData(dataArray, audioCtx.sampleRate, label);
+  }
+
+  function captureFromData(dataArray, sampleRate, label) {
+    const bufferLength = dataArray.length;
+    const allBins = [];
+    for (let i = 0; i < bufferLength; i++) {
+      const freq = Math.round(i * sampleRate / FFT_SIZE);
+      if (freq > 20 && freq < 16000) {
+        allBins.push({ freq, amp: dataArray[i] });
+      }
+    }
+    allBins.sort((a, b) => b.amp - a.amp);
+    capturedData = allBins.slice(0, TOP_N);
+    capturedAt   = label === 'microphone'
+      ? new Date().toLocaleTimeString()
+      : label;
+    renderSnapshot(label);
+  }
+
+  // ── Render snapshot ────────────────────────────────────────────────────────
+  function renderSnapshot(label) {
+    snapSection.classList.add('visible');
+    const metaPrefix = label === 'microphone'
+      ? 'Captured at ' + capturedAt
+      : 'From: ' + capturedAt;
+    snapMeta.textContent = metaPrefix + ' — top ' + TOP_N + ' frequencies by amplitude';
+
+    const maxAmp = capturedData[0].amp || 1;
+
+    barChart.innerHTML = '';
+    capturedData.forEach((d, i) => {
+      const pct = Math.round((d.amp / maxAmp) * 100);
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <span class="bar-freq">${d.freq.toLocaleString()} Hz</span>
+        <div class="bar-track"><div class="bar-fill${i === 0 ? ' top' : ''}" style="width:${pct}%"></div></div>
+        <span class="bar-amp">${d.amp}</span>
+      `;
+      barChart.appendChild(row);
+    });
+
+    dataTable.innerHTML = '';
+    capturedData.forEach((d, i) => {
+      const rel = ((d.amp / maxAmp) * 100).toFixed(1);
+      const note = i === 0 ? 'Dominant frequency' : i < 3 ? 'Strong component' : '';
+      const tr = document.createElement('tr');
+      if (i === 0) tr.className = 'highlight';
+      tr.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${d.freq.toLocaleString()}</td>
+        <td>${d.amp}</td>
+        <td>${rel}%</td>
+        <td>${note}</td>
+      `;
+      dataTable.appendChild(tr);
+    });
+
+    snapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Download CSV ───────────────────────────────────────────────────────────
+  btnDownload.addEventListener('click', () => {
+    if (!capturedData) return;
+    const header = 'Rank,Frequency (Hz),Amplitude (0-255),Relative Strength (%)\n';
+    const maxAmp = capturedData[0].amp || 1;
+    const rows = capturedData.map((d, i) => {
+      const rel = ((d.amp / maxAmp) * 100).toFixed(2);
+      return `${i + 1},${d.freq},${d.amp},${rel}`;
+    }).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'sound-frequency-data.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ── Draw functions ─────────────────────────────────────────────────────────
+  function drawIdle(msg) {
+    const W = canvas.width, H = canvas.height;
+    ctx2d.fillStyle = '#0D1B2A';
+    ctx2d.fillRect(0, 0, W, H);
+    ctx2d.fillStyle = '#A5A5A4';
+    ctx2d.font = '13px IBM Plex Mono, monospace';
+    ctx2d.textAlign = 'center';
+    const text = msg || 'Enable your microphone or upload an audio file to begin.';
+    // Wrap long text
+    const words = text.split(' ');
+    let line = '', lines = [], maxW = W - 80;
+    words.forEach(w => {
+      const test = line + (line ? ' ' : '') + w;
+      if (ctx2d.measureText(test).width > maxW && line) {
+        lines.push(line); line = w;
+      } else { line = test; }
+    });
+    if (line) lines.push(line);
+    const startY = H / 2 - (lines.length - 1) * 10;
+    lines.forEach((l, i) => ctx2d.fillText(l, W / 2, startY + i * 22));
+  }
+
+  function drawLive() {
+    if (!isListening) return;
+    animFrame = requestAnimationFrame(drawLive);
+    const W = canvas.width, H = canvas.height;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+    renderSpectrum(dataArray, audioCtx.sampleRate, W, H);
+  }
+
+  function drawStaticSpectrum(dataArray, sampleRate) {
+    const W = canvas.width, H = canvas.height;
+    renderSpectrum(dataArray, sampleRate, W, H);
+  }
+
+  function renderSpectrum(dataArray, sampleRate, W, H) {
+    ctx2d.fillStyle = '#0D1B2A';
+    ctx2d.fillRect(0, 0, W, H);
+
+    ctx2d.strokeStyle = '#1A2D44';
+    ctx2d.lineWidth = 1;
+    for (let g = 0; g <= 4; g++) {
+      const y = (g / 4) * H;
+      ctx2d.beginPath(); ctx2d.moveTo(0, y); ctx2d.lineTo(W, y); ctx2d.stroke();
+    }
+
+    const maxBin   = Math.min(dataArray.length, Math.floor(12000 / (sampleRate / FFT_SIZE)));
+    const barWidth = W / maxBin;
+    let maxVal = 0, maxIdx = 0;
+
+    for (let i = 0; i < maxBin; i++) {
+      const v = dataArray[i] / 255;
+      const barH = v * H;
+      const x = i * barWidth;
+      const ratio = i / maxBin;
+      ctx2d.fillStyle = ratio < 0.3 ? '#6598E9' : ratio < 0.7 ? '#4A7DD4' : '#BF0A30';
+      ctx2d.fillRect(x, H - barH, barWidth > 1 ? barWidth - 1 : barWidth, barH);
+      if (dataArray[i] > maxVal) { maxVal = dataArray[i]; maxIdx = i; }
+    }
+
+    if (maxVal > 30) {
+      const peakX  = maxIdx * barWidth + barWidth / 2;
+      const peakHz = Math.round(maxIdx * sampleRate / FFT_SIZE);
+      ctx2d.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx2d.font = '11px IBM Plex Mono, monospace';
+      ctx2d.textAlign = 'center';
+      const labelX = Math.min(Math.max(peakX, 35), W - 35);
+      ctx2d.fillText(peakHz.toLocaleString() + ' Hz', labelX, H - (maxVal / 255) * H - 8);
+    }
+  }
+
+  // Initial draw
+  drawIdle('Enable your microphone or upload an audio file to begin.');
+</script>
+</body>
+</html>

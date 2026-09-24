@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message to Sound — ASCTE / ACCEL</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #BF0A30;
+    --navy: #002868;
+    --blue: #6598E9;
+    --grey: #A5A5A4;
+    --light: #F4F6FA;
+    --white: #FFFFFF;
+    --dark: #0D1B2A;
+  }
+
+  body {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    background: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 0 1.5rem;
+    display: flex; align-items: center;
+    height: 56px;
+    border-bottom: 4px solid var(--red);
+  }
+  .header-brand { display: flex; align-items: center; gap: 0.8rem; }
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: var(--red);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700; font-size: 0.7rem;
+    color: white; flex-shrink: 0;
+  }
+  .header-text h1 { font-size: 1rem; font-weight: 600; color: var(--white); }
+  .header-text p { font-size: 0.72rem; color: var(--blue); font-style: italic; font-weight: 300; }
+
+  main {
+    max-width: 950px; width: 100%;
+    margin: 0 auto; padding: 1.5rem 1.5rem 2.5rem;
+    display: flex; flex-direction: column; gap: 1.25rem;
+  }
+
+  /* ===== STEP 1: set up (top of page, normal flow) ===== */
+  .setup-section {
+    background: var(--white);
+    border: 1.5px solid #DDE3EE;
+    border-left: 4px solid var(--navy);
+    padding: 1.1rem 1.2rem;
+    display: flex; flex-direction: column; gap: 0.8rem;
+  }
+
+  .setup-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+  .setup-row label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--grey);
+  }
+  #msgInput {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid #C6CEDD;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    width: 160px;
+  }
+  #msgInput:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+
+  button {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 0.85rem; font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    border: none; cursor: pointer;
+    white-space: nowrap;
+  }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-accent  { background: var(--red); color: white; }
+  .btn-gold { background: #C7871C; color: white; }
+  .btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
+
+  .progress-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem; color: var(--navy);
+    background: #EFF3FB;
+    border: 1.5px solid #C6CEDD;
+    padding: 0.36rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  table.grid-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+  }
+  table.grid-table th, table.grid-table td {
+    border: 1px solid #E1E6EF;
+    padding: 0.42rem 0.65rem;
+    text-align: left;
+  }
+  table.grid-table th {
+    background: #EFF3FB; color: var(--navy);
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .ref-swatch { width: 13px; height: 13px; border-radius: 50%; display: inline-block; margin-right: 0.4rem; vertical-align: middle; }
+
+  .explain-line { font-size: 0.88rem; color: #444; font-weight: 300; line-height: 1.55; }
+  .explain-line strong { color: var(--navy); font-weight: 600; }
+
+  .convert-log {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--dark);
+    color: #B8C2D6;
+    padding: 0.7rem 0.9rem;
+    line-height: 1.7;
+  }
+  .convert-log.visible { display: block; }
+  .convert-log .convert-line {
+    opacity: 0;
+    animation: convertFadeIn 0.3s ease-out forwards;
+  }
+  .convert-log .convert-line .cl-letter { color: #FFFFFF; font-weight: 700; }
+  .convert-log .convert-line .cl-bits { color: #6598E9; }
+  @keyframes convertFadeIn { to { opacity: 1; } }
+
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem; color: var(--grey); text-align: center;
+    padding: 0.3rem 0; display: none;
+  }
+  .scroll-hint.visible { display: block; }
+
+  /* ===== STEP 2: send / receive (below, normal flow) ===== */
+  .send-section { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .send-controls {
+    background: var(--white);
+    border: 1.5px solid #DDE3EE;
+    border-left: 4px solid var(--red);
+    padding: 0.8rem 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  }
+
+  .status-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--navy);
+    background: #EFF3FB;
+    border-left: 3px solid var(--blue);
+    padding: 0.5rem 0.85rem;
+  }
+
+  .legend-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; color: var(--grey);
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .legend-line .lg-dot { display: inline-flex; align-items: center; gap: 0.3rem; }
+  .legend-circle { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #DDE3EE; display: inline-block; }
+  .legend-circle.filled { background: var(--navy); border-color: var(--navy); }
+
+  .transmission {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .panel { background: var(--white); border: 1.5px solid #DDE3EE; display: flex; flex-direction: column; min-width: 0; }
+  .panel-sender { border-right: none; }
+  .panel-receiver { border-left: none; }
+  .panel-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0.5rem 0.8rem; color: var(--white);
+  }
+  .panel-sender .panel-label { background: var(--red); }
+  .panel-receiver .panel-label { background: var(--navy); }
+  .panel-body { padding: 0.8rem 0.7rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+
+  .conv-table { display: flex; flex-direction: column; gap: 0.4rem; }
+  .conv-row {
+    display: flex; align-items: center; gap: 0.45rem;
+    padding: 0.4rem 0.4rem;
+    background: var(--light);
+    border: 1.5px solid #E1E6EF;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .conv-row.active { border-color: var(--red); background: #FFF9EC; }
+  .conv-row.done { border-color: var(--navy); }
+  .conv-letter {
+    width: 28px; height: 28px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700; font-size: 0.9rem;
+    background: #E4E9F2; color: #9AA6BC;
+    border: 1.5px solid #DDE3EE;
+  }
+  .conv-letter.known { background: var(--navy); color: white; border-color: var(--navy); }
+  .conv-letter.decoded { background: var(--red); color: white; border-color: var(--red); }
+  .conv-pairs { display: flex; gap: 0.4rem; flex: 1; min-width: 0; }
+  .conv-pair { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+  .conv-pair.reverse { flex-direction: column-reverse; }
+  .bit-pair { display: flex; gap: 2px; }
+  .bit-box {
+    width: 19px; height: 19px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600; font-size: 0.7rem;
+    background: var(--white); border: 1.5px solid #DDE3EE; color: #C2C9D6;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .bit-box.shown { color: var(--dark); border-color: #B8C2D6; }
+  .bit-box.sent  { color: white; border-color: transparent; }
+  .pair-connector { font-size: 0.56rem; color: var(--grey); line-height: 1; }
+  .tone-circle {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700; font-size: 0.7rem;
+    background: var(--white); border: 1.5px solid #DDE3EE; color: #C2C9D6;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  .tone-circle.sent { color: white; border-color: transparent; }
+  .tone-circle.pulsing { animation: pulseCircle 0.5s ease-out; }
+  @keyframes pulseCircle { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  .same-tag {
+    font-size: 0.62rem; color: #9c6a12; font-style: italic;
+    margin-left: 0.3rem;
+  }
+
+  .decode-total {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.05rem; font-weight: 700; color: var(--navy);
+    letter-spacing: 0.1em;
+    padding-top: 0.25rem; border-top: 1.5px solid #E1E6EF; margin-top: 0.1rem;
+  }
+  .decode-total .cursor {
+    display: inline-block; width: 0.5em; height: 0.9rem;
+    background: var(--red); vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .channel {
+    width: 44px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; background: var(--dark);
+  }
+  .channel-line {
+    position: absolute; top: 0; bottom: 0; left: 50%; width: 2px;
+    background: repeating-linear-gradient(to bottom, #2A3E58 0, #2A3E58 6px, transparent 6px, transparent 12px);
+    transform: translateX(-50%);
+  }
+  .channel-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%); opacity: 0;
+    box-shadow: 0 0 12px 4px currentColor;
+  }
+  .channel-dot.traveling { animation: travel 0.55s ease-in-out forwards; }
+  @keyframes travel { 0% { top: 8%; opacity: 1; } 100% { top: 92%; opacity: 1; } }
+
+  .capture-section { background: var(--white); border: 1.5px solid #DDE3EE; border-left: 4px solid #C7871C; }
+  .capture-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.55rem 0.9rem; flex-wrap: wrap; gap: 0.5rem;
+    border-bottom: 1.5px solid #EFF1F5;
+  }
+  .capture-header h3 { font-size: 0.92rem; color: var(--navy); font-weight: 600; }
+  .capture-log {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.74rem; line-height: 1.65;
+    padding: 0.7rem 0.9rem;
+    max-height: 160px; overflow-y: auto;
+    color: var(--dark);
+  }
+  .capture-log .log-line { display: flex; gap: 0.5rem; }
+  .capture-log .log-idx { color: var(--grey); width: 2.1em; flex-shrink: 0; text-align: right; }
+  .capture-log .log-tone { font-weight: 700; width: 4.2em; flex-shrink: 0; }
+  .capture-log .log-final { margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px dashed #DDE3EE; font-weight: 700; color: var(--navy); }
+  .capture-log .placeholder { color: var(--grey); font-style: italic; }
+
+  .about { background: var(--white); border: 1.5px solid #DDE3EE; border-left: 4px solid var(--red); padding: 0.85rem 1rem; }
+  .about h4 { font-size: 0.85rem; color: var(--navy); margin-bottom: 0.3rem; }
+  .about p { font-size: 0.8rem; color: #444; line-height: 1.55; font-weight: 300; }
+
+  footer {
+    background: var(--navy); color: var(--white); text-align: center;
+    font-size: 0.72rem; padding: 1rem 1.5rem; line-height: 1.6;
+    border-top: 4px solid var(--red);
+  }
+  footer a { color: var(--blue); }
+
+  @media (max-width: 560px) {
+    .transmission { grid-template-columns: 1fr; }
+    .channel { width: 100%; height: 34px; }
+    .channel-line { top: 50%; left: 0; right: 0; bottom: auto; height: 2px; width: auto;
+      background: repeating-linear-gradient(to right, #2A3E58 0, #2A3E58 6px, transparent 6px, transparent 12px); }
+    .channel-dot.traveling { animation: travelH 0.55s ease-in-out forwards; }
+    @keyframes travelH { 0% { left: 8%; opacity: 1; } 100% { left: 92%; opacity: 1; } }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="logo-mark">ASCTE</div>
+    <div class="header-text">
+      <h1>Message to Sound</h1>
+      <p>How data travels as sound &mdash; ASCTE / ACCEL</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- STEP 1: type message, prepare, understand what's about to happen -->
+  <div class="setup-section">
+    <div class="setup-row">
+      <label for="msgInput">Message (letters only)</label>
+      <input type="text" id="msgInput" maxlength="12" placeholder="e.g. CYBER" autocomplete="off">
+      <button class="btn-accent" id="btnEncode">Prepare Transmission</button>
+    </div>
+
+    <div class="convert-log" id="convertLog"></div>
+
+    <span class="progress-pill" id="progressPill" style="display:none;">No message prepared</span>
+
+    <table class="grid-table" style="display:none;">
+      <tr><th>Bits</th><th>Tone</th><th>Frequency</th></tr>
+      <tr><td><span class="ref-swatch" style="background:#BF0A30"></span>00</td><td>Tone 1</td><td>330 Hz</td></tr>
+      <tr><td><span class="ref-swatch" style="background:#002868"></span>01</td><td>Tone 2</td><td>494 Hz</td></tr>
+      <tr><td><span class="ref-swatch" style="background:#6598E9"></span>10</td><td>Tone 3</td><td>659 Hz</td></tr>
+      <tr><td><span class="ref-swatch" style="background:#7A7A79"></span>11</td><td>Tone 4</td><td>880 Hz</td></tr>
+    </table>
+
+    <p class="explain-line" style="display:none;"><strong>Every letter = 6 bits.</strong> <strong>Every 2 bits = 1 tone.</strong> 6 &divide; 2 = 3 tones per letter, always. <span id="mathSummary"></span></p>
+
+    <p class="scroll-hint" id="scrollHint">&darr; Scroll down to send it &darr;</p>
+  </div>
+
+  <!-- STEP 2: send / receive -->
+  <div class="send-section">
+
+    <div class="send-controls">
+      <button class="btn-primary" id="btnNext" disabled>&#9654; Send Next Tone</button>
+      <button class="btn-gold" id="btnSendAll" disabled style="display:none;">&#9654;&#9654; Send Rest of Message</button>
+      <button class="btn-outline" id="btnReset" disabled>Reset</button>
+      <span class="progress-pill" id="tonePill" style="display:none;"></span>
+    </div>
+
+    <div class="status-line" id="statusLine">Type a message and click "Prepare Transmission" to begin.</div>
+
+    <div class="legend-line">
+      <span class="lg-dot"><span class="legend-circle"></span> not sent yet</span>
+      <span class="lg-dot"><span class="legend-circle filled"></span> sent (filled with tone color)</span>
+    </div>
+
+    <div class="transmission">
+      <div class="panel panel-sender">
+        <div class="panel-label">Sender — Letter &rarr; Binary &rarr; Tone</div>
+        <div class="panel-body"><div class="conv-table" id="senderTable"></div></div>
+      </div>
+      <div class="channel" id="channel"><div class="channel-line"></div></div>
+      <div class="panel panel-receiver">
+        <div class="panel-label">Receiver — Tone &rarr; Binary &rarr; Letter</div>
+        <div class="panel-body">
+          <div class="conv-table" id="receiverTable"></div>
+          <div class="decode-total" id="decodedMessage"><span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="capture-section">
+    <div class="capture-header">
+      <h3>Captured Transmission</h3>
+      <button class="btn-outline" id="btnDownload" disabled>&#8595; Download as .wav</button>
+    </div>
+    <div class="capture-log" id="captureLog"><span class="placeholder">No tones captured yet — prepare a transmission and start sending.</span></div>
+  </div>
+
+  <div class="about">
+    <h4>How this works</h4>
+    <p>Some letters (like A = 000000) split into 3 identical bit pairs, so all 3 tones sound the same &mdash; that's correct, not a glitch, and you'll see a note next to those rows. This is the same basic idea behind real pay-by-sound systems: data becomes a sequence of tones, a microphone hears it, and software decodes it back. Real systems use tones outside human hearing; these are shifted into the audible range on purpose. The downloaded .wav file is the actual tone sequence for this message.</p>
+  </div>
+
+</main>
+
+<footer>
+  Designed by the ASCTE Instructional Design Team for Alabama public school teachers.<br>
+  Questions or interested in using this with your students? Email us at <a href="mailto:instructionaldesign@ascte.org">instructionaldesign@ascte.org</a><br>
+  &copy; Alabama School of Cyber Technology and Engineering (ASCTE) / ACCEL Program
+</footer>
+
+<script>
+  // ---------- Data model ----------
+  const TONES = [
+    { bits: '00', freq: 330, hex: '#BF0A30', name: 'Tone 1' },
+    { bits: '01', freq: 494, hex: '#002868', name: 'Tone 2' },
+    { bits: '10', freq: 659, hex: '#6598E9', name: 'Tone 3' },
+    { bits: '11', freq: 880, hex: '#7A7A79', name: 'Tone 4' },
+  ];
+  const TONE_DURATION = 0.32;
+  const TONE_GAP = 0.05;
+
+  function letterToBits(letter) {
+    const idx = letter.charCodeAt(0) - 65;
+    return idx.toString(2).padStart(6, '0');
+  }
+  function bitsToLetter(bits6) {
+    const idx = parseInt(bits6, 2);
+    return String.fromCharCode(65 + idx);
+  }
+  function toneForBits(pair) { return TONES.find(t => t.bits === pair); }
+  function pairsOf(bits6) { return [bits6.substr(0,2), bits6.substr(2,2), bits6.substr(4,2)]; }
+
+  // ---------- Live audio ----------
+  let audioCtx = null;
+  function ensureAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  function playTone(freq, duration = TONE_DURATION) {
+    ensureAudioCtx();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 0.02);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration + 0.02);
+  }
+
+  // ---------- WAV capture ----------
+  function encodeWavFromChannelData(channelData, sampleRate) {
+    const numSamples = channelData.length;
+    const bytesPerSample = 2;
+    const blockAlign = bytesPerSample;
+    const byteRate = sampleRate * blockAlign;
+    const dataSize = numSamples * bytesPerSample;
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(buffer);
+    function writeString(offset, str) { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); }
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, dataSize, true);
+    let offset = 44;
+    for (let i = 0; i < numSamples; i++) {
+      let s = Math.max(-1, Math.min(1, channelData[i]));
+      s = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      view.setInt16(offset, s, true);
+      offset += 2;
+    }
+    return buffer;
+  }
+
+  async function renderTransmissionToWavBlob(queue) {
+    const sampleRate = 44100;
+    const totalDuration = queue.length * (TONE_DURATION + TONE_GAP);
+    const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    const offlineCtx = new OfflineCtx(1, Math.ceil(sampleRate * totalDuration), sampleRate);
+    queue.forEach((item, i) => {
+      const tone = toneForBits(item.bits);
+      const startTime = i * (TONE_DURATION + TONE_GAP);
+      const osc = offlineCtx.createOscillator();
+      const gain = offlineCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = tone.freq;
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.5, startTime + 0.02);
+      gain.gain.linearRampToValueAtTime(0, startTime + TONE_DURATION);
+      osc.connect(gain);
+      gain.connect(offlineCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + TONE_DURATION + 0.02);
+    });
+    const renderedBuffer = await offlineCtx.startRendering();
+    const channelData = renderedBuffer.getChannelData(0);
+    const wavBuffer = encodeWavFromChannelData(channelData, sampleRate);
+    return new Blob([wavBuffer], { type: 'audio/wav' });
+  }
+
+  // ---------- State ----------
+  let message = '';
+  let toneQueue = [];
+  let toneStep = 0;
+  let decodedLetters = [];
+  let sending = false;
+  let firstLetterDone = false;
+
+  // ---------- DOM refs ----------
+  const msgInput = document.getElementById('msgInput');
+  const btnEncode = document.getElementById('btnEncode');
+  const progressPill = document.getElementById('progressPill');
+  const statusLine = document.getElementById('statusLine');
+  const mathSummary = document.getElementById('mathSummary');
+  const scrollHint = document.getElementById('scrollHint');
+  const senderTable = document.getElementById('senderTable');
+  const receiverTable = document.getElementById('receiverTable');
+  const decodedMessage = document.getElementById('decodedMessage');
+  const btnNext = document.getElementById('btnNext');
+  const btnSendAll = document.getElementById('btnSendAll');
+  const btnReset = document.getElementById('btnReset');
+  const btnDownload = document.getElementById('btnDownload');
+  const tonePill = document.getElementById('tonePill');
+  const channel = document.getElementById('channel');
+  const captureLog = document.getElementById('captureLog');
+
+  // ---------- Prepare ----------
+  const convertLog = document.getElementById('convertLog');
+
+  function runConversionLog(msg) {
+    return new Promise((resolve) => {
+      convertLog.innerHTML = '';
+      convertLog.classList.add('visible');
+      msg.split('').forEach((letter, i) => {
+        setTimeout(() => {
+          const bits6 = letterToBits(letter);
+          const line = document.createElement('div');
+          line.className = 'convert-line';
+          line.innerHTML = `<span class="cl-letter">${letter}</span> &rarr; <span class="cl-bits">${bits6}</span>`;
+          convertLog.appendChild(line);
+          if (i === msg.length - 1) {
+            setTimeout(resolve, 350);
+          }
+        }, i * 220);
+      });
+    });
+  }
+
+  btnEncode.addEventListener('click', async () => {
+    const raw = msgInput.value.toUpperCase().replace(/[^A-Z]/g, '');
+    if (!raw.length) {
+      statusLine.textContent = 'Enter letters A–Z only, then click "Prepare Transmission."';
+      return;
+    }
+    message = raw;
+    buildToneQueue();
+    buildTables();
+    firstLetterDone = false;
+
+    btnEncode.disabled = true;
+    msgInput.disabled = true;
+    progressPill.style.display = 'none';
+    document.querySelector('table.grid-table').style.display = 'none';
+    document.querySelector('.explain-line').style.display = 'none';
+    scrollHint.classList.remove('visible');
+
+    await runConversionLog(message);
+
+    progressPill.style.display = 'inline-block';
+    document.querySelector('table.grid-table').style.display = '';
+    document.querySelector('.explain-line').style.display = '';
+    progressPill.textContent = `"${message}" ready`;
+
+    btnNext.disabled = false;
+    btnSendAll.disabled = true;
+    btnSendAll.style.display = 'none';
+    btnReset.disabled = false;
+    btnDownload.disabled = false;
+    tonePill.style.display = 'inline-block';
+    updateProgress();
+
+    const totalTones = toneQueue.length;
+    mathSummary.textContent = `"${message}" = ${message.length} letter${message.length === 1 ? '' : 's'} × 3 = ${totalTones} tones total.`;
+    scrollHint.classList.add('visible');
+    captureLog.innerHTML = `<span class="placeholder">"${message}" = ${message.length} letter${message.length === 1 ? '' : 's'} &times; 3 tones each = ${totalTones} tones total. Click "Send Next Tone" to start &mdash; after the first letter, you can send the rest in one click.</span>`;
+    statusLine.textContent = `Transmission prepared: "${message}" — ${totalTones} tones queued. Send the first letter one tone at a time to see how it works.`;
+  });
+
+  function buildToneQueue() {
+    toneQueue = [];
+    for (let li = 0; li < message.length; li++) {
+      const bits6 = letterToBits(message[li]);
+      for (let p = 0; p < 3; p++) {
+        const pair = bits6.substr(p * 2, 2);
+        toneQueue.push({ letterIndex: li, pairIndexInLetter: p, bits: pair, bits6 });
+      }
+    }
+    toneStep = 0;
+    decodedLetters = new Array(message.length).fill(null);
+  }
+
+  function buildConvRow(letterIndex, mode) {
+    const row = document.createElement('div');
+    row.className = 'conv-row';
+    row.id = (mode === 'sender' ? 'sRow-' : 'rRow-') + letterIndex;
+
+    const letterCell = document.createElement('div');
+    letterCell.className = 'conv-letter';
+    letterCell.id = (mode === 'sender' ? 'sLetter-' : 'rLetter-') + letterIndex;
+    if (mode === 'sender') {
+      letterCell.textContent = message[letterIndex];
+      letterCell.classList.add('known');
+    } else {
+      letterCell.textContent = '?';
+    }
+    row.appendChild(letterCell);
+
+    const pairsWrap = document.createElement('div');
+    pairsWrap.className = 'conv-pairs';
+    const bits6 = letterToBits(message[letterIndex]);
+    const pairs = pairsOf(bits6);
+    const tones = pairs.map(p => toneForBits(p));
+    const allSame = tones.every(t => t.name === tones[0].name);
+
+    for (let p = 0; p < 3; p++) {
+      const pairEl = document.createElement('div');
+      pairEl.className = 'conv-pair' + (mode === 'receiver' ? ' reverse' : '');
+
+      const bitPair = document.createElement('div');
+      bitPair.className = 'bit-pair';
+      for (let k = 0; k < 2; k++) {
+        const bitBox = document.createElement('div');
+        bitBox.className = 'bit-box';
+        bitBox.id = (mode === 'sender' ? 'sBit-' : 'rBit-') + letterIndex + '-' + (p * 2 + k);
+        if (mode === 'sender') {
+          bitBox.textContent = bits6[p * 2 + k];
+          bitBox.classList.add('shown');
+        }
+        bitPair.appendChild(bitBox);
+      }
+
+      const connector = document.createElement('div');
+      connector.className = 'pair-connector';
+      connector.textContent = '\u2193';
+
+      const circle = document.createElement('div');
+      circle.className = 'tone-circle';
+      circle.id = (mode === 'sender' ? 'sTone-' : 'rTone-') + letterIndex + '-' + p;
+      circle.title = 'Tone';
+      circle.textContent = '\u25CF';
+
+      pairEl.appendChild(bitPair);
+      pairEl.appendChild(connector);
+      pairEl.appendChild(circle);
+      pairsWrap.appendChild(pairEl);
+    }
+
+    row.appendChild(pairsWrap);
+
+    if (mode === 'sender' && allSame) {
+      const tag = document.createElement('span');
+      tag.className = 'same-tag';
+      tag.textContent = 'same tone ×3';
+      row.appendChild(tag);
+    }
+
+    return row;
+  }
+
+  function buildTables() {
+    senderTable.innerHTML = '';
+    receiverTable.innerHTML = '';
+    for (let li = 0; li < message.length; li++) {
+      senderTable.appendChild(buildConvRow(li, 'sender'));
+      receiverTable.appendChild(buildConvRow(li, 'receiver'));
+    }
+    decodedMessage.innerHTML = '<span class="cursor"></span>';
+    progressPill.textContent = `"${message}" ready`;
+  }
+
+  function updateProgress() {
+    tonePill.textContent = `Tone ${Math.min(toneStep, toneQueue.length)} of ${toneQueue.length}`;
+  }
+
+  // ---------- Step through ----------
+  function sendNextTone() {
+    return new Promise((resolve) => {
+      if (toneStep >= toneQueue.length) { resolve(false); return; }
+      const item = toneQueue[toneStep];
+      const tone = toneForBits(item.bits);
+      const li = item.letterIndex;
+      const p = item.pairIndexInLetter;
+
+      document.querySelectorAll('.conv-row').forEach(r => r.classList.remove('active'));
+      const sRow = document.getElementById('sRow-' + li);
+      if (sRow) sRow.classList.add('active');
+
+      const sBit0 = document.getElementById('sBit-' + li + '-' + (p * 2));
+      const sBit1 = document.getElementById('sBit-' + li + '-' + (p * 2 + 1));
+      [sBit0, sBit1].forEach(b => { if (b) { b.classList.add('sent'); b.style.background = tone.hex; b.style.borderColor = tone.hex; } });
+
+      const sTone = document.getElementById('sTone-' + li + '-' + p);
+      if (sTone) { sTone.classList.add('sent', 'pulsing'); sTone.style.background = tone.hex; sTone.style.borderColor = tone.hex; sTone.textContent = tone.name.slice(-1); sTone.title = tone.name; }
+
+      playTone(tone.freq);
+      animateChannelDot(tone.hex);
+      appendCaptureLine(toneStep, tone, item);
+
+      setTimeout(() => {
+        // STAGE A: the tone arrives and lights up first — no binary yet
+        const rRow = document.getElementById('rRow-' + li);
+        if (rRow) rRow.classList.add('active');
+
+        const rTone = document.getElementById('rTone-' + li + '-' + p);
+        if (rTone) { rTone.classList.add('sent', 'pulsing'); rTone.style.background = tone.hex; rTone.style.borderColor = tone.hex; rTone.textContent = tone.name.slice(-1); rTone.title = tone.name; }
+
+        // STAGE B: a beat later, the tone gets "decoded" into its two bits
+        setTimeout(() => {
+          const rBit0 = document.getElementById('rBit-' + li + '-' + (p * 2));
+          const rBit1 = document.getElementById('rBit-' + li + '-' + (p * 2 + 1));
+          const bitChars = tone.bits.split('');
+          [rBit0, rBit1].forEach((b, k) => { if (b) { b.textContent = bitChars[k]; b.classList.add('shown', 'sent'); b.style.background = tone.hex; b.style.borderColor = tone.hex; } });
+
+          if (p === 2) {
+            const letter = bitsToLetter(item.bits6);
+            decodedLetters[li] = letter;
+            renderDecodedMessage();
+            const rLetter = document.getElementById('rLetter-' + li);
+            if (rLetter) { rLetter.textContent = letter; rLetter.classList.add('decoded'); }
+            if (sRow) { sRow.classList.remove('active'); sRow.classList.add('done'); }
+            if (rRow) { rRow.classList.remove('active'); rRow.classList.add('done'); }
+            appendLetterDecodedLine(li, letter);
+
+            if (li === 0 && !firstLetterDone) {
+              firstLetterDone = true;
+              btnSendAll.style.display = '';
+              btnSendAll.disabled = false;
+              statusLine.textContent = `First letter sent and decoded — "${letter}". You can now send the rest of the message in one click, or keep going tone by tone.`;
+            }
+          }
+
+          toneStep++;
+          updateProgress();
+
+          if (toneStep >= toneQueue.length) {
+            statusLine.textContent = `Transmission complete — receiver decoded "${decodedLetters.join('')}".`;
+            appendCaptureFinal();
+            document.querySelectorAll('.conv-row').forEach(r => r.classList.remove('active'));
+          } else if (li !== 0 || p !== 2) {
+            statusLine.textContent = `Tone ${toneStep} of ${toneQueue.length} sent (${tone.name}, ${tone.freq} Hz) — bits "${item.bits}".`;
+          }
+          resolve(true);
+        }, 250);
+      }, 550);
+    });
+  }
+
+  btnNext.addEventListener('click', async () => {
+    if (sending || toneStep >= toneQueue.length) return;
+    btnNext.disabled = true;
+    btnSendAll.disabled = true;
+    await sendNextTone();
+    if (toneStep < toneQueue.length) {
+      btnNext.disabled = false;
+      if (firstLetterDone) btnSendAll.disabled = false;
+    }
+  });
+
+  btnSendAll.addEventListener('click', async () => {
+    if (sending || toneStep >= toneQueue.length || !firstLetterDone) return;
+    sending = true;
+    btnNext.disabled = true;
+    btnSendAll.disabled = true;
+    while (toneStep < toneQueue.length) {
+      await sendNextTone();
+    }
+    sending = false;
+  });
+
+  function appendCaptureLine(index, tone, item) {
+    if (captureLog.querySelector('.placeholder')) captureLog.innerHTML = '';
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = `<span class="log-idx">[${index + 1}]</span><span class="log-tone" style="color:${tone.hex}">${tone.name}</span><span>&mdash; bits ${tone.bits}</span>`;
+    captureLog.appendChild(line);
+    captureLog.scrollTop = captureLog.scrollHeight;
+  }
+  function appendLetterDecodedLine(letterIndex, letter) {
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = `<span class="log-idx"></span><span style="color:var(--navy); font-weight:700;">&rarr; Letter ${letterIndex + 1} decoded: "${letter}"</span>`;
+    captureLog.appendChild(line);
+    captureLog.scrollTop = captureLog.scrollHeight;
+  }
+  function appendCaptureFinal() {
+    const line = document.createElement('div');
+    line.className = 'log-final';
+    line.textContent = `Decoded: "${decodedLetters.join('')}" — ${toneQueue.length} tones captured.`;
+    captureLog.appendChild(line);
+    captureLog.scrollTop = captureLog.scrollHeight;
+  }
+  function animateChannelDot(hex) {
+    const dot = document.createElement('div');
+    dot.className = 'channel-dot traveling';
+    dot.style.background = hex;
+    dot.style.color = hex;
+    channel.appendChild(dot);
+    setTimeout(() => dot.remove(), 650);
+  }
+  function renderDecodedMessage() {
+    const html = decodedLetters.map(l => l === null ? '&nbsp;' : l).join('');
+    decodedMessage.innerHTML = html + '<span class="cursor"></span>';
+  }
+
+  // ---------- Download .wav ----------
+  btnDownload.addEventListener('click', async () => {
+    if (!toneQueue.length) return;
+    btnDownload.disabled = true;
+    const originalText = btnDownload.textContent;
+    btnDownload.textContent = 'Rendering...';
+    try {
+      const blob = await renderTransmissionToWavBlob(toneQueue);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `message-to-sound-${message}.wav`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      statusLine.textContent = 'Could not render audio file in this browser.';
+    }
+    btnDownload.textContent = originalText;
+    btnDownload.disabled = false;
+  });
+
+  // ---------- Reset ----------
+  btnReset.addEventListener('click', fullReset);
+  function fullReset() {
+    message = '';
+    toneQueue = [];
+    toneStep = 0;
+    decodedLetters = [];
+    sending = false;
+    firstLetterDone = false;
+    msgInput.value = '';
+    msgInput.disabled = false;
+    btnEncode.disabled = false;
+    btnNext.disabled = true;
+    btnSendAll.disabled = true;
+    btnSendAll.style.display = 'none';
+    btnReset.disabled = true;
+    btnDownload.disabled = true;
+    tonePill.style.display = 'none';
+    senderTable.innerHTML = '';
+    receiverTable.innerHTML = '';
+    decodedMessage.innerHTML = '<span class="cursor"></span>';
+    progressPill.textContent = 'No message prepared';
+    progressPill.style.display = 'none';
+    convertLog.innerHTML = '';
+    convertLog.classList.remove('visible');
+    document.querySelector('table.grid-table').style.display = 'none';
+    document.querySelector('.explain-line').style.display = 'none';
+    mathSummary.textContent = '';
+    scrollHint.classList.remove('visible');
+    captureLog.innerHTML = '<span class="placeholder">No tones captured yet — prepare a transmission and start sending.</span>';
+    statusLine.textContent = 'Type a message and click "Prepare Transmission" to begin.';
+  }
+
+  msgInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !btnEncode.disabled) btnEncode.click(); });
+</script>
+
+</body>
+</html>
