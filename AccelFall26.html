@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where has ACCEL been since Labor Day?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#BF0A30; --navy:#002868; --sky:#6598E9; --gray:#A5A5A4;
+  --bg:#F3F6FB; --surface:#FFFFFF; --ink:#0F1E3D; --muted:#5A6478;
+  --land:#E2E8F2; --landLine:#FFFFFF; --visited:#C9D8F3; --route:#002868; --line:#D5DCE8;
+  --camp:#BF0A30; --pd:#2E64C8; --conf:#7A7A79; --home:#002868;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1633; --surface:#11204A; --ink:#EEF2FA; --muted:#A9B4CC;
+    --land:#1A2C5C; --landLine:#0A1633; --visited:#2C4A8E; --route:#9DBBF2; --line:#24386B;
+    --camp:#F0476A; --pd:#7FA8F0; --conf:#B9B9B8; --home:#EEF2FA;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1633; --surface:#11204A; --ink:#EEF2FA; --muted:#A9B4CC;
+  --land:#1A2C5C; --landLine:#0A1633; --visited:#2C4A8E; --route:#9DBBF2; --line:#24386B;
+  --camp:#F0476A; --pd:#7FA8F0; --conf:#B9B9B8; --home:#EEF2FA;
+  color-scheme: dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Ubuntu","Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 48px}
+header{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:end}
+.headStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;background:var(--surface);border-radius:18px;padding:18px 22px}
+.headStats div{font-size:.92rem;color:var(--muted);line-height:1.3}
+.headStats b{display:block;font-size:2.2rem;line-height:1.1;color:var(--ink);margin-bottom:2px}
+header h1{font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.05;margin:0;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+header h1 .accel{color:var(--red)}
+header p{margin:10px 0 0;color:var(--muted);max-width:62ch;font-size:1.02rem}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:22px 0 14px}
+.chip{font:inherit;font-size:.92rem;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 14px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.chip .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.toggle{margin-left:auto;display:inline-flex;gap:8px;align-items:center;font-size:.92rem;color:var(--muted);cursor:pointer}
+.toggle input{accent-color:var(--red);width:16px;height:16px}
+button:focus-visible,.toggle input:focus-visible,.site:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
+.mapbox{background:var(--surface);border-radius:18px;padding:10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+svg{display:block;width:100%;height:auto}
+.county{fill:var(--land);stroke:var(--landLine);stroke-width:.8}
+.county.visited{fill:var(--visited)}
+.county.soon{fill:var(--land)}
+.outline{fill:none;stroke:var(--ink);stroke-width:1.4;opacity:.55}
+.route{fill:none;stroke:var(--route);stroke-width:1.6;opacity:.55;stroke-linecap:round}
+.route.soon{stroke-dasharray:3 5;opacity:.45}
+.site{cursor:pointer}
+.site circle.mark{stroke:var(--surface);stroke-width:2.5}
+.site.soon circle.mark{fill:var(--surface) !important;stroke-width:2.5}
+.site text{font-size:12.5px;fill:var(--ink);font-weight:500;paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+.site.active circle.ring{opacity:1}
+.site circle.ring{fill:none;stroke:var(--ink);stroke-width:1.5;opacity:0;transition:opacity .15s}
+.site.dim{opacity:.18}
+.panel{background:var(--surface);border-radius:18px;padding:22px 22px 18px}
+.panel h2{margin:0;font-size:1.5rem;line-height:1.15}
+.panel .where{color:var(--muted);margin:4px 0 14px}
+.tag{display:inline-block;font-size:.8rem;font-weight:500;padding:2px 10px;border-radius:999px;color:#fff;margin-bottom:10px}
+.ev{border-top:1px solid var(--line);padding:12px 0}
+.ev:first-of-type{border-top:0;padding-top:4px}
+.ev h3{margin:0;font-size:1.02rem}
+.ev .when{color:var(--muted);font-size:.9rem}
+.ev p{margin:6px 0 0;font-size:.95rem}
+.nums{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:8px}
+.nums span{font-size:.92rem;color:var(--muted)}
+.nums b{color:var(--ink);font-size:1.15rem;margin-right:4px}
+.back{font:inherit;font-size:.9rem;background:none;border:0;color:var(--pd);padding:0;margin-top:10px;cursor:pointer;text-decoration:underline}
+.overview p{margin:0 0 12px;color:var(--muted)}
+.overview .big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:14px 0}
+.overview .big div{font-size:.92rem;color:var(--muted)}
+.overview .big b{display:block;font-size:2rem;line-height:1.1;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem;color:var(--muted);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.legend i.hollow{background:var(--surface)!important;border:2px solid var(--muted)}
+.side{display:flex;flex-direction:column;gap:20px;min-width:0}
+.tally{background:var(--surface);border-radius:18px;padding:20px 22px 16px}
+.tally h2{font-size:1.3rem;margin:0 0 8px}
+.tally ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.tally li{padding:10px 14px 10px 0;border-top:1.5px solid var(--line);display:flex;flex-direction:column;gap:0}
+.tally li b{font-size:1.6rem;line-height:1.15;color:var(--navy);font-weight:700}
+:root[data-theme="dark"] .tally li b{color:var(--sky)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tally li b{color:var(--sky)}}
+.tally li.fun b{color:var(--camp)!important}
+.tally li span{font-size:.92rem;line-height:1.35}
+.foot{margin-top:22px;font-size:.85rem;color:var(--muted)}
+@media (max-width:820px){header{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.mapbox{position:relative;top:auto}.toggle{margin-left:0}.tally ol{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="intro">
+  <h1>Where has <span class="accel">ACCEL</span> been since Labor Day?</h1>
+  <p>Camps, teacher PD, and conferences across Alabama this fall, all starting from ASCTE in Huntsville. Select a dot to see what happened there.</p>
+  </div>
+  <div class="headStats">
+    <div><b>5,100</b>miles driven</div>
+    <div><b>150</b>middle school students</div>
+    <div><b>170</b>educators trained</div>
+  </div>
+</header>
+
+<div style="height:22px"></div>
+
+<div class="grid">
+  <div class="mapbox"><svg id="map" viewBox="0 0 560 820" role="img" aria-label="Map of Alabama showing ACCEL visits"></svg></div>
+  <div class="side">
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+<section class="tally" aria-labelledby="tallyH">
+  <h2 id="tallyH">Fall 2026 by the numbers</h2>
+  <ol>
+    <li><b>5,100</b><span>miles driven across Alabama</span></li>
+    <li class="fun"><b>16</b><span>wind-up fuzzy chickens racing in the name of friction</span></li>
+    <li><b>170</b><span>educators trained, from 6th grade teachers to two-year college professors</span></li>
+    <li class="fun"><b>3,000</b><span>Nerds Clusters consumed in the name of nerdy lemonade, collaboration, grading, panic, and survival</span></li>
+    <li><b>150</b><span>middle school students engaged</span></li>
+    <li class="fun"><b>12</b><span>cans of green beans that gave us leverage</span></li>
+    <li><b>23</b><span>hours of whole-group AI ethics conversations</span></li>
+    <li class="fun"><b>10</b><span>soccer-playing robots built</span></li>
+    <li><b>150</b><span>STEM kits left in classrooms</span></li>
+    <li class="fun"><b>25</b><span>micropipette art projects completed</span></li>
+    <li><b>2</b><span>shake tables built</span></li>
+    <li class="fun"><b>65</b><span>cipher rings 3D printed</span></li>
+  </ol>
+  <p class="foot">Totals cover Labor Day through December 2026.</p>
+</section>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+const TOPO = {"type":"Topology","objects":{"c":{"type":"GeometryCollection","geometries":[{"type":"Polygon","arcs":[[0,1,2,3,4,5]],"id":"01013","properties":{"n":"Butler"}},{"type":"Polygon","arcs":[[6,7,8,9,10]],"id":"01031","properties":{"n":"Coffee"}},{"type":"Polygon","arcs":[[11,12,13,14,15]],"id":"01103","properties":{"n":"Morgan"}},{"type":"Polygon","arcs":[[16,17,18,19,20,21]],"id":"01003","properties":{"n":"Baldwin"}},{"type":"Polygon","arcs":[[22,23,24,-1,25,26]],"id":"01085","properties":{"n":"Lowndes"}},{"type":"Polygon","arcs":[[27,28,29,30,31]],"id":"01057","properties":{"n":"Fayette"}},{"type":"Polygon","arcs":[[32,33,34,35,36]],"id":"01133","properties":{"n":"Winston"}},{"type":"Polygon","arcs":[[37,38,39,40,41,42,43]],"id":"01021","properties":{"n":"Chilton"}},{"type":"Polygon","arcs":[[44,45,46,47,48,49]],"id":"01073","properties":{"n":"Jefferson"}},{"type":"Polygon","arcs":[[50,51,52,53,54]],"id":"01027","properties":{"n":"Clay"}},{"type":"Polygon","arcs":[[55,56,57,58]],"id":"01017","properties":{"n":"Chambers"}},{"type":"Polygon","arcs":[[59,60,61,62,-47,63]],"id":"01115","properties":{"n":"St. Clair"}},{"type":"Polygon","arcs":[[64,65,66,67]],"id":"01077","properties":{"n":"Lauderdale"}},{"type":"Polygon","arcs":[[68,69,70,71,72]],"id":"01049","properties":{"n":"DeKalb"}},{"type":"Polygon","arcs":[[73,74,75,76,77]],"id":"01063","properties":{"n":"Greene"}},{"type":"Polygon","arcs":[[78,79,80,81,-71]],"id":"01019","properties":{"n":"Cherokee"}},{"type":"Polygon","arcs":[[-67,82,83,84]],"id":"01033","properties":{"n":"Colbert"}},{"type":"Polygon","arcs":[[85,86,87,88,89,-24,90]],"id":"01101","properties":{"n":"Montgomery"}},{"type":"Polygon","arcs":[[91,-72,-82,92,-60,93]],"id":"01055","properties":{"n":"Etowah"}},{"type":"Polygon","arcs":[[-84,94,-33,95,96]],"id":"01059","properties":{"n":"Franklin"}},{"type":"Polygon","arcs":[[97,98,99,-86,100,-41]],"id":"01051","properties":{"n":"Elmore"}},{"type":"Polygon","arcs":[[101,-44,102,103,104]],"id":"01105","properties":{"n":"Perry"}},{"type":"Polygon","arcs":[[-93,-81,105,106,-61]],"id":"01015","properties":{"n":"Calhoun"}},{"type":"Polygon","arcs":[[-103,-43,107,-27,108,109]],"id":"01047","properties":{"n":"Dallas"}},{"type":"Polygon","arcs":[[-4,110,111,112]],"id":"01035","properties":{"n":"Conecuh"}},{"type":"Polygon","arcs":[[113,114,115,116,117]],"id":"01023","properties":{"n":"Choctaw"}},{"type":"Polygon","arcs":[[118,-78,119,-114,120]],"id":"01119","properties":{"n":"Sumter"}},{"type":"Polygon","arcs":[[121,122,-56,123,-52]],"id":"01111","properties":{"n":"Randolph"}},{"type":"Polygon","arcs":[[124,125,-12,126,-65]],"id":"01083","properties":{"n":"Limestone"}},{"type":"Polygon","arcs":[[127,128,-73,-92,129,130,-14]],"id":"01095","properties":{"n":"Marshall"}},{"type":"Polygon","arcs":[[131,132,133,134,-88]],"id":"01011","properties":{"n":"Bullock"}},{"type":"Polygon","arcs":[[135,136,137,-133,138]],"id":"01113","properties":{"n":"Russell"}},{"type":"Polygon","arcs":[[-48,-63,139,140,-39,141]],"id":"01117","properties":{"n":"Shelby"}},{"type":"Polygon","arcs":[[142,143,144,-19,145,-116]],"id":"01025","properties":{"n":"Clarke"}},{"type":"Polygon","arcs":[[-120,-77,146,-104,-110,147,-143,-115]],"id":"01091","properties":{"n":"Marengo"}},{"type":"Polygon","arcs":[[148,149,-105,-147,-76]],"id":"01065","properties":{"n":"Hale"}},{"type":"Polygon","arcs":[[150,-32,151,152]],"id":"01075","properties":{"n":"Lamar"}},{"type":"Polygon","arcs":[[-152,-31,153,-74,-119,154]],"id":"01107","properties":{"n":"Pickens"}},{"type":"Polygon","arcs":[[-141,155,-54,156,-98,-40]],"id":"01037","properties":{"n":"Coosa"}},{"type":"Polygon","arcs":[[-36,157,158,-45,159,-29,160]],"id":"01127","properties":{"n":"Walker"}},{"type":"Polygon","arcs":[[-117,-146,-18,161,162]],"id":"01129","properties":{"n":"Washington"}},{"type":"Polygon","arcs":[[-25,-90,163,-7,164,-2]],"id":"01041","properties":{"n":"Crenshaw"}},{"type":"Polygon","arcs":[[165,166,167,168,169,-9]],"id":"01045","properties":{"n":"Dale"}},{"type":"Polygon","arcs":[[-58,170,-136,171,172]],"id":"01081","properties":{"n":"Lee"}},{"type":"Polygon","arcs":[[-42,-101,-91,-23,-108]],"id":"01001","properties":{"n":"Autauga"}},{"type":"Polygon","arcs":[[-134,-138,173,174,-167,175]],"id":"01005","properties":{"n":"Barbour"}},{"type":"MultiPolygon","arcs":[[[176]],[[-162,-17,177]]],"id":"01097","properties":{"n":"Mobile"}},{"type":"Polygon","arcs":[[178,-49,-142,-38,-102,-150]],"id":"01007","properties":{"n":"Bibb"}},{"type":"Polygon","arcs":[[-89,-135,-176,-166,-8,-164]],"id":"01109","properties":{"n":"Pike"}},{"type":"Polygon","arcs":[[-10,-170,179,180,181]],"id":"01061","properties":{"n":"Geneva"}},{"type":"Polygon","arcs":[[182,183,-180,-169]],"id":"01069","properties":{"n":"Houston"}},{"type":"Polygon","arcs":[[-96,-37,-161,-28,-151,184]],"id":"01093","properties":{"n":"Marion"}},{"type":"Polygon","arcs":[[185,-106,-80,186,-122,-51]],"id":"01029","properties":{"n":"Cleburne"}},{"type":"Polygon","arcs":[[187,188,-128,-13,-126]],"id":"01089","properties":{"n":"Madison"}},{"type":"Polygon","arcs":[[-148,-109,-26,-6,189,-144]],"id":"01131","properties":{"n":"Wilcox"}},{"type":"Polygon","arcs":[[190,-130,-94,-64,-46,-159]],"id":"01009","properties":{"n":"Blount"}},{"type":"Polygon","arcs":[[-83,-66,-127,-16,191,-34,-95]],"id":"01079","properties":{"n":"Lawrence"}},{"type":"Polygon","arcs":[[-30,-160,-50,-179,-149,-75,-154]],"id":"01125","properties":{"n":"Tuscaloosa"}},{"type":"Polygon","arcs":[[-100,192,-172,-139,-132,-87]],"id":"01087","properties":{"n":"Macon"}},{"type":"Polygon","arcs":[[-53,-124,-59,-173,-193,-99,-157]],"id":"01123","properties":{"n":"Tallapoosa"}},{"type":"Polygon","arcs":[[193,-69,-129,-189]],"id":"01071","properties":{"n":"Jackson"}},{"type":"Polygon","arcs":[[-3,-165,-11,-182,194,195,-111]],"id":"01039","properties":{"n":"Covington"}},{"type":"Polygon","arcs":[[-190,-5,-113,196,-20,-145]],"id":"01099","properties":{"n":"Monroe"}},{"type":"Polygon","arcs":[[-62,-107,-186,-55,-156,-140]],"id":"01121","properties":{"n":"Talladega"}},{"type":"Polygon","arcs":[[-175,197,-183,-168]],"id":"01067","properties":{"n":"Henry"}},{"type":"Polygon","arcs":[[-197,-112,-196,198,-21]],"id":"01053","properties":{"n":"Escambia"}},{"type":"Polygon","arcs":[[-35,-192,-15,-131,-191,-158]],"id":"01043","properties":{"n":"Cullman"}}]}},"arcs":[[[4518,3634],[1141,6]],[[5659,3640],[0,-551],[-8,-97],[-139,0],[0,-269]],[[5512,2723],[-561,-4]],[[4951,2719],[-383,2],[-81,44],[-108,179],[0,253]],[[4379,3197],[0,163]],[[4379,3360],[-12,274],[151,0]],[[6363,2543],[0,188],[139,17],[0,167]],[[6502,2915],[991,0]],[[7493,2915],[0,-880]],[[7493,2035],[-1122,-10]],[[6371,2025],[-8,518]],[[3829,9326],[550,-221],[321,-63]],[[4700,9042],[108,12],[81,57],[131,-11],[28,-54],[143,52],[128,-4],[50,-60]],[[5369,9034],[-89,-366],[0,-138]],[[5280,8530],[-1474,19]],[[3806,8549],[23,777]],[[1303,965],[-50,143],[112,123],[120,31],[-101,73],[-11,53],[162,102],[-112,67],[0,85],[70,82],[-100,86],[100,121],[-89,31]],[[1404,1962],[89,2],[-20,63]],[[1473,2027],[90,-13],[131,61],[109,125],[123,15],[-73,50],[131,-21]],[[1984,2244],[131,13],[109,-86],[170,-35]],[[2394,2136],[0,-519],[51,0]],[[2445,1617],[30,-66],[-131,-207],[20,-42],[231,-142],[31,-73],[360,-145],[31,-123],[-151,-184],[31,-98],[198,-92],[-179,-63],[-81,-146],[-89,-27],[70,-44],[-151,-46],[-379,-63],[-402,-43],[-561,-7],[181,73],[120,-46],[349,48],[31,61],[-151,86],[-70,77],[-198,86],[-72,161],[92,133],[-31,136],[-70,86],[-201,58]],[[4630,4426],[50,-69],[70,69],[-11,111],[161,18],[20,-87],[78,-17],[81,94],[100,15],[12,-65],[198,-23],[30,-52],[101,12]],[[5520,4432],[61,-27],[-30,-98],[220,-82],[0,-405]],[[5771,3820],[8,-182],[-120,2]],[[4518,3634],[0,180],[-139,0]],[[4379,3814],[-12,369],[282,0],[-131,67],[-8,57],[89,46],[-61,48],[92,25]],[[1462,7725],[882,-8]],[[2344,7717],[0,-92],[290,-10],[12,-366],[290,-6],[0,-182]],[[2936,7061],[-581,17],[0,-61],[-100,-2],[0,-123],[-480,8]],[[1775,6900],[-302,-2]],[[1473,6898],[-11,827]],[[2344,8534],[290,-4]],[[2634,8530],[1172,-10]],[[3806,8520],[0,-644],[-108,2]],[[3698,7878],[-972,6],[-382,13]],[[2344,7897],[0,637]],[[4058,5462],[402,0],[-12,445]],[[4448,5907],[0,46],[159,-6],[592,2],[162,-106],[100,2]],[[5461,5845],[9,-190],[100,-115],[81,-21],[-19,-105],[228,-127]],[[5860,5287],[-108,-4],[0,-90]],[[5752,5193],[-843,-4],[11,-94],[-572,6]],[[4348,5101],[-279,-2],[0,138]],[[4069,5237],[-11,225]],[[3366,6875],[231,90],[-50,48],[70,73],[240,29],[0,61],[100,-2],[50,65],[39,179],[151,30],[50,58]],[[4247,7506],[190,59],[352,-5],[310,-156],[192,-2]],[[5291,7402],[98,0],[50,-92],[0,-136],[-70,-75],[0,-124],[92,-31]],[[5461,6944],[0,-46],[-122,-13],[-120,-106],[-179,-2],[-140,-105],[-92,0],[-69,-102],[-151,-13],[0,-60],[-140,0],[-251,-134],[-28,-46],[-131,0]],[[4038,6317],[-100,2]],[[3938,6319],[0,61],[-271,64],[-101,107],[-100,17],[0,60],[-140,97],[-150,31],[19,75],[120,-12],[51,56]],[[7323,6846],[-50,-46],[240,-15],[50,61],[340,-7]],[[7903,6839],[-19,-357],[-9,-458]],[[7875,6024],[-901,0],[-92,-33]],[[6882,5991],[0,31],[-461,0]],[[6421,6022],[0,191],[151,-3],[11,212],[380,-5],[11,184],[148,29],[0,122],[50,0],[0,94],[151,0]],[[8046,6027],[1001,2]],[[9047,6029],[129,-498],[92,-56],[-42,-65],[131,-81],[-19,-44]],[[9338,5285],[-433,-13],[-28,-31],[-831,-6]],[[8046,5235],[0,792]],[[6000,7769],[131,101],[70,-51],[151,51],[89,-51],[0,-79],[70,-58],[81,10],[50,-90],[81,-37]],[[6723,7565],[58,-168],[-279,-112],[0,-63]],[[6502,7222],[-170,23],[89,-63],[-30,-140],[-101,-10],[81,-92],[-120,-103],[-131,34],[-78,-121],[-190,-130]],[[5852,6620],[0,232],[-293,0],[0,92],[-98,0]],[[5291,7402],[8,77],[472,71],[179,104],[50,115]],[[3527,9980],[-11,-382],[-178,-88],[50,-33]],[[3388,9477],[-101,-15],[-131,94],[-231,8]],[[2925,9564],[-268,67],[-171,-27],[-80,-42],[-260,-54],[-73,-59],[-209,-27],[-81,19],[-240,134],[-81,129],[-248,84],[-162,-31]],[[1052,9757],[-159,62],[-131,153],[0,27],[603,-4],[1060,-4],[1061,-9],[41,-2]],[[6742,8887],[151,9],[611,301],[260,252],[89,21],[92,161],[128,61]],[[8073,9692],[132,-498],[19,-71],[42,-135]],[[8266,8988],[-181,-86],[0,-90],[-159,-152],[-112,-51],[-371,-217],[-101,13],[0,-94]],[[7342,8311],[-731,2]],[[6611,8313],[-8,474],[139,100]],[[843,5795],[70,87],[290,-12],[50,65],[159,31],[101,73],[262,86]],[[1775,6125],[19,-287],[341,3],[-20,-23]],[[2115,5818],[-61,-147],[-101,-18],[42,-44],[-120,-19],[-81,-119],[31,-96],[-142,-67],[181,-23],[-70,-82],[101,4],[19,-127],[132,-4],[-31,-38],[-170,0],[39,-48],[139,2],[42,-50],[-151,-13],[-69,-119]],[[1845,4810],[-112,17]],[[1733,4827],[-120,125],[100,-4],[12,63],[-132,-13],[-69,36],[-131,-44],[-221,-38],[-70,55],[62,50],[8,113],[-70,-27],[-100,35],[81,17],[-59,129],[89,9],[9,62],[-89,-12],[-81,71],[-120,-8],[61,50],[-70,39],[-81,111],[90,15],[11,134]],[[8266,8988],[140,-496],[120,-430],[58,-245]],[[8584,7817],[-268,-14],[-100,-34]],[[8216,7769],[8,32],[-591,27]],[[7633,7828],[11,42],[-171,232],[20,52],[-140,-29],[-11,186]],[[2925,9564],[30,-67],[-30,-123],[-70,-27],[22,-73],[-151,-73],[-92,-124]],[[2634,9077],[-1702,30]],[[932,9107],[120,650]],[[5760,4570],[31,36],[150,12],[101,-46],[-42,67],[170,123],[143,-56],[58,-82],[182,-4],[228,-58],[62,29]],[[6843,4591],[89,-176],[201,-127]],[[7133,4288],[-190,-6],[-30,-44],[0,-418]],[[6913,3820],[11,-176],[-553,-2]],[[6371,3642],[-310,-2],[0,180],[-290,0]],[[5520,4432],[100,71],[12,59],[128,8]],[[6061,8100],[321,175],[229,6],[0,32]],[[7633,7828],[0,-71],[-299,46],[-151,-29],[0,-78],[-190,19],[-69,-104],[-201,-46]],[[6000,7769],[-128,-2],[108,96],[0,113],[81,124]],[[2634,9077],[0,-547]],[[2344,8534],[-759,11],[-742,18]],[[843,8563],[50,297],[39,247]],[[5860,5287],[1022,4]],[[6882,5291],[360,-2],[-89,-159],[69,-63],[-19,-94],[19,-229]],[[7222,4744],[42,-40],[-61,-57],[-221,13],[-139,-69]],[[5760,4570],[-8,623]],[[2936,5540],[290,2],[0,-92],[832,12]],[[4069,5237],[-92,-226],[22,-44],[-112,-63],[0,-69],[-89,-100],[-862,-12],[0,-366],[-140,-2]],[[2796,4355],[-139,0],[0,366]],[[2657,4721],[0,361],[139,2],[0,366],[140,0],[0,90]],[[8216,7769],[0,-108],[-201,2],[-89,-32],[0,-58],[139,-2],[0,-92],[-151,-61],[0,-261],[-50,-44],[-240,-56],[0,-92],[-151,2]],[[7473,6967],[12,61],[-561,2],[-81,29],[-11,96],[-59,54],[-271,13]],[[4348,5101],[50,-201],[-19,-65],[131,-179],[97,-55],[-58,-52],[81,-60],[0,-63]],[[4379,3814],[-762,-2],[-31,81],[-120,31],[-78,96],[-50,-6],[-132,115],[-111,-4],[-70,90],[-148,60],[-81,-8]],[[2796,4267],[0,88]],[[4951,2719],[0,-184],[69,0],[28,-140],[-97,-50],[0,-320]],[[4951,2025],[-182,-21],[0,165],[-1844,-2]],[[2925,2167],[92,86],[100,35],[170,174],[190,110],[59,11],[111,127],[90,255],[220,75],[20,84],[170,0],[232,73]],[[151,4357],[1373,6]],[[1524,4363],[-251,-54],[30,-209],[-81,-84],[-19,-131],[-70,-42],[-140,-19],[9,-75],[120,-57]],[[1122,3692],[11,-64],[-151,-19],[101,-59],[-120,-35],[-31,-86],[-109,-90],[101,-144],[109,19],[50,-130]],[[1083,3084],[-1052,-2]],[[31,3082],[-31,410],[120,698],[31,167]],[[371,5784],[472,11]],[[1733,4827],[0,-38],[-170,7],[-109,-94],[-221,-82],[-39,-119],[210,-69],[120,-69]],[[151,4357],[92,564],[58,353],[51,381],[19,129]],[[7903,6839],[812,-8],[131,-19]],[[8846,6812],[31,-115],[159,-622],[11,-46]],[[8046,6027],[-171,-3]],[[3527,9980],[1041,-14],[151,0]],[[4719,9966],[0,-397],[-19,-527]],[[3829,9326],[-101,80],[-231,81],[-109,-10]],[[5369,9034],[50,-94],[182,-53],[120,9],[89,81],[151,-19],[100,147],[-69,39]],[[5992,9144],[499,0],[0,-163],[142,2],[28,-117],[81,21]],[[6061,8100],[-301,221],[-120,113]],[[5640,8434],[-70,92],[-290,4]],[[7133,4288],[109,33],[61,-123],[1183,4]],[[8486,4202],[20,-182],[50,0]],[[8556,4020],[-50,-16],[0,-259],[-240,-2],[0,-30],[-220,-12],[-31,-69],[-131,-105],[-20,-64]],[[7864,3463],[-371,0],[0,181],[-260,0],[-30,168],[-290,8]],[[8486,4570],[291,2],[-11,121],[770,9],[-9,73],[159,4]],[[9686,4779],[20,-119],[92,-63],[-50,-94],[-50,-117],[178,-50],[123,-71],[-81,-69],[-131,-25],[19,-44],[-139,-38],[-131,-91],[22,-153]],[[9558,3845],[-382,-2],[-201,180],[-419,-3]],[[8486,4202],[0,368]],[[5852,6620],[98,-79],[-70,-36],[31,-86],[-101,-39],[-109,12],[9,-67],[-109,-52],[19,-46],[-120,-50],[120,-113],[-81,-46]],[[5539,6018],[-58,-31],[-20,-142]],[[4448,5907],[-150,30],[-101,73],[0,123],[-151,17],[-8,167]],[[1122,3692],[1133,3]],[[2255,3695],[0,-237],[131,-16],[0,-90],[329,4]],[[2715,3356],[-50,-31],[11,-243],[-142,0],[0,-303],[-148,-79],[159,-77],[-39,-97],[-131,-43],[-39,29],[-190,-50],[-50,-119],[-81,37],[-89,-69],[58,-67]],[[1473,2027],[12,107],[-120,31],[89,19],[-20,100],[151,15],[28,121],[-128,-13],[89,103],[11,140],[-81,64],[-231,63],[-151,88],[-50,136],[11,83]],[[1845,4810],[240,0],[0,-92],[572,3]],[[2796,4267],[-139,-21],[0,-255],[-282,-2],[0,-263],[-120,-31]],[[2115,5818],[821,-9]],[[2936,5809],[0,-269]],[[742,8014],[623,-13],[0,-60],[97,-2],[0,-214]],[[1473,6898],[-912,21]],[[561,6919],[72,441],[109,654]],[[1775,6900],[0,-775]],[[371,5784],[101,621],[89,514]],[[5539,6018],[882,4]],[[6882,5991],[0,-700]],[[3698,7878],[108,-71],[81,-111],[-30,-33],[240,-2],[0,-48],[120,-17]],[[4217,7596],[30,-90]],[[3366,6875],[-140,2],[0,153],[-290,31]],[[2344,7717],[0,180]],[[1404,1962],[-51,23],[-100,-60],[-851,-3],[0,-60],[-282,0]],[[120,1862],[-47,671],[-42,549]],[[6371,3642],[50,-75],[-30,-205],[-39,-88],[139,3],[0,-268],[-89,-96],[100,2]],[[6363,2543],[-193,4],[-39,27],[-11,153],[-159,-86],[-70,0],[-89,-75],[-11,159],[-279,-2]],[[7493,2915],[120,0]],[[7613,2915],[921,2]],[[8534,2917],[0,-635]],[[8534,2282],[0,-61],[-190,2],[0,-83],[-329,52],[-170,-6],[-132,-155]],[[7713,2031],[-220,4]],[[9338,5285],[69,-224],[59,-77],[170,-136],[50,-69]],[[8486,4570],[-11,182],[-139,0],[-483,148],[-98,59]],[[7755,4959],[0,211],[48,33],[192,2],[51,30]],[[9558,3845],[-31,-153],[-50,-104],[-139,-130],[-31,-81],[39,-123],[0,-36]],[[9346,3218],[-59,21],[-161,-65],[-31,-81],[-561,8],[0,-184]],[[7613,2915],[92,90],[-11,77],[61,105],[90,73],[-42,152],[61,51]],[[402,25],[561,56],[11,44],[139,-71],[-89,-50],[-100,29],[-182,-4],[-201,-29],[-139,25]],[[1303,965],[-150,-83],[19,-67],[-89,-102],[11,-76],[-61,-56],[-9,-259],[-81,-119],[-150,-7],[11,65],[-201,71],[-151,-27],[-50,40],[-182,-40],[-50,765],[-28,549],[-22,243]],[[2936,5809],[290,7],[20,183],[80,82],[232,-6],[0,140],[128,75],[143,-25],[109,54]],[[7713,2031],[631,11],[-8,-425]],[[8336,1617],[-31,0],[-1493,-8],[-430,2]],[[6382,1611],[-11,414]],[[8534,2282],[661,-17],[251,2]],[[9446,2267],[-69,-65],[50,-91],[-31,-99],[201,-163],[31,-67],[58,-156],[-1350,-9]],[[742,8014],[11,60],[90,489]],[[7323,6846],[150,121]],[[8584,7817],[31,-129],[139,-520],[92,-356]],[[4719,9966],[1303,-3],[20,0]],[[6042,9963],[139,-94],[-100,-2],[-151,-150],[62,-88],[-42,-29],[11,-113],[-50,-58],[-12,-214],[93,-71]],[[4379,3360],[-863,-6],[-78,8],[-723,-6]],[[4217,7596],[123,33],[-12,76],[109,14],[182,86],[81,-11],[251,180],[-11,88],[100,8],[39,46],[151,25],[231,278],[179,15]],[[3806,8549],[0,-29]],[[7222,4744],[251,2],[0,181],[232,0],[50,32]],[[6042,9963],[1242,-4],[720,-10],[69,-257]],[[6382,1611],[-561,0],[-831,2]],[[4990,1613],[-39,13],[0,399]],[[2925,2167],[-171,0],[-198,-67],[-162,36]],[[9346,3218],[0,-142],[190,-157],[30,-215],[-69,-102],[19,-78],[-78,-144],[8,-113]],[[4990,1613],[-271,4],[-1063,5],[-1211,-5]]],"bbox":[-88.475,30.223,-84.892,35.008],"transform":{"scale":[0.0003583358335833582,0.0004785478547854789],"translate":[-88.475,30.223]}};
+
+const TYPES = {
+  home:{label:"Home base",color:"var(--home)"},
+  camp:{label:"Student camp",color:"var(--camp)"},
+  pd:{label:"Teacher PD",color:"var(--pd)"},
+  conf:{label:"Conference",color:"var(--conf)"}
+};
+
+const SITES = [
+  {id:"huntsville",name:"ASCTE",place:"Huntsville",type:"home",ll:[-86.66,34.72],county:"01089",dx:10,dy:-10,
+   events:[
+    {title:"Cyber Immersion: Discovery",when:"Sep 24 and Oct 1",text:"Two TEAMS teacher trainings on the ASCTE campus.",type:"pd"},
+    {title:"AI ethics with ASCTE faculty",when:"Fall 2026",text:"A whole-group conversation with our own faculty.",nums:{hours:1},type:"pd"},
+    {title:"Cyber Immersion: Processes",when:"Nov 12",text:"The next session in the Cyber Immersion series.",type:"pd"},
+    {title:"ACCS train-the-trainer PD",when:"Nov 16 to 17",text:"Two full days of AI ethics work with ACCS trainers.",nums:{hours:12},type:"pd"}
+   ]},
+  {id:"opp",name:"Opp Middle School",place:"Opp",type:"camp",isNew:true,ll:[-86.26,31.28],county:"01039",dx:10,dy:4,
+   events:[{title:"Electrical Circuit & Shortwave Radio camp",when:"Sep 24",text:"Built working circuits and listened in on shortwave radio.",nums:{students:25,teachers:1}}]},
+  {id:"wedowee",name:"Randolph County",place:"Wedowee",type:"camp",isNew:true,ll:[-85.48,33.31],county:"01111",dx:-10,dy:-10,anchor:"end",
+   events:[
+    {title:"Biotech camp",when:"Oct 15",text:"Extracted DNA from bananas, then from themselves.",nums:{students:25}},
+    {title:"Robots camp",when:"Oct 16",text:"Built robots and sent them onto the field to play soccer.",nums:{students:25}},
+    {title:"Cyber with micro:bits",when:"Oct 15 to 16",text:"Coded pairs of micro:bits to talk to each other by radio, sending data back and forth during a rubber duck toss and exploring how devices share location."}
+   ],sum:{teachers:3}},
+  {id:"tuscumbia",name:"Deshler",place:"Tuscumbia",type:"camp",isNew:true,ll:[-87.70,34.73],county:"01033",dx:10,dy:18,
+   events:[
+    {title:"History of levers",when:"Nov 3",text:"Used cans of green beans to test levers and raced wind-up fuzzy chickens to explore friction.",nums:{students:25}},
+    {title:"Structural engineering",when:"Nov 4",text:"Built structures and put them to the test on shake tables.",nums:{students:25}}
+   ]},
+  {id:"mobile",name:"Davidson High School",place:"Mobile",type:"pd",ll:[-88.10,30.69],county:"01097",dx:-10,dy:-8,anchor:"end",
+   events:[
+    {title:"LLMs and the Ethical Classroom",when:"Sep 28",text:"Davidson High School faculty, the launch of this PD.",nums:{teachers:115,hours:2}}
+   ]},
+  {id:"jackson",name:"Jackson High School",place:"Jackson",type:"pd",ll:[-87.89,31.51],county:"01025",dx:10,dy:4,
+   events:[{title:"On-site teacher PD",when:"Oct 13",text:"AI ethics in the classroom with Jackson HS teachers.",nums:{hours:2}}]},
+  {id:"perdido",name:"CLAS",place:"Perdido",type:"pd",ll:[-87.62,30.33],county:"01003",dx:10,dy:6,
+   events:[{title:"CLAS presentation",when:"Nov 9",text:"Presented AI and the Ethical Classroom from the principal’s perspective, then workshopped real-life case scenarios with school leaders.",nums:{hours:3}}]},
+  {id:"tuscaloosa",name:"APLUS CS Conference",place:"Tuscaloosa",type:"conf",ll:[-87.57,33.21],county:"01125",dx:-10,dy:4,anchor:"end",
+   events:[{title:"APLUS CS Conference",when:"Oct 19 to 20",text:"Led hands-on machine learning sessions with computer science teachers, including a nearest neighbor classification activity.",nums:{hours:3}}]},
+  {id:"dothan",name:"Troy University Everett Cybersecurity Symposium",place:"Dothan",type:"conf",ll:[-85.39,31.22],county:"01069",dx:-10,dy:-8,anchor:"end",
+   events:[{title:"Dothan City Schools visit",when:"Sep 17",text:"Visited Dothan City Schools to build relationships across the Wiregrass."},{title:"Cybersecurity symposium",when:"Sep 17 to 18",text:"Attended the Troy University Everett Cybersecurity Symposium and hosted an admissions meet and greet."}]},
+  {id:"livingston",name:"University Charter School",place:"Livingston",type:"camp",ll:[-88.19,32.58],county:"01119",dx:10,dy:4,
+   events:[{title:"Cyber and rocket camp",when:"Coming December 16",text:"This camp hasn’t happened yet. About 25 middle schoolers will crack codes with 3D printed cipher rings, code micro:bits to talk to each other by radio, and explore rocketry."}]},
+];
+const HOME = SITES[0];
+
+const svg = d3.select("#map");
+const W=560,H=820;
+const counties = topojson.feature(TOPO, TOPO.objects.c);
+const state = topojson.merge(TOPO, TOPO.objects.c.geometries);
+const proj = d3.geoTransverseMercator().rotate([86.8,0]).fitExtent([[24,24],[W-24,H-24]], state);
+const path = d3.geoPath(proj);
+
+const done = SITES.filter(s=>!s.soon);
+const visitedFips = new Set(done.map(s=>s.county));
+const soonFips = new Set(SITES.filter(s=>s.soon).map(s=>s.county));
+
+const gC = svg.append("g");
+gC.selectAll("path").data(counties.features).join("path")
+  .attr("class",d=>"county"+(visitedFips.has(d.id)?" visited":""))
+  .attr("d",path)
+  .append("title").text(d=>d.properties.n+" County");
+svg.append("path").datum(state).attr("class","outline").attr("d",path);
+
+const gR = svg.append("g");
+const routes = gR.selectAll("path").data(SITES.filter(s=>s.type!=="home")).join("path")
+  .attr("class",d=>"route"+(d.soon?" soon":""))
+  .attr("d",d=>path({type:"LineString",coordinates:[HOME.ll,d.ll]}));
+
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(!reduce){
+  routes.filter(d=>!d.soon).each(function(d,i){
+    const L=this.getTotalLength();
+    d3.select(this).attr("stroke-dasharray",L).attr("stroke-dashoffset",L)
+      .transition().delay(250+i*140).duration(900).ease(d3.easeCubicOut).attr("stroke-dashoffset",0)
+      .on("end",function(){d3.select(this).attr("stroke-dasharray",null)});
+  });
+}
+
+const gS = svg.append("g");
+const sites = gS.selectAll("g").data(SITES).join("g")
+  .attr("class",d=>"site"+(d.soon?" soon":""))
+  .attr("transform",d=>{const p=proj(d.ll);return `translate(${p[0]},${p[1]})`;})
+  .attr("tabindex",0).attr("role","button")
+  .attr("aria-label",d=>`${d.name}, ${d.place}${d.soon?", coming up":""}`);
+sites.append("circle").attr("class","ring").attr("r",d=>d.type==="home"||d.isNew?15:12);
+sites.append("circle").attr("class","mark").attr("r",d=>d.type==="home"?10:7.5)
+  .style("fill",d=>d.type==="home"?"var(--home)":"var(--camp)").style("stroke",d=>d.soon?TYPES[d.type].color:null);
+sites.filter(d=>d.type==="home").append("circle").attr("r",3.5).style("fill","var(--surface)").style("pointer-events","none");
+sites.filter(d=>d.isNew).append("circle").attr("r",11.5).style("fill","none").style("stroke","var(--camp)").style("stroke-width","2").style("pointer-events","none");
+sites.append("text").attr("x",d=>d.dx).attr("y",d=>d.dy).attr("text-anchor",d=>d.anchor||"start").text(d=>d.place);
+
+sites.on("click",(e,d)=>select(d)).on("keydown",(e,d)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(d);}});
+
+let filter="all", showSoon=false, current=null;
+function applyVis(){
+  sites.style("display",d=>d.soon&&!showSoon?"none":null)
+    .classed("dim",d=>filter!=="all" && d.type!=="home" && d.type!==filter);
+  routes.style("display",d=>d.soon&&!showSoon?"none":null)
+    .style("opacity",d=>filter!=="all" && d.type!==filter?0.08:null);
+  gC.selectAll("path").classed("visited",d=>visitedFips.has(d.id)&&(filter==="all"||done.some(s=>s.county===d.id&&(s.type===filter||s.type==="home"))));
+}
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+  filter=b.dataset.f;
+  document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
+  applyVis();
+}));
+
+
+const panel=document.getElementById("panel");
+const fmt=n=>n.toLocaleString("en-US");
+function numsHTML(n){
+  if(!n) return "";
+  const parts=[];
+  if(n.students) parts.push(`<span><b>${fmt(n.students)}</b>students</span>`);
+  if(n.teachers) parts.push(`<span><b>${fmt(n.teachers)}</b>${n.teachers===1?"teacher":"teachers"}</span>`);
+  if(n.hours) parts.push(`<span><b>${n.hours}</b>${n.hours===1?"hour":"hours"} of AI ethics</span>`);
+  return `<div class="nums">${parts.join("")}</div>`;
+}
+function select(d){
+  current=d;
+  sites.classed("active",s=>s===d);
+  const t=TYPES[d.type];
+  const label=d.soon?"Coming up":t.label;
+  panel.innerHTML=`
+    ${d.isNew?'<span class="tag" style="background:var(--camp)">New camp programming launched</span>':''}
+    <h2>${d.name}</h2>
+    <p class="where">${d.place}, Alabama</p>
+    ${d.events.map(ev=>`<div class="ev"><h3>${ev.title}</h3><div class="when">${ev.when}</div>${ev.text?`<p>${ev.text}</p>`:""}${numsHTML(ev.nums)}</div>`).join("")}
+    ${d.sum?`<div class="ev">${numsHTML(d.sum)}</div>`:""}
+    <button class="back" type="button">Back to the overview</button>`;
+  panel.querySelector(".back").addEventListener("click",overview);
+}
+function overview(){
+  current=null; sites.classed("active",false);
+  const places=done.filter(s=>s.type!=="home").length;
+  panel.innerHTML=`<div class="overview">
+    <h2>Fall 2026 on the road</h2>
+    <p>Lines trace each trip out from ASCTE. Shaded counties are where ACCEL has already worked this fall.</p>
+    <div class="legend">
+      <span><i style="background:var(--home)"></i>Home base</span>
+      <span><i style="background:var(--camp)"></i>Where ACCEL went</span>
+      <span><i class="hollow" style="border-color:var(--camp)"></i>New camp programming launched</span>
+    </div></div>`;
+}
+overview(); applyVis();
+</script>
+</body>
+</html>
